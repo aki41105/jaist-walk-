@@ -8,10 +8,10 @@ export type Affiliation = 'student' | 'faculty' | 'staff' | 'other';
 export type ResearchArea = 'cs' | 'is' | 'ms' | 'other';
 
 // Capture outcomes
-export type CaptureOutcome = 'jaileon' | 'bird';
+export type CaptureOutcome = 'jaileon' | 'bird' | 'rainbow_jaileon';
 
 // Capture game states
-export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'RESULT';
+export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'ESCAPED' | 'RESULT';
 
 // Database row types
 export interface User {
@@ -102,6 +102,7 @@ export interface CaptureRequest {
 
 export interface CaptureResponse {
   outcome: CaptureOutcome;
+  captured: boolean;
   points_earned: number;
   total_points: number;
   capture_count: number;

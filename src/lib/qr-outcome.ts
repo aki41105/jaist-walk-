@@ -2,7 +2,9 @@ import { createHash } from 'crypto';
 import { supabase } from './supabase';
 import type { CaptureOutcome } from '@/types';
 
-const JAILEON_PROBABILITY = 0.6; // 60% chance of Jaileon
+const RAINBOW_JAILEON_THRESHOLD = 0.05; // 5% rainbow jaileon
+const JAILEON_THRESHOLD = 0.65;         // 60% jaileon (0.05 ~ 0.65)
+// remaining 35% = bird
 
 function determineOutcome(seed: string, qrLocationId: string, date: string): CaptureOutcome {
   const hash = createHash('sha256')
@@ -13,7 +15,9 @@ function determineOutcome(seed: string, qrLocationId: string, date: string): Cap
   const value = parseInt(hash.substring(0, 8), 16);
   const normalized = value / 0xFFFFFFFF;
 
-  return normalized < JAILEON_PROBABILITY ? 'jaileon' : 'bird';
+  if (normalized < RAINBOW_JAILEON_THRESHOLD) return 'rainbow_jaileon';
+  if (normalized < JAILEON_THRESHOLD) return 'jaileon';
+  return 'bird';
 }
 
 export async function getDailyOutcome(

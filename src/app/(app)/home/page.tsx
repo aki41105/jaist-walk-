@@ -187,7 +187,7 @@ export default function HomePage() {
                 {profile.recent_scans.map((scan: Scan & { location_name: string }) => (
                   <div key={scan.id} className="p-4 flex items-center gap-3">
                     <div className="text-2xl">
-                      {scan.outcome === 'jaileon' ? '🦎' : '🐦'}
+                      {scan.outcome === 'rainbow_jaileon' ? '🌈' : scan.outcome === 'jaileon' ? '🦎' : '🐦'}
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-sm">{scan.location_name}</p>
@@ -196,7 +196,7 @@ export default function HomePage() {
                       </p>
                     </div>
                     <p className={`font-bold text-sm ${
-                      scan.outcome === 'jaileon' ? 'text-green-600' : 'text-yellow-500'
+                      scan.outcome === 'rainbow_jaileon' ? 'text-purple-600' : scan.outcome === 'jaileon' ? 'text-green-600' : 'text-yellow-500'
                     }`}>
                       +{scan.points_earned}pt
                     </p>
