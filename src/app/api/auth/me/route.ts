@@ -42,10 +42,16 @@ export async function GET() {
       points: user.points,
       capture_count: user.capture_count,
       recent_scans: (recentScans || []).map((scan: Record<string, unknown>) => ({
-        ...scan,
+        id: scan.id as string,
+        user_id: scan.user_id as string,
+        qr_location_id: scan.qr_location_id as string,
+        outcome: scan.outcome as string,
+        points_earned: scan.points_earned as number,
+        date: scan.date as string,
+        scanned_at: scan.scanned_at as string,
         location_name: (scan.qr_locations as Record<string, string>)?.name_ja || '',
       })),
-      recent_transactions: recentTransactions || [],
+      recent_transactions: (recentTransactions || []) as UserProfile['recent_transactions'],
     };
 
     return NextResponse.json(profile);
