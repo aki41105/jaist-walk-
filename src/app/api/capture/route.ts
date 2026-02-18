@@ -6,7 +6,7 @@ import { getDailyOutcome } from '@/lib/qr-outcome';
 import type { CaptureOutcome } from '@/types';
 
 const CATCH_RATES: Record<CaptureOutcome, number> = {
-  jaileon: 0.80,
+  jaileon: 0.50,
   bird: 1.0,
   rainbow_jaileon: 0.40,
 };
