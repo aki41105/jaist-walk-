@@ -15,22 +15,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { user_id } = parsed.data;
+    const { name } = parsed.data;
 
     const { data: user } = await supabase
       .from('users')
       .select('id')
-      .eq('id', user_id)
+      .eq('name', name)
       .single();
 
     if (!user) {
       return NextResponse.json(
-        { error: 'IDが見つかりません' },
+        { error: 'アカウント名が見つかりません' },
         { status: 404 }
       );
     }
 
-    await createSession(user_id);
+    await createSession(user.id);
 
     return NextResponse.json({ success: true });
   } catch {

@@ -19,21 +19,21 @@ export async function POST(request: NextRequest) {
 
     const { data: user } = await supabase
       .from('users')
-      .select('id')
+      .select('id, name')
       .eq('email', email)
       .single();
 
     // Always return success to prevent email enumeration
     if (user) {
       try {
-        await sendRecoveryEmail(email, user.id);
+        await sendRecoveryEmail(email, user.name);
       } catch {
         console.error('Failed to send recovery email');
       }
     }
 
     return NextResponse.json({
-      message: '登録されたメールアドレスの場合、IDを送信しました',
+      message: '登録されたメールアドレスの場合、アカウント名を送信しました',
     });
   } catch {
     return NextResponse.json(

@@ -18,6 +18,20 @@ export async function POST(request: NextRequest) {
 
     const { name, email, affiliation, research_area } = parsed.data;
 
+    // Check if name already exists
+    const { data: existingName } = await supabase
+      .from('users')
+      .select('id')
+      .eq('name', name)
+      .single();
+
+    if (existingName) {
+      return NextResponse.json(
+        { error: 'このアカウント名は既に使用されています' },
+        { status: 409 }
+      );
+    }
+
     // Check if email already exists
     const { data: existing } = await supabase
       .from('users')
@@ -71,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // Send email with ID
     try {
-      await sendRegistrationEmail(email, userId);
+      await sendRegistrationEmail(email, name);
     } catch {
       // Email failure shouldn't block registration
       console.error('Failed to send registration email');

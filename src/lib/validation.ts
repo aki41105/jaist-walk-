@@ -8,9 +8,7 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  user_id: z
-    .string()
-    .regex(/^JW-[A-HJ-NP-Z2-9]{6}$/, '無効なIDです'),
+  name: z.string().min(1, 'アカウント名を入力してください'),
 });
 
 export const recoverSchema = z.object({

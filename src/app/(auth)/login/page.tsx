@@ -9,7 +9,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/home';
-  const [userId, setUserId] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +22,7 @@ function LoginForm() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId.toUpperCase().trim() }),
+        body: JSON.stringify({ name: name.trim() }),
       });
 
       const data = await res.json();
@@ -51,17 +51,17 @@ function LoginForm() {
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
           <div>
-            <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-1">
-              あなたのID
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              アカウント名
             </label>
             <input
-              id="userId"
+              id="name"
               type="text"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder="JW-XXXXXX"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-center text-xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent uppercase"
-              maxLength={9}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="登録したアカウント名"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-center text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              maxLength={50}
               required
             />
           </div>
@@ -90,7 +90,7 @@ function LoginForm() {
             href="/recover"
             className="block text-gray-500 hover:text-gray-700 text-sm"
           >
-            IDを忘れた方
+            アカウント名を忘れた方
           </Link>
         </div>
 

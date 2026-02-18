@@ -8,7 +8,7 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'JAIST Walk <onboarding@resend.dev>
 
 export async function sendRegistrationEmail(
   to: string,
-  userId: string
+  name: string
 ): Promise<void> {
   if (!resend) {
     console.warn('[email] RESEND_API_KEY not set, skipping email to', to);
@@ -17,18 +17,18 @@ export async function sendRegistrationEmail(
   await resend.emails.send({
     from: FROM_EMAIL,
     to,
-    subject: 'JAIST Walk - あなたのIDです / Your ID',
+    subject: 'JAIST Walk - 登録完了 / Registration Complete',
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
         <h1 style="color: #16a34a; font-size: 24px;">🦎 JAIST Walk</h1>
         <p>ご登録ありがとうございます！<br/>Thank you for registering!</p>
         <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
-          <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">あなたのID / Your ID</p>
-          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${userId}</p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">あなたのアカウント名 / Your Account Name</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${name}</p>
         </div>
         <p style="color: #666; font-size: 14px;">
-          このIDでログインしてください。IDは大切に保管してください。<br/>
-          Please use this ID to log in. Keep it safe.
+          このアカウント名でログインしてください。<br/>
+          Please use this account name to log in.
         </p>
       </div>
     `,
@@ -37,7 +37,7 @@ export async function sendRegistrationEmail(
 
 export async function sendRecoveryEmail(
   to: string,
-  userId: string
+  name: string
 ): Promise<void> {
   if (!resend) {
     console.warn('[email] RESEND_API_KEY not set, skipping recovery email to', to);
@@ -46,18 +46,18 @@ export async function sendRecoveryEmail(
   await resend.emails.send({
     from: FROM_EMAIL,
     to,
-    subject: 'JAIST Walk - ID復旧 / ID Recovery',
+    subject: 'JAIST Walk - アカウント名復旧 / Account Recovery',
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
         <h1 style="color: #16a34a; font-size: 24px;">🦎 JAIST Walk</h1>
-        <p>ID復旧のリクエストを受け付けました。<br/>We received your ID recovery request.</p>
+        <p>アカウント名復旧のリクエストを受け付けました。<br/>We received your account recovery request.</p>
         <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
-          <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">あなたのID / Your ID</p>
-          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${userId}</p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">あなたのアカウント名 / Your Account Name</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${name}</p>
         </div>
         <p style="color: #666; font-size: 14px;">
-          このIDでログインしてください。<br/>
-          Please use this ID to log in.
+          このアカウント名でログインしてください。<br/>
+          Please use this account name to log in.
         </p>
       </div>
     `,
