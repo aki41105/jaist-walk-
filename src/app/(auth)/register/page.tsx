@@ -53,7 +53,7 @@ export default function RegisterPage() {
         return;
       }
 
-      setRegisteredId(data.user_id);
+      setRegisteredId(data.name);
     } catch {
       setError('通信エラーが発生しました');
     } finally {
@@ -67,17 +67,15 @@ export default function RegisterPage() {
         <div className="w-full max-w-sm text-center">
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-2xl font-bold text-green-700 mb-2">登録完了！</h1>
-          <p className="text-gray-600 mb-6">あなたのIDはメールでも送信されました</p>
-
           <div className="bg-green-50 border-2 border-green-500 rounded-2xl p-6 mb-6">
-            <p className="text-sm text-gray-500 mb-2">あなたのID</p>
-            <p className="text-3xl font-bold font-mono tracking-widest text-green-700">
+            <p className="text-sm text-gray-500 mb-2">アカウント名</p>
+            <p className="text-3xl font-bold text-green-700">
               {registeredId}
             </p>
           </div>
 
-          <p className="text-sm text-red-500 mb-6">
-            ⚠️ このIDは大切に保管してください
+          <p className="text-sm text-gray-500 mb-6">
+            このアカウント名でログインできます
           </p>
 
           <button

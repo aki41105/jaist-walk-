@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     // Create session
     await createSession(userId);
 
-    return NextResponse.json({ user_id: userId }, { status: 201 });
+    return NextResponse.json({ user_id: userId, name }, { status: 201 });
   } catch {
     return NextResponse.json(
       { error: 'サーバーエラーが発生しました' },

@@ -98,8 +98,7 @@ export default function HomePage() {
             />
           </div>
           <div>
-            <p className="text-lg font-bold">{profile.name}</p>
-            <p className="text-green-100 text-sm font-mono tracking-wider">{profile.id}</p>
+            <p className="text-xl font-bold">{profile.name}</p>
           </div>
         </div>
       </div>
@@ -131,7 +130,7 @@ export default function HomePage() {
           <div className="bg-white rounded-b-2xl shadow px-4 pb-4 flex justify-center">
             <div className="bg-gray-100 rounded-xl p-4 text-center">
               <QRCode
-                data={`${typeof window !== 'undefined' ? window.location.origin : ''}/admin/points?user=${encodeURIComponent(profile.id)}`}
+                data={`${typeof window !== 'undefined' ? window.location.origin : ''}/admin/points?user=${encodeURIComponent(profile.name)}`}
                 size={200}
               />
               <p className="text-xs text-gray-500 mt-3">ポイント利用時に運営へ提示してください</p>

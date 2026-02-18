@@ -7,7 +7,7 @@ import type { User, PointTransaction } from '@/types';
 function PointsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const userId = searchParams.get('user');
+  const userName = searchParams.get('user');
 
   const [user, setUser] = useState<(User & { recent_transactions: PointTransaction[] }) | null>(null);
   const [amount, setAmount] = useState('');
@@ -21,9 +21,9 @@ function PointsContent() {
   const [forbidden, setForbidden] = useState(false);
 
   const fetchUser = useCallback(async () => {
-    if (!userId) return;
+    if (!userName) return;
     try {
-      const res = await fetch(`/api/users?id=${encodeURIComponent(userId)}`);
+      const res = await fetch(`/api/users?name=${encodeURIComponent(userName)}`);
       const data = await res.json();
       if (res.status === 401) {
         router.push('/login');
@@ -43,7 +43,7 @@ function PointsContent() {
     } finally {
       setLoading(false);
     }
-  }, [userId, router]);
+  }, [userName, router]);
 
   useEffect(() => {
     fetchUser();
@@ -60,7 +60,7 @@ function PointsContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
+          user_id: user!.id,
           amount: parseInt(amount, 10),
           reason,
         }),
@@ -84,7 +84,7 @@ function PointsContent() {
     }
   };
 
-  if (!userId) {
+  if (!userName) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <p className="text-gray-500">ユーザーが指定されていません</p>
@@ -148,8 +148,8 @@ function PointsContent() {
         <div className="bg-white rounded-2xl shadow-lg p-4 mb-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">ユーザーID</p>
-              <p className="text-xl font-bold font-mono">{user.id}</p>
+              <p className="text-sm text-gray-500">アカウント名</p>
+              <p className="text-xl font-bold">{user.name}</p>
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-500">現在のポイント</p>
@@ -264,7 +264,7 @@ function PointsContent() {
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
               <h3 className="text-lg font-bold mb-3">確認</h3>
               <p className="text-gray-600 mb-1">
-                <span className="font-mono font-bold">{user.id}</span> に対して
+                <span className="font-bold">{user.name}</span> に対して
               </p>
               <p className="text-2xl font-bold mb-1">
                 <span className={parseInt(amount) > 0 ? 'text-green-600' : 'text-red-500'}>

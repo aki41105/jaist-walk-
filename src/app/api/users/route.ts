@@ -8,19 +8,22 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');
+    const name = searchParams.get('name');
 
-    if (!id) {
+    if (!id && !name) {
       return NextResponse.json(
-        { error: 'IDを指定してください' },
+        { error: 'IDまたはアカウント名を指定してください' },
         { status: 400 }
       );
     }
 
-    const { data: user } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const query = supabase.from('users').select('*');
+    if (name) {
+      query.eq('name', name);
+    } else {
+      query.eq('id', id!);
+    }
+    const { data: user } = await query.single();
 
     if (!user) {
       return NextResponse.json(
@@ -33,7 +36,7 @@ export async function GET(request: NextRequest) {
     const { data: transactions } = await supabase
       .from('point_transactions')
       .select('*')
-      .eq('user_id', id)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(50);
 
