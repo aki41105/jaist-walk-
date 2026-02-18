@@ -117,6 +117,17 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* QR Scan Button */}
+      <div className="px-4 mt-4">
+        <button
+          onClick={() => router.push('/scan')}
+          className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-2xl shadow-lg transition-colors flex items-center justify-center gap-3 animate-pulse-glow"
+        >
+          <span className="text-2xl">📷</span>
+          QR スキャン
+        </button>
+      </div>
+
       {/* Personal QR Code */}
       <div className="px-4 mt-4">
         <button
