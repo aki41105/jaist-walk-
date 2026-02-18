@@ -1,0 +1,5 @@
+[
+  {"id":"36f96603-10cd-46bd-a520-0378927530ae","code":"358b9ae4-dbc8-4d64-bc0f-a5e805e4442f","name_ja":"Main Gate","name_en":"Main Gate","location_number":1,"is_active":true},
+  {"id":"28b3e647-a992-404d-899c-74d026b093f1","code":"73cdd272-69de-4f92-b8a0-7df29af35070","name_ja":"IS Building","name_en":"IS Building (Building I)","location_number":2,"is_active":true},
+  {"id":"9ecfba59-eebf-42a8-98ba-00d82f022e5c","code":"8f0d7d0a-0e94-42bc-a752-c9e14d2ab92a","name_ja":"KS Building","name_en":"KS Building (Building K)","location_number":3,"is_active":true}
+]

@@ -1,0 +1,143 @@
+{
+  "common": {
+    "appName": "JAIST Walk",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "retry": "再試行",
+    "back": "戻る",
+    "confirm": "確定",
+    "cancel": "キャンセル",
+    "submit": "送信",
+    "home": "ホーム",
+    "logout": "ログアウト",
+    "admin": "管理画面"
+  },
+  "login": {
+    "title": "ログイン",
+    "subtitle": "ジャイレオンを捕まえよう！",
+    "idLabel": "あなたのID",
+    "idPlaceholder": "JW-XXXXXX",
+    "loginButton": "ログイン",
+    "loggingIn": "ログイン中...",
+    "registerLink": "新規登録はこちら",
+    "recoverLink": "IDを忘れた方"
+  },
+  "register": {
+    "title": "新規登録",
+    "subtitle": "JAIST Walkに参加しよう",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "example@jaist.ac.jp",
+    "affiliationLabel": "身分",
+    "affiliationPlaceholder": "選択してください",
+    "researchAreaLabel": "領域",
+    "researchAreaPlaceholder": "選択してください",
+    "registerButton": "登録する",
+    "registering": "登録中...",
+    "loginLink": "既にIDをお持ちの方",
+    "success": {
+      "title": "登録完了！",
+      "emailSent": "あなたのIDはメールでも送信されました",
+      "yourId": "あなたのID",
+      "warning": "⚠️ このIDは大切に保管してください",
+      "startButton": "はじめる"
+    },
+    "affiliations": {
+      "student": "学生",
+      "faculty": "教員",
+      "staff": "職員",
+      "other": "その他"
+    },
+    "researchAreas": {
+      "cs": "情報科学 (CS)",
+      "is": "知識科学 (IS)",
+      "ms": "マテリアルサイエンス (MS)",
+      "other": "その他"
+    }
+  },
+  "recover": {
+    "title": "ID復旧",
+    "subtitle": "登録時のメールアドレスを入力してください",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "example@jaist.ac.jp",
+    "sendButton": "IDを再送信",
+    "sending": "送信中...",
+    "backToLogin": "ログインに戻る",
+    "success": {
+      "title": "メール送信完了",
+      "message": "登録されたメールアドレスの場合、IDを記載したメールを送信しました。"
+    }
+  },
+  "home": {
+    "yourId": "あなたのID",
+    "captureCount": "捕獲数",
+    "points": "ポイント",
+    "personalQr": "個人QRコード",
+    "qrHint": "ポイント利用時に提示",
+    "scanHistory": "スキャン履歴",
+    "pointHistory": "ポイント履歴",
+    "noScans": "まだスキャンしていません",
+    "noScansHint": "QRコードを探しに行こう！",
+    "noTransactions": "ポイント履歴はありません"
+  },
+  "capture": {
+    "searching": "ジャイレオンを探しています...",
+    "noQr": "QRコードが指定されていません",
+    "goHome": "ホームに戻る",
+    "catchButton": "つかまえる！",
+    "birdAppeared": "小鳥が遊びに来ました！",
+    "watchButton": "見守る 👀",
+    "catching": "捕獲中...!",
+    "success": {
+      "title": "捕獲成功！🎉",
+      "message": "ジャイレオンを捕まえた！"
+    },
+    "birdResult": {
+      "title": "小鳥は飛んでいった...🐦",
+      "message": "でもポイントは少しもらえた！"
+    },
+    "earnedPoints": "獲得ポイント",
+    "totalPoints": "合計ポイント",
+    "totalCaptures": "捕獲数"
+  },
+  "admin": {
+    "title": "管理画面",
+    "backToHome": "ホームに戻る",
+    "searchLabel": "ユーザーID検索",
+    "searchButton": "ユーザーを検索",
+    "searching": "検索中...",
+    "points": {
+      "backToSearch": "← 検索に戻る",
+      "userId": "ユーザーID",
+      "currentPoints": "現在のポイント",
+      "affiliation": "身分",
+      "researchArea": "領域",
+      "captureCount": "捕獲数",
+      "operation": "ポイント操作",
+      "amountLabel": "ポイント数",
+      "amountPlaceholder": "例: 100 or -50",
+      "amountHint": "正の数で付与、負の数で差引",
+      "reasonLabel": "理由",
+      "reasonPlaceholder": "例: イベント参加賞",
+      "executeButton": "実行",
+      "processing": "処理中...",
+      "confirmTitle": "確認",
+      "confirmTarget": "に対して",
+      "confirmReason": "理由",
+      "history": "ポイント履歴",
+      "noHistory": "履歴はありません",
+      "adminNote": "管理者"
+    }
+  },
+  "errors": {
+    "invalidId": "無効なIDです",
+    "idNotFound": "IDが見つかりません",
+    "emailExists": "このメールアドレスは既に登録されています",
+    "invalidQr": "無効なQRコードです",
+    "inactiveQr": "このQRコードは現在無効です",
+    "alreadyScanned": "本日このQRコードは既にスキャン済みです",
+    "userNotFound": "ユーザーが見つかりません",
+    "insufficientPoints": "ポイントが不足しています",
+    "networkError": "通信エラーが発生しました",
+    "serverError": "サーバーエラーが発生しました"
+  }
+}

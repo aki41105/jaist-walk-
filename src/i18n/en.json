@@ -1,0 +1,143 @@
+{
+  "common": {
+    "appName": "JAIST Walk",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "back": "Back",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "home": "Home",
+    "logout": "Log out",
+    "admin": "Admin"
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Catch the Jaileon!",
+    "idLabel": "Your ID",
+    "idPlaceholder": "JW-XXXXXX",
+    "loginButton": "Log In",
+    "loggingIn": "Logging in...",
+    "registerLink": "Create an account",
+    "recoverLink": "Forgot your ID?"
+  },
+  "register": {
+    "title": "Register",
+    "subtitle": "Join JAIST Walk",
+    "emailLabel": "Email",
+    "emailPlaceholder": "example@jaist.ac.jp",
+    "affiliationLabel": "Affiliation",
+    "affiliationPlaceholder": "Select one",
+    "researchAreaLabel": "Research Area",
+    "researchAreaPlaceholder": "Select one",
+    "registerButton": "Register",
+    "registering": "Registering...",
+    "loginLink": "Already have an ID?",
+    "success": {
+      "title": "Registration Complete!",
+      "emailSent": "Your ID has also been sent to your email",
+      "yourId": "Your ID",
+      "warning": "⚠️ Please keep this ID safe",
+      "startButton": "Get Started"
+    },
+    "affiliations": {
+      "student": "Student",
+      "faculty": "Faculty",
+      "staff": "Staff",
+      "other": "Other"
+    },
+    "researchAreas": {
+      "cs": "Computer Science (CS)",
+      "is": "Information Science (IS)",
+      "ms": "Materials Science (MS)",
+      "other": "Other"
+    }
+  },
+  "recover": {
+    "title": "Recover ID",
+    "subtitle": "Enter the email you used to register",
+    "emailLabel": "Email",
+    "emailPlaceholder": "example@jaist.ac.jp",
+    "sendButton": "Resend ID",
+    "sending": "Sending...",
+    "backToLogin": "Back to login",
+    "success": {
+      "title": "Email Sent",
+      "message": "If this email is registered, we've sent your ID to it."
+    }
+  },
+  "home": {
+    "yourId": "Your ID",
+    "captureCount": "Captures",
+    "points": "Points",
+    "personalQr": "Personal QR Code",
+    "qrHint": "Show when using points",
+    "scanHistory": "Scan History",
+    "pointHistory": "Point History",
+    "noScans": "No scans yet",
+    "noScansHint": "Go find some QR codes!",
+    "noTransactions": "No point history"
+  },
+  "capture": {
+    "searching": "Searching for Jaileon...",
+    "noQr": "No QR code specified",
+    "goHome": "Go Home",
+    "catchButton": "Catch it!",
+    "birdAppeared": "A little bird came to visit!",
+    "watchButton": "Watch 👀",
+    "catching": "Catching...!",
+    "success": {
+      "title": "Capture Success! 🎉",
+      "message": "You caught a Jaileon!"
+    },
+    "birdResult": {
+      "title": "The bird flew away... 🐦",
+      "message": "But you still got some points!"
+    },
+    "earnedPoints": "Points earned",
+    "totalPoints": "Total points",
+    "totalCaptures": "Captures"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "backToHome": "Back to home",
+    "searchLabel": "Search User ID",
+    "searchButton": "Search User",
+    "searching": "Searching...",
+    "points": {
+      "backToSearch": "← Back to search",
+      "userId": "User ID",
+      "currentPoints": "Current Points",
+      "affiliation": "Affiliation",
+      "researchArea": "Area",
+      "captureCount": "Captures",
+      "operation": "Point Operation",
+      "amountLabel": "Points",
+      "amountPlaceholder": "e.g. 100 or -50",
+      "amountHint": "Positive to add, negative to subtract",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "e.g. Event prize",
+      "executeButton": "Execute",
+      "processing": "Processing...",
+      "confirmTitle": "Confirm",
+      "confirmTarget": "For user",
+      "confirmReason": "Reason",
+      "history": "Point History",
+      "noHistory": "No history",
+      "adminNote": "Admin"
+    }
+  },
+  "errors": {
+    "invalidId": "Invalid ID",
+    "idNotFound": "ID not found",
+    "emailExists": "This email is already registered",
+    "invalidQr": "Invalid QR code",
+    "inactiveQr": "This QR code is currently inactive",
+    "alreadyScanned": "You already scanned this QR code today",
+    "userNotFound": "User not found",
+    "insufficientPoints": "Insufficient points",
+    "networkError": "Network error",
+    "serverError": "Server error"
+  }
+}
