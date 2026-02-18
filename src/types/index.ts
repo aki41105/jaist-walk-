@@ -16,6 +16,7 @@ export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'RESU
 // Database row types
 export interface User {
   id: string; // JW-XXXXXX format
+  name: string;
   email: string;
   affiliation: Affiliation;
   research_area: ResearchArea;
@@ -81,6 +82,7 @@ export interface PrivacyScanLog {
 
 // API request/response types
 export interface RegisterRequest {
+  name: string;
   email: string;
   affiliation: Affiliation;
   research_area: ResearchArea;
@@ -119,6 +121,7 @@ export interface ApiError {
 
 export interface UserProfile {
   id: string;
+  name: string;
   email: string;
   affiliation: Affiliation;
   research_area: ResearchArea;

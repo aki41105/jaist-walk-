@@ -98,8 +98,8 @@ export default function HomePage() {
             />
           </div>
           <div>
-            <p className="text-green-100 text-sm">あなたのID</p>
-            <p className="text-2xl font-bold font-mono tracking-wider">{profile.id}</p>
+            <p className="text-lg font-bold">{profile.name}</p>
+            <p className="text-green-100 text-sm font-mono tracking-wider">{profile.id}</p>
           </div>
         </div>
       </div>

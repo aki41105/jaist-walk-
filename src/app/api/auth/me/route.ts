@@ -35,6 +35,7 @@ export async function GET() {
 
     const profile: UserProfile = {
       id: user.id,
+      name: user.name,
       email: user.email,
       affiliation: user.affiliation,
       research_area: user.research_area,

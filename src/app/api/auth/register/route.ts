@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, affiliation, research_area } = parsed.data;
+    const { name, email, affiliation, research_area } = parsed.data;
 
     // Check if email already exists
     const { data: existing } = await supabase
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
     // Create user
     const { error: insertError } = await supabase.from('users').insert({
       id: userId,
+      name,
       email,
       affiliation,
       research_area,
