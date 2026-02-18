@@ -55,11 +55,16 @@ export async function getCurrentUser(): Promise<User | null> {
     .eq('token', token)
     .single();
 
-  if (!session) return null;
+  if (!session) {
+    // Session not found in DB (e.g. after data reset) - clear stale cookie
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    return null;
+  }
 
   // Check expiration
   if (new Date(session.expires_at) < new Date()) {
     await supabase.from('sessions').delete().eq('token', token);
+    cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
@@ -68,6 +73,12 @@ export async function getCurrentUser(): Promise<User | null> {
     .select('*')
     .eq('id', session.user_id)
     .single();
+
+  if (!user) {
+    // User deleted but session remains - clear cookie
+    cookieStore.delete(SESSION_COOKIE_NAME);
+    return null;
+  }
 
   return user as User | null;
 }
