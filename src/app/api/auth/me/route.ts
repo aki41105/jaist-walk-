@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/session';
 import { supabase } from '@/lib/supabase';
-import type { UserProfile } from '@/types';
+import type { UserProfile, CaptureOutcome } from '@/types';
 
 export async function GET() {
   try {
@@ -45,7 +45,7 @@ export async function GET() {
         id: scan.id as string,
         user_id: scan.user_id as string,
         qr_location_id: scan.qr_location_id as string,
-        outcome: scan.outcome as string,
+        outcome: scan.outcome as CaptureOutcome,
         points_earned: scan.points_earned as number,
         date: scan.date as string,
         scanned_at: scan.scanned_at as string,
