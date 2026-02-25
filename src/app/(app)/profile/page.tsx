@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { UserProfile } from '@/types';
+import Image from 'next/image';
+import type { UserProfile, AvatarType } from '@/types';
+
+const AVATAR_OPTIONS: { value: AvatarType; label: string; image: string }[] = [
+  { value: 'green', label: '緑', image: '/images/jaileon-green.png' },
+  { value: 'yellow', label: '黄', image: '/images/jaileon-yellow.png' },
+  { value: 'blue', label: '青', image: '/images/jaileon-blue.png' },
+  { value: 'rainbow', label: '虹', image: '/images/jaileon-logo.png' },
+  { value: 'bird', label: '鳥', image: '/images/bird-yellow.png' },
+];
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -10,6 +19,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [avatar, setAvatar] = useState<AvatarType>('green');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -25,6 +35,7 @@ export default function ProfilePage() {
       setProfile(data);
       setName(data.name);
       setEmail(data.email);
+      setAvatar(data.avatar || 'green');
     } catch {
       // ignore
     } finally {
@@ -46,7 +57,7 @@ export default function ProfilePage() {
       const res = await fetch('/api/auth/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), email: email.trim() }),
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), avatar }),
       });
 
       const data = await res.json();
@@ -57,7 +68,6 @@ export default function ProfilePage() {
       }
 
       setMessage('プロフィールを更新しました');
-      // Update local cache
       localStorage.removeItem('jw_profile_cache');
     } catch {
       setError('通信エラーが発生しました');
@@ -76,7 +86,7 @@ export default function ProfilePage() {
 
   if (!profile) return null;
 
-  const hasChanges = name.trim() !== profile.name || email.trim() !== profile.email;
+  const hasChanges = name.trim() !== profile.name || email.trim() !== profile.email || avatar !== (profile.avatar || 'green');
 
   return (
     <div className="min-h-screen pb-8">
@@ -93,6 +103,29 @@ export default function ProfilePage() {
 
       <div className="px-4 mt-4">
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-5 space-y-4">
+          {/* Avatar selector */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              アイコン
+            </label>
+            <div className="flex gap-3 justify-center">
+              {AVATAR_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setAvatar(opt.value)}
+                  className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
+                    avatar === opt.value
+                      ? 'ring-3 ring-green-500 bg-green-50 scale-110'
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  <Image src={opt.image} alt={opt.label} width={48} height={48} className="object-contain" />
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* ID (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

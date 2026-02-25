@@ -2,9 +2,17 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { UserProfile, Scan } from '@/types';
+import type { UserProfile, Scan, AvatarType } from '@/types';
 import Image from 'next/image';
 import { QRCode } from '@/components/ui/QRCode';
+
+const AVATAR_IMAGES: Record<AvatarType, string> = {
+  green: '/images/jaileon-green.png',
+  yellow: '/images/jaileon-yellow.png',
+  blue: '/images/jaileon-blue.png',
+  rainbow: '/images/jaileon-logo.png',
+  bird: '/images/bird-yellow.png',
+};
 
 interface RankingEntry {
   name: string;
@@ -98,7 +106,7 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl animate-bounce mb-4">🦎</div>
+          <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">読み込み中...</p>
         </div>
       </div>
@@ -145,8 +153,8 @@ export default function HomePage() {
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center overflow-hidden">
             <Image
-              src="/images/jaileon-logo.png"
-              alt="Jaileon"
+              src={AVATAR_IMAGES[profile.avatar || 'green']}
+              alt="アバター"
               width={56}
               height={56}
               className="object-contain"

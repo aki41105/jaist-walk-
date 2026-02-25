@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { CaptureGame } from '@/components/capture/CaptureGame';
 
 function CaptureContent() {
@@ -38,7 +39,7 @@ export default function CapturePage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-4xl animate-bounce">🦎</div>
+          <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="animate-bounce" />
         </div>
       }
     >

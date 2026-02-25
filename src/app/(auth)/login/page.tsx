@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Suspense } from 'react';
 
 function LoginForm() {
@@ -44,7 +45,7 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-6xl mb-2">🦎</div>
+          <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={96} height={96} className="mx-auto mb-2" />
           <h1 className="text-3xl font-bold text-green-700">JAIST Walk</h1>
           <p className="text-gray-500 mt-1">ジャイレオンを捕まえよう！</p>
         </div>

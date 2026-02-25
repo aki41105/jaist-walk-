@@ -13,6 +13,8 @@ const updateProfileSchema = z.object({
   email: z.string()
     .email('有効なメールアドレスを入力してください')
     .optional(),
+  avatar: z.enum(['green', 'yellow', 'blue', 'rainbow', 'bird'])
+    .optional(),
 });
 
 export async function PUT(request: NextRequest) {
@@ -37,6 +39,11 @@ export async function PUT(request: NextRequest) {
     }
 
     const updates: Record<string, string> = {};
+
+    // Avatar update (no uniqueness check needed)
+    if (parsed.data.avatar && parsed.data.avatar !== user.avatar) {
+      updates.avatar = parsed.data.avatar;
+    }
 
     // Check name uniqueness
     if (parsed.data.name && parsed.data.name !== user.name) {

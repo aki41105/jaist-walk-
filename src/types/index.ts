@@ -14,6 +14,9 @@ export type CaptureOutcome = 'jaileon' | 'yellow_jaileon' | 'blue_jaileon' | 'ra
 export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'ESCAPED' | 'RESULT';
 
 // Database row types
+// Avatar options
+export type AvatarType = 'green' | 'yellow' | 'blue' | 'rainbow' | 'bird';
+
 export interface User {
   id: string; // JW-XXXXXX format
   name: string;
@@ -21,6 +24,7 @@ export interface User {
   affiliation: Affiliation;
   research_area: ResearchArea;
   role: UserRole;
+  avatar: AvatarType;
   points: number;
   capture_count: number;
   created_at: string;
@@ -127,6 +131,7 @@ export interface UserProfile {
   affiliation: Affiliation;
   research_area: ResearchArea;
   role: UserRole;
+  avatar: AvatarType;
   points: number;
   capture_count: number;
   recent_scans: (Scan & { location_name: string })[];

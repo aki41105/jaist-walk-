@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 
 const Scanner = dynamic(
@@ -106,7 +107,7 @@ export default function ScanPage() {
           </div>
         ) : scanned ? (
           <div className="text-center">
-            <div className="text-4xl animate-bounce mb-4">🦎</div>
+            <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
             <p className="text-white">読み込み中...</p>
           </div>
         ) : (
