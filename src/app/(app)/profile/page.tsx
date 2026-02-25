@@ -31,6 +31,9 @@ function resizeImage(file: File, maxSize: number): Promise<Blob> {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d')!;
+      // Fill white background to prevent transparent areas from becoming black
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
       ctx.drawImage(img, 0, 0, width, height);
       canvas.toBlob(
         (blob) => blob ? resolve(blob) : reject(new Error('Canvas conversion failed')),
