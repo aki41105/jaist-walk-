@@ -183,6 +183,24 @@ export default function HomePage() {
         </button>
       </div>
 
+      {/* Quick links */}
+      <div className="px-4 mt-4 grid grid-cols-2 gap-3">
+        <button
+          onClick={() => router.push('/info')}
+          className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
+        >
+          <span>📖</span>
+          遊び方
+        </button>
+        <button
+          onClick={() => router.push('/profile')}
+          className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
+        >
+          <span>⚙️</span>
+          プロフィール
+        </button>
+      </div>
+
       {/* Personal QR Code */}
       <div className="px-4 mt-4">
         <button
