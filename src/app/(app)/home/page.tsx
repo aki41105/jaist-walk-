@@ -75,6 +75,25 @@ export default function HomePage() {
     router.push('/login');
   };
 
+  const handleDeleteAccount = async () => {
+    if (!confirm('本当にアカウントを削除しますか？\nすべてのデータが完全に削除され、元に戻せません。')) return;
+    if (!confirm('最終確認：本当に削除してよろしいですか？')) return;
+
+    try {
+      const res = await fetch('/api/auth/delete', { method: 'POST' });
+      if (res.ok) {
+        localStorage.removeItem('jw_profile_cache');
+        localStorage.removeItem('jw_profile_updated');
+        router.push('/login');
+      } else {
+        const data = await res.json();
+        alert(data.error || '削除に失敗しました');
+      }
+    } catch {
+      alert('通信エラーが発生しました');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -294,6 +313,16 @@ export default function HomePage() {
           </button>
         </div>
       )}
+
+      {/* Delete account */}
+      <div className="px-4 mt-8 mb-4">
+        <button
+          onClick={handleDeleteAccount}
+          className="w-full py-2 text-red-400 hover:text-red-600 text-xs transition-colors"
+        >
+          アカウントを削除
+        </button>
+      </div>
     </div>
   );
 }
