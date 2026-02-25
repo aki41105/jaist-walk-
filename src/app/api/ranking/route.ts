@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const { data: ranking, error } = await supabase
       .from('users')
-      .select('name, points, capture_count')
+      .select('name, points, capture_count, avatar')
       .order('points', { ascending: false })
       .limit(20);
 

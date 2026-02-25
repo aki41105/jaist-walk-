@@ -20,6 +20,7 @@ interface RankingEntry {
   name: string;
   points: number;
   capture_count: number;
+  avatar: AvatarType | null;
 }
 
 export default function HomePage() {
@@ -316,6 +317,15 @@ export default function HomePage() {
                 >
                   <div className="w-8 text-center text-xl font-bold">
                     {getRankMedal(index)}
+                  </div>
+                  <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+                    <Image
+                      src={AVATAR_IMAGES[entry.avatar || 'green']}
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="object-contain"
+                    />
                   </div>
                   <div className="flex-1">
                     <p className={`font-medium text-sm ${
