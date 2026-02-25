@@ -2,21 +2,25 @@ import { createHash } from 'crypto';
 import { supabase } from './supabase';
 import type { CaptureOutcome } from '@/types';
 
-const RAINBOW_JAILEON_THRESHOLD = 0.05; // 5% rainbow jaileon
-const JAILEON_THRESHOLD = 0.65;         // 60% jaileon (0.05 ~ 0.65)
-// remaining 35% = bird
+// Outcome thresholds (cumulative):
+// 0.00 - 0.05 = rainbow_jaileon (5%)
+// 0.05 - 0.15 = blue_jaileon (10%)
+// 0.15 - 0.35 = yellow_jaileon (20%)
+// 0.35 - 0.65 = jaileon/green (30%)
+// 0.65 - 1.00 = bird (35%)
 
 function determineOutcome(seed: string, qrLocationId: string, date: string): CaptureOutcome {
   const hash = createHash('sha256')
     .update(`${seed}:${qrLocationId}:${date}`)
     .digest('hex');
 
-  // Use first 8 hex chars as a number (0 to 4294967295)
   const value = parseInt(hash.substring(0, 8), 16);
   const normalized = value / 0xFFFFFFFF;
 
-  if (normalized < RAINBOW_JAILEON_THRESHOLD) return 'rainbow_jaileon';
-  if (normalized < JAILEON_THRESHOLD) return 'jaileon';
+  if (normalized < 0.05) return 'rainbow_jaileon';
+  if (normalized < 0.15) return 'blue_jaileon';
+  if (normalized < 0.35) return 'yellow_jaileon';
+  if (normalized < 0.65) return 'jaileon';
   return 'bird';
 }
 
@@ -24,7 +28,6 @@ export async function getDailyOutcome(
   qrLocationId: string,
   date: string
 ): Promise<CaptureOutcome> {
-  // Check if outcome already exists for today
   const { data: existing } = await supabase
     .from('daily_qr_outcomes')
     .select('outcome')
@@ -36,7 +39,6 @@ export async function getDailyOutcome(
     return existing.outcome as CaptureOutcome;
   }
 
-  // Determine and store the outcome
   const seed = process.env.QR_OUTCOME_SEED || 'default-seed';
   const outcome = determineOutcome(seed, qrLocationId, date);
 

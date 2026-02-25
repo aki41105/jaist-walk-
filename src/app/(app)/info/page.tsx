@@ -50,25 +50,41 @@ export default function InfoPage() {
               <span className="text-2xl">🦎</span>
               <div className="flex-1">
                 <p className="font-bold text-green-700">ジャイレオン</p>
-                <p className="text-xs text-gray-500">捕獲率 50%</p>
+                <p className="text-xs text-gray-500">出現率 30% ｜ 捕獲率 50%</p>
               </div>
               <p className="font-bold text-green-600">100pt</p>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl">
+              <span className="text-2xl">💛</span>
+              <div className="flex-1">
+                <p className="font-bold text-yellow-700">黄ジャイレオン</p>
+                <p className="text-xs text-gray-500">出現率 20% ｜ 捕獲率 45%</p>
+              </div>
+              <p className="font-bold text-yellow-600">150pt</p>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
+              <span className="text-2xl">💙</span>
+              <div className="flex-1">
+                <p className="font-bold text-blue-700">青ジャイレオン</p>
+                <p className="text-xs text-gray-500">出現率 10% ｜ 捕獲率 40%</p>
+              </div>
+              <p className="font-bold text-blue-600">200pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl">
               <span className="text-2xl">🌈</span>
               <div className="flex-1">
                 <p className="font-bold text-purple-700">虹色ジャイレオン</p>
-                <p className="text-xs text-gray-500">捕獲率 40%（レア！）</p>
+                <p className="text-xs text-gray-500">出現率 5% ｜ 捕獲率 35%（超レア！）</p>
               </div>
               <p className="font-bold text-purple-600">500pt</p>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl">
+            <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl">
               <span className="text-2xl">🐦</span>
               <div className="flex-1">
-                <p className="font-bold text-yellow-700">小鳥</p>
-                <p className="text-xs text-gray-500">捕獲率 100%</p>
+                <p className="font-bold text-orange-700">小鳥</p>
+                <p className="text-xs text-gray-500">出現率 35% ｜ 捕獲率 100%</p>
               </div>
-              <p className="font-bold text-yellow-600">10pt</p>
+              <p className="font-bold text-orange-600">10pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
               <span className="text-2xl">💨</span>

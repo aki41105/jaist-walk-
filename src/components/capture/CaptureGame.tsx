@@ -18,7 +18,17 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
   const [result, setResult] = useState<CaptureResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const isJaileonType = outcome === 'jaileon' || outcome === 'rainbow_jaileon';
+  const isJaileonType = outcome !== null && outcome !== 'bird';
+
+  const outcomeConfig: Record<string, { name: string; color: string; bgGradient: string; btnColor: string }> = {
+    jaileon: { name: 'ジャイレオン', color: 'text-green-700', bgGradient: 'bg-gradient-to-b from-green-100 to-green-50', btnColor: 'bg-green-600 hover:bg-green-700' },
+    yellow_jaileon: { name: '黄ジャイレオン', color: 'text-yellow-700', bgGradient: 'bg-gradient-to-b from-yellow-100 to-yellow-50', btnColor: 'bg-yellow-500 hover:bg-yellow-600' },
+    blue_jaileon: { name: '青ジャイレオン', color: 'text-blue-700', bgGradient: 'bg-gradient-to-b from-blue-100 to-blue-50', btnColor: 'bg-blue-600 hover:bg-blue-700' },
+    rainbow_jaileon: { name: '虹色ジャイレオン', color: 'text-purple-600', bgGradient: 'bg-gradient-to-b from-purple-100 via-pink-50 to-yellow-50', btnColor: 'bg-purple-600 hover:bg-purple-700' },
+    bird: { name: '小鳥', color: 'text-yellow-600', bgGradient: 'bg-gradient-to-b from-yellow-100 to-yellow-50', btnColor: 'bg-yellow-500 hover:bg-yellow-600' },
+  };
+
+  const config = outcome ? outcomeConfig[outcome] : outcomeConfig.jaileon;
 
   const startCapture = useCallback(async () => {
     try {
@@ -107,11 +117,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Background */}
-      <div className={`absolute inset-0 ${
-        outcome === 'rainbow_jaileon'
-          ? 'bg-gradient-to-b from-purple-100 via-pink-50 to-yellow-50'
-          : 'bg-gradient-to-b from-green-100 to-green-50'
-      }`} />
+      <div className={`absolute inset-0 ${config.bgGradient}`} />
 
       {/* Location name */}
       {result && (
@@ -122,11 +128,25 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
         </div>
       )}
 
-      {/* Rainbow Jaileon discovery text */}
+      {/* Special Jaileon discovery text */}
       {outcome === 'rainbow_jaileon' && (state === 'APPEARING' || state === 'IDLE') && (
         <div className="relative z-10 mb-2">
           <p className="text-purple-600 font-bold text-lg animate-pulse">
             ！？ 虹色に輝いている！？
+          </p>
+        </div>
+      )}
+      {outcome === 'blue_jaileon' && (state === 'APPEARING' || state === 'IDLE') && (
+        <div className="relative z-10 mb-2">
+          <p className="text-blue-600 font-bold text-lg animate-pulse">
+            青く光るジャイレオン！
+          </p>
+        </div>
+      )}
+      {outcome === 'yellow_jaileon' && (state === 'APPEARING' || state === 'IDLE') && (
+        <div className="relative z-10 mb-2">
+          <p className="text-yellow-600 font-bold text-lg animate-pulse">
+            黄色いジャイレオンだ！
           </p>
         </div>
       )}
@@ -151,13 +171,13 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
             >
               <Image
                 src={
-                  state === 'CATCHING'
+                  outcome === 'blue_jaileon'
                     ? '/images/jaileon-blue.png'
-                    : state === 'RESULT' && captured
+                    : outcome === 'yellow_jaileon'
                     ? '/images/jaileon-yellow.png'
                     : '/images/jaileon-green.png'
                 }
-                alt={outcome === 'rainbow_jaileon' ? '虹色ジャイレオン' : 'ジャイレオン'}
+                alt={config.name}
                 width={200}
                 height={200}
                 className={`object-contain drop-shadow-lg ${
@@ -205,11 +225,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
         {state === 'IDLE' && isJaileonType && (
           <button
             onClick={handleCatch}
-            className={`px-10 py-4 text-white text-xl font-bold rounded-2xl shadow-lg animate-pulse-glow transition-colors active:scale-95 ${
-              outcome === 'rainbow_jaileon'
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-green-600 hover:bg-green-700'
-            }`}
+            className={`px-10 py-4 text-white text-xl font-bold rounded-2xl shadow-lg animate-pulse-glow transition-colors active:scale-95 ${config.btnColor}`}
           >
             つかまえる！
           </button>
@@ -243,15 +259,11 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
           <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm">
             {isJaileonType && captured ? (
               <>
-                <h2 className={`text-2xl font-bold mb-2 ${
-                  outcome === 'rainbow_jaileon' ? 'text-purple-600' : 'text-green-700'
-                }`}>
+                <h2 className={`text-2xl font-bold mb-2 ${config.color}`}>
                   捕獲成功！🎉
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  {outcome === 'rainbow_jaileon'
-                    ? '虹色ジャイレオンを捕まえた！！'
-                    : 'ジャイレオンを捕まえた！'}
+                  {config.name}を捕まえた{outcome === 'rainbow_jaileon' ? '！！' : '！'}
                 </p>
               </>
             ) : isJaileonType && !captured ? (
@@ -260,9 +272,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
                   逃げてしまった...💨
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  {outcome === 'rainbow_jaileon'
-                    ? '虹色ジャイレオンは去っていった...'
-                    : 'ジャイレオンは逃げてしまった...'}
+                  {config.name}は逃げてしまった...
                 </p>
                 <p className="text-gray-400 text-sm mb-4">慰めポイントをもらった</p>
               </>

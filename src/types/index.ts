@@ -8,7 +8,7 @@ export type Affiliation = 'student' | 'faculty' | 'staff' | 'other';
 export type ResearchArea = 'cs' | 'is' | 'ms' | 'other';
 
 // Capture outcomes
-export type CaptureOutcome = 'jaileon' | 'bird' | 'rainbow_jaileon';
+export type CaptureOutcome = 'jaileon' | 'yellow_jaileon' | 'blue_jaileon' | 'rainbow_jaileon' | 'bird';
 
 // Capture game states
 export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'ESCAPED' | 'RESULT';

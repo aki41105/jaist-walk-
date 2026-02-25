@@ -7,17 +7,29 @@ import type { CaptureOutcome } from '@/types';
 
 const CATCH_RATES: Record<CaptureOutcome, number> = {
   jaileon: 0.50,
+  yellow_jaileon: 0.45,
+  blue_jaileon: 0.40,
+  rainbow_jaileon: 0.35,
   bird: 1.0,
-  rainbow_jaileon: 0.40,
 };
 
 const SUCCESS_POINTS: Record<CaptureOutcome, number> = {
   jaileon: 100,
-  bird: 10,
+  yellow_jaileon: 150,
+  blue_jaileon: 200,
   rainbow_jaileon: 500,
+  bird: 10,
 };
 
 const ESCAPE_POINTS = 5;
+
+const OUTCOME_NAMES: Record<CaptureOutcome, string> = {
+  jaileon: 'ジャイレオン',
+  yellow_jaileon: '黄ジャイレオン',
+  blue_jaileon: '青ジャイレオン',
+  rainbow_jaileon: '虹色ジャイレオン',
+  bird: '小鳥',
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -90,7 +102,6 @@ export async function POST(request: NextRequest) {
     });
 
     if (scanError) {
-      // Handle race condition with unique constraint
       if (scanError.code === '23505') {
         return NextResponse.json(
           { error: '本日このQRコードは既にスキャン済みです', code: 'ALREADY_SCANNED' },
@@ -101,17 +112,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Build reason message
+    const charName = OUTCOME_NAMES[outcome];
     let reason: string;
-    if (outcome === 'rainbow_jaileon') {
-      reason = captured
-        ? `虹色ジャイレオン捕獲！ (${qrLocation.name_ja})`
-        : `虹色ジャイレオンに逃げられた (${qrLocation.name_ja})`;
-    } else if (outcome === 'jaileon') {
-      reason = captured
-        ? `ジャイレオン捕獲 (${qrLocation.name_ja})`
-        : `ジャイレオンに逃げられた (${qrLocation.name_ja})`;
+    if (outcome === 'bird') {
+      reason = `${charName}発見 (${qrLocation.name_ja})`;
     } else {
-      reason = `小鳥発見 (${qrLocation.name_ja})`;
+      reason = captured
+        ? `${charName}捕獲${outcome === 'rainbow_jaileon' ? '！' : ''} (${qrLocation.name_ja})`
+        : `${charName}に逃げられた (${qrLocation.name_ja})`;
     }
 
     await supabase.rpc('update_user_points', {
@@ -120,8 +128,8 @@ export async function POST(request: NextRequest) {
       p_reason: reason,
     });
 
-    // Update capture count only for jaileon-type captures that succeeded
-    if (captured && (outcome === 'jaileon' || outcome === 'rainbow_jaileon')) {
+    // Update capture count for jaileon-type captures that succeeded
+    if (captured && outcome !== 'bird') {
       await supabase
         .from('users')
         .update({ capture_count: user.capture_count + 1 })
