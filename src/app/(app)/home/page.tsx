@@ -145,7 +145,7 @@ export default function HomePage() {
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center overflow-hidden">
             <Image
-              src="/images/jaileon-green.png"
+              src="/images/jaileon-logo.png"
               alt="Jaileon"
               width={56}
               height={56}
