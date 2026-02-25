@@ -21,6 +21,7 @@ interface RankingEntry {
   points: number;
   capture_count: number;
   avatar: AvatarType | null;
+  avatar_url: string | null;
 }
 
 export default function HomePage() {
@@ -159,13 +160,18 @@ export default function HomePage() {
 
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center overflow-hidden">
-            <Image
-              src={AVATAR_IMAGES[profile.avatar || 'green']}
-              alt="アバター"
-              width={56}
-              height={56}
-              className="object-contain"
-            />
+            {profile.avatar_url ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={profile.avatar_url} alt="アバター" className="w-14 h-14 object-cover rounded-xl" />
+            ) : (
+              <Image
+                src={AVATAR_IMAGES[profile.avatar || 'green']}
+                alt="アバター"
+                width={56}
+                height={56}
+                className="object-contain"
+              />
+            )}
           </div>
           <div>
             <p className="text-xl font-bold">{profile.name}</p>
@@ -319,13 +325,18 @@ export default function HomePage() {
                     {getRankMedal(index)}
                   </div>
                   <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden shrink-0">
-                    <Image
-                      src={AVATAR_IMAGES[entry.avatar || 'green']}
-                      alt=""
-                      width={32}
-                      height={32}
-                      className="object-contain"
-                    />
+                    {entry.avatar_url ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img src={entry.avatar_url} alt="" className="w-8 h-8 object-cover rounded-lg" />
+                    ) : (
+                      <Image
+                        src={AVATAR_IMAGES[entry.avatar || 'green']}
+                        alt=""
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                      />
+                    )}
                   </div>
                   <div className="flex-1">
                     <p className={`font-medium text-sm ${

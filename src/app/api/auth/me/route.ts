@@ -46,6 +46,7 @@ export async function GET() {
       research_area: user.research_area,
       role: user.role,
       avatar: user.avatar || 'green',
+      avatar_url: user.avatar_url || null,
       points: user.points,
       capture_count: user.capture_count,
       recent_scans: (recentScans || []).map((scan: Record<string, unknown>) => ({

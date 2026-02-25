@@ -15,6 +15,7 @@ const updateProfileSchema = z.object({
     .optional(),
   avatar: z.enum(['green', 'yellow', 'blue', 'rainbow', 'bird'])
     .optional(),
+  avatar_url: z.string().url().nullable().optional(),
 });
 
 export async function PUT(request: NextRequest) {
@@ -38,11 +39,16 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const updates: Record<string, string> = {};
+    const updates: Record<string, string | null> = {};
 
     // Avatar update (no uniqueness check needed)
     if (parsed.data.avatar && parsed.data.avatar !== user.avatar) {
       updates.avatar = parsed.data.avatar;
+    }
+
+    // Avatar URL update (custom image)
+    if (parsed.data.avatar_url !== undefined) {
+      updates.avatar_url = parsed.data.avatar_url;
     }
 
     // Check name uniqueness

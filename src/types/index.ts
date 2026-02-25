@@ -25,6 +25,7 @@ export interface User {
   research_area: ResearchArea;
   role: UserRole;
   avatar: AvatarType;
+  avatar_url: string | null;
   points: number;
   capture_count: number;
   created_at: string;
@@ -132,6 +133,7 @@ export interface UserProfile {
   research_area: ResearchArea;
   role: UserRole;
   avatar: AvatarType;
+  avatar_url: string | null;
   points: number;
   capture_count: number;
   recent_scans: (Scan & { location_name: string })[];
