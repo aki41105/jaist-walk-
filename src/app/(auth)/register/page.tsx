@@ -118,12 +118,13 @@ export default function RegisterPage() {
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               メールアドレス
             </label>
+            <p className="text-xs text-orange-600 mb-1">※ JAISTメール以外でお願いします（Gmail等）</p>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@jaist.ac.jp"
+              placeholder="example@gmail.com"
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             />
