@@ -18,7 +18,6 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [avatar, setAvatar] = useState<AvatarType>('green');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -34,7 +33,6 @@ export default function ProfilePage() {
       const data = await res.json();
       setProfile(data);
       setName(data.name);
-      setEmail(data.email);
       setAvatar(data.avatar || 'green');
     } catch {
       // ignore
@@ -57,7 +55,7 @@ export default function ProfilePage() {
       const res = await fetch('/api/auth/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), avatar }),
+        body: JSON.stringify({ name: name.trim(), avatar }),
       });
 
       const data = await res.json();
@@ -86,7 +84,7 @@ export default function ProfilePage() {
 
   if (!profile) return null;
 
-  const hasChanges = name.trim() !== profile.name || email.trim() !== profile.email || avatar !== (profile.avatar || 'green');
+  const hasChanges = name.trim() !== profile.name || avatar !== (profile.avatar || 'green');
 
   return (
     <div className="min-h-screen pb-8">
@@ -152,19 +150,14 @@ export default function ProfilePage() {
             />
           </div>
 
-          {/* Email */}
+          {/* Email (read-only) */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               メールアドレス
             </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              required
-            />
+            <p className="px-4 py-3 bg-gray-100 rounded-xl text-gray-500 text-sm">
+              {profile.email}
+            </p>
           </div>
 
           {/* Affiliation (read-only) */}

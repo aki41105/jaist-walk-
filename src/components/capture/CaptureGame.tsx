@@ -60,7 +60,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
 
   useEffect(() => {
     if (state === 'APPEARING') {
-      const timer = setTimeout(() => setState('IDLE'), 1000);
+      const timer = setTimeout(() => setState('IDLE'), 600);
       return () => clearTimeout(timer);
     }
   }, [state]);
@@ -103,7 +103,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
 
   if (state === 'LOADING') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-100 to-green-50">
         <div className="text-center">
           <div className="text-5xl animate-bounce mb-4">🔍</div>
           <p className="text-green-700 font-medium animate-pulse">
