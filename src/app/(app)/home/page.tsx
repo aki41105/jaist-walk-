@@ -2,16 +2,24 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { UserProfile, PointTransaction, Scan } from '@/types';
+import type { UserProfile, Scan } from '@/types';
 import Image from 'next/image';
 import { QRCode } from '@/components/ui/QRCode';
+
+interface RankingEntry {
+  name: string;
+  points: number;
+  capture_count: number;
+}
 
 export default function HomePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showQr, setShowQr] = useState(false);
-  const [activeTab, setActiveTab] = useState<'scans' | 'points'>('scans');
+  const [activeTab, setActiveTab] = useState<'scans' | 'ranking'>('scans');
+  const [ranking, setRanking] = useState<RankingEntry[]>([]);
+  const [rankingLoading, setRankingLoading] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -37,9 +45,30 @@ export default function HomePage() {
     }
   }, [router]);
 
+  const fetchRanking = useCallback(async () => {
+    setRankingLoading(true);
+    try {
+      const res = await fetch('/api/ranking');
+      if (res.ok) {
+        const data = await res.json();
+        setRanking(data);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setRankingLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
+
+  useEffect(() => {
+    if (activeTab === 'ranking' && ranking.length === 0) {
+      fetchRanking();
+    }
+  }, [activeTab, ranking.length, fetchRanking]);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -72,6 +101,13 @@ export default function HomePage() {
       </div>
     );
   }
+
+  const getRankMedal = (index: number) => {
+    if (index === 0) return '🥇';
+    if (index === 1) return '🥈';
+    if (index === 2) return '🥉';
+    return `${index + 1}`;
+  };
 
   return (
     <div className="min-h-screen pb-8">
@@ -150,7 +186,7 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* History Tabs */}
+      {/* Tabs */}
       <div className="px-4 mt-4">
         <div className="flex bg-gray-100 rounded-xl p-1 mb-3">
           <button
@@ -164,14 +200,14 @@ export default function HomePage() {
             スキャン履歴
           </button>
           <button
-            onClick={() => setActiveTab('points')}
+            onClick={() => setActiveTab('ranking')}
             className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'points'
+              activeTab === 'ranking'
                 ? 'bg-white text-green-700 shadow-sm'
                 : 'text-gray-500'
             }`}
           >
-            ポイント履歴
+            ランキング
           </button>
         </div>
 
@@ -204,36 +240,45 @@ export default function HomePage() {
                 ))}
               </div>
             )
+          ) : rankingLoading ? (
+            <div className="p-8 text-center text-gray-400">
+              <p>読み込み中...</p>
+            </div>
+          ) : ranking.length === 0 ? (
+            <div className="p-8 text-center text-gray-400">
+              <p>まだランキングデータがありません</p>
+            </div>
           ) : (
-            profile.recent_transactions.length === 0 ? (
-              <div className="p-8 text-center text-gray-400">
-                <p>ポイント履歴はありません</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-50">
-                {profile.recent_transactions.map((tx: PointTransaction) => (
-                  <div key={tx.id} className="p-4 flex items-center gap-3">
-                    <div className="text-2xl">
-                      {tx.amount > 0 ? '➕' : '➖'}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{tx.reason}</p>
-                      <p className="text-xs text-gray-400">
-                        {new Date(tx.created_at).toLocaleDateString('ja-JP')}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className={`font-bold text-sm ${
-                        tx.amount > 0 ? 'text-green-600' : 'text-red-500'
-                      }`}>
-                        {tx.amount > 0 ? '+' : ''}{tx.amount}pt
-                      </p>
-                      <p className="text-xs text-gray-400">{tx.balance_after}pt</p>
-                    </div>
+            <div className="divide-y divide-gray-50">
+              {ranking.map((entry, index) => (
+                <div
+                  key={entry.name}
+                  className={`p-4 flex items-center gap-3 ${
+                    entry.name === profile.name ? 'bg-green-50' : ''
+                  }`}
+                >
+                  <div className="w-8 text-center text-xl font-bold">
+                    {getRankMedal(index)}
                   </div>
-                ))}
-              </div>
-            )
+                  <div className="flex-1">
+                    <p className={`font-medium text-sm ${
+                      entry.name === profile.name ? 'text-green-700' : ''
+                    }`}>
+                      {entry.name}
+                      {entry.name === profile.name && (
+                        <span className="text-xs text-green-500 ml-1">YOU</span>
+                      )}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      捕獲数: {entry.capture_count}
+                    </p>
+                  </div>
+                  <p className="font-bold text-sm text-yellow-500">
+                    {entry.points}pt
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
