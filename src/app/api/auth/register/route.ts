@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (insertError) {
+      console.error('User insert error:', insertError.message, insertError.code);
       return NextResponse.json(
         { error: '登録に失敗しました' },
         { status: 500 }

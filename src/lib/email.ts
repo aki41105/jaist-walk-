@@ -6,6 +6,16 @@ const resend = process.env.RESEND_API_KEY
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'JAIST Walk <onboarding@resend.dev>';
 
+/** Escape HTML special characters to prevent injection */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export async function sendRegistrationEmail(
   to: string,
   name: string
@@ -24,7 +34,7 @@ export async function sendRegistrationEmail(
         <p>ご登録ありがとうございます！<br/>Thank you for registering!</p>
         <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
           <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">あなたのアカウント名 / Your Account Name</p>
-          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${name}</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${escapeHtml(name)}</p>
         </div>
         <p style="color: #666; font-size: 14px;">
           このアカウント名でログインしてください。<br/>
@@ -53,7 +63,7 @@ export async function sendRecoveryEmail(
         <p>アカウント名復旧のリクエストを受け付けました。<br/>We received your account recovery request.</p>
         <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
           <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">あなたのアカウント名 / Your Account Name</p>
-          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${name}</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #16a34a;">${escapeHtml(name)}</p>
         </div>
         <p style="color: #666; font-size: 14px;">
           このアカウント名でログインしてください。<br/>

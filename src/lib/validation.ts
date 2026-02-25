@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
 export const registerSchema = z.object({
-  name: z.string().min(1, '名前を入力してください').max(50, '名前は50文字以内にしてください'),
+  name: z.string()
+    .min(1, '名前を入力してください')
+    .max(50, '名前は50文字以内にしてください')
+    .trim()
+    .regex(/^[^\s<>"';&|\\]+$/, '使用できない文字が含まれています'),
   email: z.string().email('有効なメールアドレスを入力してください'),
   affiliation: z.enum(['student', 'faculty', 'staff', 'other']),
   research_area: z.enum(['cs', 'is', 'ms', 'other']),

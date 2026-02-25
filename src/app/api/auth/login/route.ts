@@ -25,8 +25,8 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'アカウント名が見つかりません' },
-        { status: 404 }
+        { error: 'アカウント名が正しくありません' },
+        { status: 401 }
       );
     }
 

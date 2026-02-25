@@ -33,10 +33,15 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(20);
 
+    // Do not expose full email to client - mask it for privacy
+    const emailParts = user.email.split('@');
+    const maskedLocal = emailParts[0].slice(0, 2) + '***';
+    const maskedEmail = `${maskedLocal}@${emailParts[1]}`;
+
     const profile: UserProfile = {
       id: user.id,
       name: user.name,
-      email: user.email,
+      email: maskedEmail,
       affiliation: user.affiliation,
       research_area: user.research_area,
       role: user.role,

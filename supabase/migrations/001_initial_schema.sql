@@ -6,6 +6,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- ============================================
 CREATE TABLE users (
   id TEXT PRIMARY KEY, -- JW-XXXXXX format
+  name TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   affiliation TEXT NOT NULL CHECK (affiliation IN ('student', 'faculty', 'staff', 'other')),
   research_area TEXT NOT NULL CHECK (research_area IN ('cs', 'is', 'ms', 'other')),
