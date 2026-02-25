@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
@@ -8,6 +8,31 @@ const Scanner = dynamic(
   () => import('@yudiel/react-qr-scanner').then((mod) => mod.Scanner),
   { ssr: false },
 );
+
+/** Play a short pop sound using Web Audio API */
+function playPopSound() {
+  try {
+    const ctx = new AudioContext();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.05);
+    oscillator.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.15);
+
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.2);
+  } catch {
+    // Audio not supported - silently ignore
+  }
+}
 
 function extractQrUuid(raw: string): string | null {
   try {
@@ -36,6 +61,7 @@ export default function ScanPage() {
       const uuid = extractQrUuid(value);
       if (uuid) {
         setScanned(true);
+        playPopSound();
         router.push(`/capture?qr=${encodeURIComponent(uuid)}`);
       }
     },
@@ -88,6 +114,7 @@ export default function ScanPage() {
             <Scanner
               onScan={handleScan}
               onError={handleError}
+              sound={false}
               styles={{
                 container: { width: '100%', height: '100%' },
                 video: { objectFit: 'cover' as const },
