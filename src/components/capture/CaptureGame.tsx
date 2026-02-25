@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type { CaptureState, CaptureOutcome, CaptureResponse } from '@/types';
 import { Confetti } from './Confetti';
 import { NetAnimation } from './NetAnimation';
+import { useLocale } from '@/lib/i18n';
 
 interface CaptureGameProps {
   qrCode: string;
@@ -12,6 +13,7 @@ interface CaptureGameProps {
 }
 
 export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
+  const { t } = useLocale();
   const [state, setState] = useState<CaptureState>('LOADING');
   const [outcome, setOutcome] = useState<CaptureOutcome | null>(null);
   const [captured, setCaptured] = useState<boolean>(true);
@@ -20,15 +22,16 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
 
   const isJaileonType = outcome !== null && outcome !== 'bird';
 
-  const outcomeConfig: Record<string, { name: string; color: string; bgGradient: string; btnColor: string }> = {
-    jaileon: { name: 'ジャイレオン', color: 'text-green-700', bgGradient: 'bg-gradient-to-b from-green-100 to-green-50', btnColor: 'bg-green-600 hover:bg-green-700' },
-    yellow_jaileon: { name: '黄ジャイレオン', color: 'text-yellow-700', bgGradient: 'bg-gradient-to-b from-yellow-100 to-yellow-50', btnColor: 'bg-yellow-500 hover:bg-yellow-600' },
-    blue_jaileon: { name: '青ジャイレオン', color: 'text-blue-700', bgGradient: 'bg-gradient-to-b from-blue-100 to-blue-50', btnColor: 'bg-blue-600 hover:bg-blue-700' },
-    rainbow_jaileon: { name: '虹色ジャイレオン', color: 'text-purple-600', bgGradient: 'bg-gradient-to-b from-purple-100 via-pink-50 to-yellow-50', btnColor: 'bg-purple-600 hover:bg-purple-700' },
-    bird: { name: '小鳥', color: 'text-yellow-600', bgGradient: 'bg-gradient-to-b from-yellow-100 to-yellow-50', btnColor: 'bg-yellow-500 hover:bg-yellow-600' },
+  const outcomeConfig: Record<string, { color: string; bgGradient: string; btnColor: string }> = {
+    jaileon: { color: 'text-green-700', bgGradient: 'bg-gradient-to-b from-green-100 to-green-50', btnColor: 'bg-green-600 hover:bg-green-700' },
+    yellow_jaileon: { color: 'text-yellow-700', bgGradient: 'bg-gradient-to-b from-yellow-100 to-yellow-50', btnColor: 'bg-yellow-500 hover:bg-yellow-600' },
+    blue_jaileon: { color: 'text-blue-700', bgGradient: 'bg-gradient-to-b from-blue-100 to-blue-50', btnColor: 'bg-blue-600 hover:bg-blue-700' },
+    rainbow_jaileon: { color: 'text-purple-600', bgGradient: 'bg-gradient-to-b from-purple-100 via-pink-50 to-yellow-50', btnColor: 'bg-purple-600 hover:bg-purple-700' },
+    bird: { color: 'text-yellow-600', bgGradient: 'bg-gradient-to-b from-yellow-100 to-yellow-50', btnColor: 'bg-yellow-500 hover:bg-yellow-600' },
   };
 
   const config = outcome ? outcomeConfig[outcome] : outcomeConfig.jaileon;
+  const charName = outcome ? t(`capture.characters.${outcome}`) : t('capture.characters.jaileon');
 
   const startCapture = useCallback(async () => {
     try {
@@ -41,7 +44,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'エラーが発生しました');
+        setError(data.error || t('common.error'));
         return;
       }
 
@@ -50,9 +53,9 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
       setCaptured(data.captured);
       setState('APPEARING');
     } catch {
-      setError('通信エラーが発生しました');
+      setError(t('errors.networkError'));
     }
-  }, [qrCode]);
+  }, [qrCode, t]);
 
   useEffect(() => {
     startCapture();
@@ -94,7 +97,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
             onClick={onComplete}
             className="mt-4 px-6 py-3 bg-green-600 text-white rounded-xl font-bold"
           >
-            ホームに戻る
+            {t('capture.goHome')}
           </button>
         </div>
       </div>
@@ -107,7 +110,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
         <div className="text-center">
           <div className="text-5xl animate-bounce mb-4">🔍</div>
           <p className="text-green-700 font-medium animate-pulse">
-            ジャイレオンを探しています...
+            {t('capture.searching')}
           </p>
         </div>
       </div>
@@ -132,21 +135,21 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
       {outcome === 'rainbow_jaileon' && (state === 'APPEARING' || state === 'IDLE') && (
         <div className="relative z-10 mb-2">
           <p className="text-purple-600 font-bold text-lg animate-pulse">
-            ！？ 虹色に輝いている！？
+            {t('capture.discovery.rainbow')}
           </p>
         </div>
       )}
       {outcome === 'blue_jaileon' && (state === 'APPEARING' || state === 'IDLE') && (
         <div className="relative z-10 mb-2">
           <p className="text-blue-600 font-bold text-lg animate-pulse">
-            青く光るジャイレオン！
+            {t('capture.discovery.blue')}
           </p>
         </div>
       )}
       {outcome === 'yellow_jaileon' && (state === 'APPEARING' || state === 'IDLE') && (
         <div className="relative z-10 mb-2">
           <p className="text-yellow-600 font-bold text-lg animate-pulse">
-            黄色いジャイレオンだ！
+            {t('capture.discovery.yellow')}
           </p>
         </div>
       )}
@@ -177,7 +180,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
                     ? '/images/jaileon-yellow.png'
                     : '/images/jaileon-green.png'
                 }
-                alt={config.name}
+                alt={charName}
                 width={200}
                 height={200}
                 className={`object-contain drop-shadow-lg ${
@@ -206,7 +209,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
             >
               <Image
                 src="/images/bird-yellow.png"
-                alt="小鳥"
+                alt={t('capture.characters.bird')}
                 width={120}
                 height={120}
                 className="object-contain drop-shadow-lg"
@@ -227,31 +230,31 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
             onClick={handleCatch}
             className={`px-10 py-4 text-white text-xl font-bold rounded-2xl shadow-lg animate-pulse-glow transition-colors active:scale-95 ${config.btnColor}`}
           >
-            つかまえる！
+            {t('capture.catchButton')}
           </button>
         )}
 
         {state === 'IDLE' && outcome === 'bird' && (
           <div className="space-y-3">
-            <p className="text-gray-600">小鳥が遊びに来ました！</p>
+            <p className="text-gray-600">{t('capture.birdAppeared')}</p>
             <button
               onClick={() => setState('RESULT')}
               className="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-2xl shadow-lg transition-colors"
             >
-              見守る 👀
+              {t('capture.watchButton')}
             </button>
           </div>
         )}
 
         {state === 'CATCHING' && (
           <p className="text-green-700 font-bold text-lg animate-pulse">
-            捕獲中...!
+            {t('capture.catching')}
           </p>
         )}
 
         {state === 'ESCAPED' && (
           <p className="text-red-500 font-bold text-lg animate-pulse">
-            あっ...!
+            {t('capture.escaped')}
           </p>
         )}
 
@@ -260,34 +263,34 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
             {isJaileonType && captured ? (
               <>
                 <h2 className={`text-2xl font-bold mb-2 ${config.color}`}>
-                  捕獲成功！🎉
+                  {t('capture.success.title')}
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  {config.name}を捕まえた{outcome === 'rainbow_jaileon' ? '！！' : '！'}
+                  {charName}{outcome === 'rainbow_jaileon' ? t('capture.caughtMessageRainbow') : t('capture.caughtMessage')}
                 </p>
               </>
             ) : isJaileonType && !captured ? (
               <>
                 <h2 className="text-xl font-bold text-red-500 mb-2">
-                  逃げてしまった...💨
+                  {t('capture.escapedResult.title')}
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  {config.name}は逃げてしまった...
+                  {charName}{t('capture.escapedMessage')}
                 </p>
-                <p className="text-gray-400 text-sm mb-4">慰めポイントをもらった</p>
+                <p className="text-gray-400 text-sm mb-4">{t('capture.escapedResult.consolation')}</p>
               </>
             ) : (
               <>
                 <h2 className="text-xl font-bold text-yellow-600 mb-2">
-                  小鳥は飛んでいった...🐦
+                  {t('capture.birdResult.title')}
                 </h2>
-                <p className="text-gray-600 mb-4">でもポイントは少しもらえた！</p>
+                <p className="text-gray-600 mb-4">{t('capture.birdResult.message')}</p>
               </>
             )}
 
             <div className="bg-gray-50 rounded-xl p-3 mb-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-500 text-sm">獲得ポイント</span>
+                <span className="text-gray-500 text-sm">{t('capture.earnedPoints')}</span>
                 <span className={`text-xl font-bold ${
                   isJaileonType && !captured ? 'text-gray-400' : 'text-green-600'
                 }`}>
@@ -295,12 +298,12 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
                 </span>
               </div>
               <div className="flex justify-between items-center mt-1">
-                <span className="text-gray-500 text-sm">合計ポイント</span>
+                <span className="text-gray-500 text-sm">{t('capture.totalPoints')}</span>
                 <span className="font-bold text-gray-700">{result.total_points}pt</span>
               </div>
               {isJaileonType && captured && (
                 <div className="flex justify-between items-center mt-1">
-                  <span className="text-gray-500 text-sm">捕獲数</span>
+                  <span className="text-gray-500 text-sm">{t('capture.totalCaptures')}</span>
                   <span className="font-bold text-gray-700">{result.capture_count}匹</span>
                 </div>
               )}
@@ -310,7 +313,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
               onClick={onComplete}
               className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors"
             >
-              ホームに戻る
+              {t('capture.goHome')}
             </button>
           </div>
         )}

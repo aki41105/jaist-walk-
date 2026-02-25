@@ -10,35 +10,41 @@
     "submit": "Submit",
     "home": "Home",
     "logout": "Log out",
-    "admin": "Admin"
+    "admin": "Admin",
+    "save": "Save",
+    "saving": "Saving...",
+    "language": "Language"
   },
   "login": {
     "title": "Login",
     "subtitle": "Catch the Jaileon!",
-    "idLabel": "Your ID",
-    "idPlaceholder": "JW-XXXXXX",
+    "nameLabel": "Account Name",
+    "namePlaceholder": "Enter your account name",
     "loginButton": "Log In",
     "loggingIn": "Logging in...",
     "registerLink": "Create an account",
-    "recoverLink": "Forgot your ID?"
+    "recoverLink": "Forgot your name?"
   },
   "register": {
     "title": "Register",
     "subtitle": "Join JAIST Walk",
+    "nameLabel": "Account Name",
+    "namePlaceholder": "Choose a name",
     "emailLabel": "Email",
-    "emailPlaceholder": "example@jaist.ac.jp",
+    "emailPlaceholder": "example@gmail.com",
+    "emailNote": "* Please use a non-JAIST email (e.g. Gmail)",
     "affiliationLabel": "Affiliation",
     "affiliationPlaceholder": "Select one",
     "researchAreaLabel": "Research Area",
     "researchAreaPlaceholder": "Select one",
     "registerButton": "Register",
     "registering": "Registering...",
-    "loginLink": "Already have an ID?",
+    "loginLink": "Already have an account?",
     "success": {
       "title": "Registration Complete!",
-      "emailSent": "Your ID has also been sent to your email",
-      "yourId": "Your ID",
-      "warning": "⚠️ Please keep this ID safe",
+      "emailSent": "Your account info has been sent to your email",
+      "yourName": "Your Account Name",
+      "warning": "⚠️ Please remember this name",
       "startButton": "Get Started"
     },
     "affiliations": {
@@ -55,29 +61,42 @@
     }
   },
   "recover": {
-    "title": "Recover ID",
+    "title": "Recover Account",
     "subtitle": "Enter the email you used to register",
     "emailLabel": "Email",
-    "emailPlaceholder": "example@jaist.ac.jp",
-    "sendButton": "Resend ID",
+    "emailPlaceholder": "example@gmail.com",
+    "sendButton": "Resend Account Name",
     "sending": "Sending...",
     "backToLogin": "Back to login",
     "success": {
       "title": "Email Sent",
-      "message": "If this email is registered, we've sent your ID to it."
+      "message": "If this email is registered, we've sent your account name to it."
     }
   },
   "home": {
-    "yourId": "Your ID",
     "captureCount": "Captures",
     "points": "Points",
+    "scanButton": "QR Scan",
+    "howToPlay": "How to Play",
+    "profile": "Profile",
     "personalQr": "Personal QR Code",
-    "qrHint": "Show when using points",
+    "qrHint": "Show to staff when using points",
     "scanHistory": "Scan History",
-    "pointHistory": "Point History",
+    "ranking": "Ranking",
     "noScans": "No scans yet",
     "noScansHint": "Go find some QR codes!",
-    "noTransactions": "No point history"
+    "noRanking": "No ranking data yet",
+    "deleteAccount": "Delete Account",
+    "deleteConfirm1": "Are you sure you want to delete your account?\nAll data will be permanently deleted and cannot be undone.",
+    "deleteConfirm2": "Final confirmation: Are you sure you want to delete?",
+    "dataLoadFailed": "Failed to load data"
+  },
+  "scan": {
+    "title": "QR Scan",
+    "guide": "Align the QR code within the frame",
+    "cameraError": "Camera access is not allowed.\nPlease enable camera permissions in your device settings.",
+    "cameraFail": "Failed to start camera",
+    "goHome": "Go Home"
   },
   "capture": {
     "searching": "Searching for Jaileon...",
@@ -87,9 +106,18 @@
     "birdAppeared": "A little bird came to visit!",
     "watchButton": "Watch 👀",
     "catching": "Catching...!",
+    "escaped": "Oh no...!",
+    "discovery": {
+      "rainbow": "!? It's shining in rainbow colors!?",
+      "blue": "A blue glowing Jaileon!",
+      "yellow": "A yellow Jaileon!"
+    },
     "success": {
-      "title": "Capture Success! 🎉",
-      "message": "You caught a Jaileon!"
+      "title": "Capture Success! 🎉"
+    },
+    "escapedResult": {
+      "title": "It escaped... 💨",
+      "consolation": "Got consolation points"
     },
     "birdResult": {
       "title": "The bird flew away... 🐦",
@@ -97,7 +125,58 @@
     },
     "earnedPoints": "Points earned",
     "totalPoints": "Total points",
-    "totalCaptures": "Captures"
+    "totalCaptures": "Captures",
+    "characters": {
+      "jaileon": "Jaileon",
+      "yellow_jaileon": "Yellow Jaileon",
+      "blue_jaileon": "Blue Jaileon",
+      "rainbow_jaileon": "Rainbow Jaileon",
+      "bird": "Little Bird"
+    },
+    "caughtMessage": " was caught!",
+    "caughtMessageRainbow": " was caught!!",
+    "escapedMessage": " escaped..."
+  },
+  "profile": {
+    "title": "Edit Profile",
+    "iconLabel": "Icon",
+    "userIdLabel": "User ID",
+    "nameLabel": "Account Name",
+    "emailLabel": "Email",
+    "affiliationLabel": "Affiliation",
+    "researchAreaLabel": "Area",
+    "updated": "Profile updated",
+    "avatarLabels": {
+      "green": "Green",
+      "yellow": "Yellow",
+      "blue": "Blue",
+      "rainbow": "Rainbow",
+      "bird": "Bird"
+    }
+  },
+  "info": {
+    "title": "How to Play & News",
+    "howToPlay": "How to Play",
+    "step1": "Find QR codes placed around the campus",
+    "step2": "Use the 'QR Scan' button on the home screen to scan them",
+    "step3": "Catch the characters that appear and earn points!",
+    "step4": "Collect points and aim for the top of the ranking",
+    "characters": "Characters",
+    "spawnRate": "Spawn rate",
+    "catchRate": "Catch rate",
+    "superRare": "Super Rare!",
+    "consolation": "Consolation",
+    "escapedLabel": "If it escapes",
+    "rules": "Rules",
+    "rule1": "Each QR code can only be scanned once per day",
+    "rule2": "Characters change depending on the day",
+    "rule3": "Collected points can be used at events",
+    "announcements": "Announcements",
+    "releaseTitle": "JAIST Walk Released!",
+    "releaseDate": "February 2026",
+    "releaseDesc": "Find QR codes on campus and catch Jaileon!",
+    "contact": "Contact",
+    "contactDesc": "Bug reports and questions:"
   },
   "admin": {
     "title": "Admin Panel",
@@ -130,14 +209,16 @@
   },
   "errors": {
     "invalidId": "Invalid ID",
-    "idNotFound": "ID not found",
+    "idNotFound": "Account name is incorrect",
     "emailExists": "This email is already registered",
+    "nameExists": "This account name is already taken",
     "invalidQr": "Invalid QR code",
     "inactiveQr": "This QR code is currently inactive",
     "alreadyScanned": "You already scanned this QR code today",
     "userNotFound": "User not found",
     "insufficientPoints": "Insufficient points",
     "networkError": "Network error",
-    "serverError": "Server error"
+    "serverError": "Server error",
+    "deleteFailed": "Failed to delete"
   }
 }

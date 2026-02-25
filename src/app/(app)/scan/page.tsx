@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import { useLocale } from '@/lib/i18n';
 
 const Scanner = dynamic(
   () => import('@yudiel/react-qr-scanner').then((mod) => mod.Scanner),
@@ -52,6 +53,7 @@ function extractQrUuid(raw: string): string | null {
 
 export default function ScanPage() {
   const router = useRouter();
+  const { t } = useLocale();
   const [error, setError] = useState<string | null>(null);
   const [scanned, setScanned] = useState(false);
 
@@ -63,6 +65,7 @@ export default function ScanPage() {
       if (uuid) {
         setScanned(true);
         playPopSound();
+        if (navigator.vibrate) navigator.vibrate(100);
         router.push(`/capture?qr=${encodeURIComponent(uuid)}`);
       }
     },
@@ -73,11 +76,11 @@ export default function ScanPage() {
     const message =
       err instanceof Error ? err.message : String(err);
     if (message.includes('Permission') || message.includes('NotAllowed')) {
-      setError('カメラへのアクセスが許可されていません。\n端末の設定からカメラの権限を許可してください。');
+      setError(t('scan.cameraError'));
     } else {
-      setError(`カメラの起動に失敗しました: ${message}`);
+      setError(`${t('scan.cameraFail')}: ${message}`);
     }
-  }, []);
+  }, [t]);
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -89,7 +92,7 @@ export default function ScanPage() {
         >
           <span className="text-xl">&larr;</span>
         </button>
-        <h1 className="text-lg font-bold">QR&thinsp;スキャン</h1>
+        <h1 className="text-lg font-bold">{t('scan.title')}</h1>
       </div>
 
       {/* Scanner area */}
@@ -102,13 +105,13 @@ export default function ScanPage() {
               onClick={() => router.push('/home')}
               className="px-6 py-3 bg-green-600 text-white rounded-xl font-bold"
             >
-              ホームに戻る
+              {t('scan.goHome')}
             </button>
           </div>
         ) : scanned ? (
           <div className="text-center">
             <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
-            <p className="text-white">読み込み中...</p>
+            <p className="text-white">{t('common.loading')}</p>
           </div>
         ) : (
           <div className="w-full h-full">
@@ -127,7 +130,7 @@ export default function ScanPage() {
               <div className="w-64 h-64 border-2 border-white/60 rounded-2xl" />
             </div>
             <p className="absolute bottom-8 left-0 right-0 text-center text-white/80 text-sm">
-              QRコードを枠内に合わせてください
+              {t('scan.guide')}
             </p>
           </div>
         )}

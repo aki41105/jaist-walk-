@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { ServiceWorkerProvider } from '@/components/ui/ServiceWorkerProvider';
+import { LocaleProvider } from '@/lib/i18n';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -24,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="min-h-screen bg-green-50 text-gray-900 antialiased">
-        <ServiceWorkerProvider>
-          {children}
-        </ServiceWorkerProvider>
+        <LocaleProvider>
+          <ServiceWorkerProvider>
+            {children}
+          </ServiceWorkerProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

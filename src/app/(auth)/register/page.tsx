@@ -3,23 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
-const AFFILIATIONS = [
-  { value: 'student', label: '学生' },
-  { value: 'faculty', label: '教員' },
-  { value: 'staff', label: '職員' },
-  { value: 'other', label: 'その他' },
-];
-
-const RESEARCH_AREAS = [
-  { value: 'cs', label: '情報科学 (CS)' },
-  { value: 'is', label: '知識科学 (IS)' },
-  { value: 'ms', label: 'マテリアルサイエンス (MS)' },
-  { value: 'other', label: 'その他' },
-];
+import { useLocale } from '@/lib/i18n';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useLocale();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [affiliation, setAffiliation] = useState('');
@@ -28,6 +17,20 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [registeredId, setRegisteredId] = useState('');
+
+  const affiliations = [
+    { value: 'student', label: t('register.affiliations.student') },
+    { value: 'faculty', label: t('register.affiliations.faculty') },
+    { value: 'staff', label: t('register.affiliations.staff') },
+    { value: 'other', label: t('register.affiliations.other') },
+  ];
+
+  const researchAreas = [
+    { value: 'cs', label: t('register.researchAreas.cs') },
+    { value: 'is', label: t('register.researchAreas.is') },
+    { value: 'ms', label: t('register.researchAreas.ms') },
+    { value: 'other', label: t('register.researchAreas.other') },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +58,7 @@ export default function RegisterPage() {
 
       setRegisteredId(data.name);
     } catch {
-      setError('通信エラーが発生しました');
+      setError(t('errors.networkError'));
     } finally {
       setLoading(false);
     }
@@ -66,23 +69,23 @@ export default function RegisterPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-sm text-center">
           <div className="text-6xl mb-4">🎉</div>
-          <h1 className="text-2xl font-bold text-green-700 mb-2">登録完了！</h1>
+          <h1 className="text-2xl font-bold text-green-700 mb-2">{t('register.success.title')}</h1>
           <div className="bg-green-50 border-2 border-green-500 rounded-2xl p-6 mb-6">
-            <p className="text-sm text-gray-500 mb-2">アカウント名</p>
+            <p className="text-sm text-gray-500 mb-2">{t('register.success.yourName')}</p>
             <p className="text-3xl font-bold text-green-700">
               {registeredId}
             </p>
           </div>
 
           <p className="text-sm text-gray-500 mb-6">
-            このアカウント名でログインできます
+            {t('register.success.warning')}
           </p>
 
           <button
             onClick={() => router.push('/home')}
             className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors"
           >
-            はじめる
+            {t('register.success.startButton')}
           </button>
         </div>
       </div>
@@ -92,22 +95,27 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
+        {/* Language toggle */}
+        <div className="flex justify-end mb-2">
+          <LanguageToggle className="border-green-300 text-green-700 hover:bg-green-50" />
+        </div>
+
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-green-700">新規登録</h1>
-          <p className="text-gray-500 mt-1">JAIST Walkに参加しよう</p>
+          <h1 className="text-2xl font-bold text-green-700">{t('register.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('register.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              アカウント名
+              {t('register.nameLabel')}
             </label>
             <input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="ニックネーム"
+              placeholder={t('register.namePlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
               maxLength={50}
@@ -116,15 +124,15 @@ export default function RegisterPage() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              メールアドレス
+              {t('register.emailLabel')}
             </label>
-            <p className="text-xs text-orange-600 mb-1">※ JAISTメール以外でお願いします（Gmail等）</p>
+            <p className="text-xs text-orange-600 mb-1">{t('register.emailNote')}</p>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@gmail.com"
+              placeholder={t('register.emailPlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             />
@@ -132,7 +140,7 @@ export default function RegisterPage() {
 
           <div>
             <label htmlFor="affiliation" className="block text-sm font-medium text-gray-700 mb-1">
-              身分
+              {t('register.affiliationLabel')}
             </label>
             <select
               id="affiliation"
@@ -141,8 +149,8 @@ export default function RegisterPage() {
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
               required
             >
-              <option value="">選択してください</option>
-              {AFFILIATIONS.map((a) => (
+              <option value="">{t('register.affiliationPlaceholder')}</option>
+              {affiliations.map((a) => (
                 <option key={a.value} value={a.value}>
                   {a.label}
                 </option>
@@ -152,7 +160,7 @@ export default function RegisterPage() {
 
           <div>
             <label htmlFor="researchArea" className="block text-sm font-medium text-gray-700 mb-1">
-              領域
+              {t('register.researchAreaLabel')}
             </label>
             <select
               id="researchArea"
@@ -161,8 +169,8 @@ export default function RegisterPage() {
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
               required
             >
-              <option value="">選択してください</option>
-              {RESEARCH_AREAS.map((a) => (
+              <option value="">{t('register.researchAreaPlaceholder')}</option>
+              {researchAreas.map((a) => (
                 <option key={a.value} value={a.value}>
                   {a.label}
                 </option>
@@ -199,7 +207,7 @@ export default function RegisterPage() {
             disabled={loading || !agreed}
             className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors"
           >
-            {loading ? '登録中...' : '登録する'}
+            {loading ? t('register.registering') : t('register.registerButton')}
           </button>
         </form>
 
@@ -208,7 +216,7 @@ export default function RegisterPage() {
             href="/login"
             className="text-gray-500 hover:text-gray-700 text-sm"
           >
-            既にIDをお持ちの方
+            {t('register.loginLink')}
           </Link>
         </div>
       </div>

@@ -4,17 +4,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import type { UserProfile, AvatarType } from '@/types';
+import { useLocale } from '@/lib/i18n';
 
-const AVATAR_OPTIONS: { value: AvatarType; label: string; image: string }[] = [
-  { value: 'green', label: '緑', image: '/images/jaileon-green.png' },
-  { value: 'yellow', label: '黄', image: '/images/jaileon-yellow.png' },
-  { value: 'blue', label: '青', image: '/images/jaileon-blue.png' },
-  { value: 'rainbow', label: '虹', image: '/images/jaileon-logo.png' },
-  { value: 'bird', label: '鳥', image: '/images/bird-yellow.png' },
-];
+const AVATAR_KEYS: AvatarType[] = ['green', 'yellow', 'blue', 'rainbow', 'bird'];
+
+const AVATAR_IMAGES: Record<AvatarType, string> = {
+  green: '/images/jaileon-green.png',
+  yellow: '/images/jaileon-yellow.png',
+  blue: '/images/jaileon-blue.png',
+  rainbow: '/images/jaileon-logo.png',
+  bird: '/images/bird-yellow.png',
+};
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { t } = useLocale();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
@@ -65,10 +69,10 @@ export default function ProfilePage() {
         return;
       }
 
-      setMessage('プロフィールを更新しました');
+      setMessage(t('profile.updated'));
       localStorage.removeItem('jw_profile_cache');
     } catch {
-      setError('通信エラーが発生しました');
+      setError(t('errors.networkError'));
     } finally {
       setSaving(false);
     }
@@ -77,7 +81,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">読み込み中...</p>
+        <p className="text-gray-500">{t('common.loading')}</p>
       </div>
     );
   }
@@ -85,6 +89,26 @@ export default function ProfilePage() {
   if (!profile) return null;
 
   const hasChanges = name.trim() !== profile.name || avatar !== (profile.avatar || 'green');
+
+  const affiliationLabel = (key: string) => {
+    const map: Record<string, string> = {
+      student: t('register.affiliations.student'),
+      faculty: t('register.affiliations.faculty'),
+      staff: t('register.affiliations.staff'),
+      other: t('register.affiliations.other'),
+    };
+    return map[key] || key;
+  };
+
+  const researchAreaLabel = (key: string) => {
+    const map: Record<string, string> = {
+      cs: t('register.researchAreas.cs'),
+      is: t('register.researchAreas.is'),
+      ms: t('register.researchAreas.ms'),
+      other: t('register.researchAreas.other'),
+    };
+    return map[key] || key;
+  };
 
   return (
     <div className="min-h-screen pb-8">
@@ -96,7 +120,7 @@ export default function ProfilePage() {
         >
           <span className="text-xl">&larr;</span>
         </button>
-        <h1 className="text-lg font-bold">プロフィール編集</h1>
+        <h1 className="text-lg font-bold">{t('profile.title')}</h1>
       </div>
 
       <div className="px-4 mt-4">
@@ -104,21 +128,21 @@ export default function ProfilePage() {
           {/* Avatar selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              アイコン
+              {t('profile.iconLabel')}
             </label>
             <div className="flex gap-3 justify-center">
-              {AVATAR_OPTIONS.map((opt) => (
+              {AVATAR_KEYS.map((key) => (
                 <button
-                  key={opt.value}
+                  key={key}
                   type="button"
-                  onClick={() => setAvatar(opt.value)}
+                  onClick={() => setAvatar(key)}
                   className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${
-                    avatar === opt.value
+                    avatar === key
                       ? 'ring-3 ring-green-500 bg-green-50 scale-110'
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
                 >
-                  <Image src={opt.image} alt={opt.label} width={48} height={48} className="object-contain" />
+                  <Image src={AVATAR_IMAGES[key]} alt={t(`profile.avatarLabels.${key}`)} width={48} height={48} className="object-contain" />
                 </button>
               ))}
             </div>
@@ -127,7 +151,7 @@ export default function ProfilePage() {
           {/* ID (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              ユーザーID
+              {t('profile.userIdLabel')}
             </label>
             <p className="px-4 py-3 bg-gray-100 rounded-xl text-gray-500 text-sm">
               {profile.id}
@@ -137,7 +161,7 @@ export default function ProfilePage() {
           {/* Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              アカウント名
+              {t('profile.nameLabel')}
             </label>
             <input
               id="name"
@@ -153,7 +177,7 @@ export default function ProfilePage() {
           {/* Email (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              メールアドレス
+              {t('profile.emailLabel')}
             </label>
             <p className="px-4 py-3 bg-gray-100 rounded-xl text-gray-500 text-sm">
               {profile.email}
@@ -163,24 +187,20 @@ export default function ProfilePage() {
           {/* Affiliation (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              身分
+              {t('profile.affiliationLabel')}
             </label>
             <p className="px-4 py-3 bg-gray-100 rounded-xl text-gray-500 text-sm">
-              {profile.affiliation === 'student' ? '学生' :
-               profile.affiliation === 'faculty' ? '教員' :
-               profile.affiliation === 'staff' ? '職員' : 'その他'}
+              {affiliationLabel(profile.affiliation)}
             </p>
           </div>
 
           {/* Research area (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              領域
+              {t('profile.researchAreaLabel')}
             </label>
             <p className="px-4 py-3 bg-gray-100 rounded-xl text-gray-500 text-sm">
-              {profile.research_area === 'cs' ? '情報科学 (CS)' :
-               profile.research_area === 'is' ? '知識科学 (IS)' :
-               profile.research_area === 'ms' ? 'マテリアルサイエンス (MS)' : 'その他'}
+              {researchAreaLabel(profile.research_area)}
             </p>
           </div>
 
@@ -197,7 +217,7 @@ export default function ProfilePage() {
             disabled={saving || !hasChanges}
             className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors"
           >
-            {saving ? '保存中...' : '保存する'}
+            {saving ? t('common.saving') : t('common.save')}
           </button>
         </form>
       </div>

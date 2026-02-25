@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import type { UserProfile, Scan, AvatarType } from '@/types';
 import Image from 'next/image';
 import { QRCode } from '@/components/ui/QRCode';
+import { useLocale } from '@/lib/i18n';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 
 const AVATAR_IMAGES: Record<AvatarType, string> = {
   green: '/images/jaileon-green.png',
@@ -22,6 +24,7 @@ interface RankingEntry {
 
 export default function HomePage() {
   const router = useRouter();
+  const { t } = useLocale();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showQr, setShowQr] = useState(false);
@@ -84,8 +87,8 @@ export default function HomePage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!confirm('本当にアカウントを削除しますか？\nすべてのデータが完全に削除され、元に戻せません。')) return;
-    if (!confirm('最終確認：本当に削除してよろしいですか？')) return;
+    if (!confirm(t('home.deleteConfirm1'))) return;
+    if (!confirm(t('home.deleteConfirm2'))) return;
 
     try {
       const res = await fetch('/api/auth/delete', { method: 'POST' });
@@ -95,10 +98,10 @@ export default function HomePage() {
         router.push('/login');
       } else {
         const data = await res.json();
-        alert(data.error || '削除に失敗しました');
+        alert(data.error || t('errors.deleteFailed'));
       }
     } catch {
-      alert('通信エラーが発生しました');
+      alert(t('errors.networkError'));
     }
   };
 
@@ -107,7 +110,7 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
-          <p className="text-gray-500">読み込み中...</p>
+          <p className="text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -117,12 +120,12 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">データの読み込みに失敗しました</p>
+          <p className="text-gray-500 mb-4">{t('home.dataLoadFailed')}</p>
           <button
             onClick={fetchProfile}
             className="px-6 py-2 bg-green-600 text-white rounded-xl"
           >
-            再試行
+            {t('common.retry')}
           </button>
         </div>
       </div>
@@ -141,13 +144,16 @@ export default function HomePage() {
       {/* Header */}
       <div className="bg-green-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold">JAIST Walk</h1>
-          <button
-            onClick={handleLogout}
-            className="text-green-100 hover:text-white text-sm"
-          >
-            ログアウト
-          </button>
+          <h1 className="text-xl font-bold">{t('common.appName')}</h1>
+          <div className="flex items-center gap-2">
+            <LanguageToggle className="border-green-400 text-green-100 hover:bg-green-500" />
+            <button
+              onClick={handleLogout}
+              className="text-green-100 hover:text-white text-sm"
+            >
+              {t('common.logout')}
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center gap-4">
@@ -171,11 +177,11 @@ export default function HomePage() {
         <div className="bg-white rounded-2xl shadow-lg p-4 grid grid-cols-2 gap-4">
           <div className="text-center">
             <p className="text-3xl font-bold text-green-600">{profile.capture_count}</p>
-            <p className="text-xs text-gray-500 mt-1">捕獲数</p>
+            <p className="text-xs text-gray-500 mt-1">{t('home.captureCount')}</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-yellow-500">{profile.points}</p>
-            <p className="text-xs text-gray-500 mt-1">ポイント</p>
+            <p className="text-xs text-gray-500 mt-1">{t('home.points')}</p>
           </div>
         </div>
       </div>
@@ -187,7 +193,7 @@ export default function HomePage() {
           className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-2xl shadow-lg transition-colors flex items-center justify-center gap-3 animate-pulse-glow"
         >
           <span className="text-2xl">📷</span>
-          QR スキャン
+          {t('home.scanButton')}
         </button>
       </div>
 
@@ -198,14 +204,14 @@ export default function HomePage() {
           className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
         >
           <span>📖</span>
-          遊び方
+          {t('home.howToPlay')}
         </button>
         <button
           onClick={() => router.push('/profile')}
           className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
         >
           <span>⚙️</span>
-          プロフィール
+          {t('home.profile')}
         </button>
       </div>
 
@@ -215,7 +221,7 @@ export default function HomePage() {
           onClick={() => setShowQr(!showQr)}
           className="w-full bg-white rounded-2xl shadow p-4 flex items-center justify-between"
         >
-          <span className="font-medium text-gray-700">個人QRコード</span>
+          <span className="font-medium text-gray-700">{t('home.personalQr')}</span>
           <span className="text-gray-400">{showQr ? '▲' : '▼'}</span>
         </button>
         {showQr && (
@@ -225,7 +231,7 @@ export default function HomePage() {
                 data={`${typeof window !== 'undefined' ? window.location.origin : ''}/admin/points?user=${encodeURIComponent(profile.name)}`}
                 size={200}
               />
-              <p className="text-xs text-gray-500 mt-3">ポイント利用時に運営へ提示してください</p>
+              <p className="text-xs text-gray-500 mt-3">{t('home.qrHint')}</p>
             </div>
           </div>
         )}
@@ -242,7 +248,7 @@ export default function HomePage() {
                 : 'text-gray-500'
             }`}
           >
-            スキャン履歴
+            {t('home.scanHistory')}
           </button>
           <button
             onClick={() => setActiveTab('ranking')}
@@ -252,7 +258,7 @@ export default function HomePage() {
                 : 'text-gray-500'
             }`}
           >
-            ランキング
+            {t('home.ranking')}
           </button>
         </div>
 
@@ -260,8 +266,8 @@ export default function HomePage() {
           {activeTab === 'scans' ? (
             profile.recent_scans.length === 0 ? (
               <div className="p-8 text-center text-gray-400">
-                <p>まだスキャンしていません</p>
-                <p className="text-sm mt-1">QRコードを探しに行こう！</p>
+                <p>{t('home.noScans')}</p>
+                <p className="text-sm mt-1">{t('home.noScansHint')}</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
@@ -293,11 +299,11 @@ export default function HomePage() {
             )
           ) : rankingLoading ? (
             <div className="p-8 text-center text-gray-400">
-              <p>読み込み中...</p>
+              <p>{t('common.loading')}</p>
             </div>
           ) : ranking.length === 0 ? (
             <div className="p-8 text-center text-gray-400">
-              <p>まだランキングデータがありません</p>
+              <p>{t('home.noRanking')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
@@ -321,7 +327,7 @@ export default function HomePage() {
                       )}
                     </p>
                     <p className="text-xs text-gray-400">
-                      捕獲数: {entry.capture_count}
+                      {t('home.captureCount')}: {entry.capture_count}
                     </p>
                   </div>
                   <p className="font-bold text-sm text-yellow-500">
@@ -341,7 +347,7 @@ export default function HomePage() {
             onClick={() => router.push('/admin')}
             className="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-bold rounded-xl transition-colors"
           >
-            管理画面
+            {t('common.admin')}
           </button>
         </div>
       )}
@@ -352,7 +358,7 @@ export default function HomePage() {
           onClick={handleDeleteAccount}
           className="w-full py-2 text-red-400 hover:text-red-600 text-xs transition-colors"
         >
-          アカウントを削除
+          {t('home.deleteAccount')}
         </button>
       </div>
     </div>

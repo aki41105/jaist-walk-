@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useLocale } from '@/lib/i18n';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 
 export default function RecoverPage() {
+  const { t } = useLocale();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +33,7 @@ export default function RecoverPage() {
 
       setSent(true);
     } catch {
-      setError('通信エラーが発生しました');
+      setError(t('errors.networkError'));
     } finally {
       setLoading(false);
     }
@@ -41,15 +44,15 @@ export default function RecoverPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-sm text-center">
           <div className="text-6xl mb-4">📧</div>
-          <h1 className="text-2xl font-bold text-green-700 mb-2">メール送信完了</h1>
+          <h1 className="text-2xl font-bold text-green-700 mb-2">{t('recover.success.title')}</h1>
           <p className="text-gray-600 mb-6">
-            登録されたメールアドレスの場合、IDを記載したメールを送信しました。
+            {t('recover.success.message')}
           </p>
           <Link
             href="/login"
             className="inline-block w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors text-center"
           >
-            ログインに戻る
+            {t('recover.backToLogin')}
           </Link>
         </div>
       </div>
@@ -59,22 +62,27 @@ export default function RecoverPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
+        {/* Language toggle */}
+        <div className="flex justify-end mb-2">
+          <LanguageToggle className="border-green-300 text-green-700 hover:bg-green-50" />
+        </div>
+
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-green-700">ID復旧</h1>
-          <p className="text-gray-500 mt-1">登録時のメールアドレスを入力してください</p>
+          <h1 className="text-2xl font-bold text-green-700">{t('recover.title')}</h1>
+          <p className="text-gray-500 mt-1">{t('recover.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              メールアドレス
+              {t('recover.emailLabel')}
             </label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@jaist.ac.jp"
+              placeholder={t('recover.emailPlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             />
@@ -89,7 +97,7 @@ export default function RecoverPage() {
             disabled={loading}
             className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors"
           >
-            {loading ? '送信中...' : 'IDを再送信'}
+            {loading ? t('recover.sending') : t('recover.sendButton')}
           </button>
         </form>
 
@@ -98,7 +106,7 @@ export default function RecoverPage() {
             href="/login"
             className="text-gray-500 hover:text-gray-700 text-sm"
           >
-            ログインに戻る
+            {t('recover.backToLogin')}
           </Link>
         </div>
       </div>

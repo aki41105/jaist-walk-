@@ -10,35 +10,41 @@
     "submit": "送信",
     "home": "ホーム",
     "logout": "ログアウト",
-    "admin": "管理画面"
+    "admin": "管理画面",
+    "save": "保存する",
+    "saving": "保存中...",
+    "language": "言語"
   },
   "login": {
     "title": "ログイン",
     "subtitle": "ジャイレオンを捕まえよう！",
-    "idLabel": "あなたのID",
-    "idPlaceholder": "JW-XXXXXX",
+    "nameLabel": "アカウント名",
+    "namePlaceholder": "アカウント名を入力",
     "loginButton": "ログイン",
     "loggingIn": "ログイン中...",
     "registerLink": "新規登録はこちら",
-    "recoverLink": "IDを忘れた方"
+    "recoverLink": "アカウント名を忘れた方"
   },
   "register": {
     "title": "新規登録",
     "subtitle": "JAIST Walkに参加しよう",
+    "nameLabel": "アカウント名",
+    "namePlaceholder": "好きな名前を入力",
     "emailLabel": "メールアドレス",
-    "emailPlaceholder": "example@jaist.ac.jp",
+    "emailPlaceholder": "example@gmail.com",
+    "emailNote": "※ JAISTメール以外でお願いします（Gmail等）",
     "affiliationLabel": "身分",
     "affiliationPlaceholder": "選択してください",
     "researchAreaLabel": "領域",
     "researchAreaPlaceholder": "選択してください",
     "registerButton": "登録する",
     "registering": "登録中...",
-    "loginLink": "既にIDをお持ちの方",
+    "loginLink": "既にアカウントをお持ちの方",
     "success": {
       "title": "登録完了！",
-      "emailSent": "あなたのIDはメールでも送信されました",
-      "yourId": "あなたのID",
-      "warning": "⚠️ このIDは大切に保管してください",
+      "emailSent": "アカウント情報はメールでも送信されました",
+      "yourName": "あなたのアカウント名",
+      "warning": "⚠️ このアカウント名は大切に保管してください",
       "startButton": "はじめる"
     },
     "affiliations": {
@@ -55,29 +61,42 @@
     }
   },
   "recover": {
-    "title": "ID復旧",
+    "title": "アカウント名復旧",
     "subtitle": "登録時のメールアドレスを入力してください",
     "emailLabel": "メールアドレス",
-    "emailPlaceholder": "example@jaist.ac.jp",
-    "sendButton": "IDを再送信",
+    "emailPlaceholder": "example@gmail.com",
+    "sendButton": "アカウント名を再送信",
     "sending": "送信中...",
     "backToLogin": "ログインに戻る",
     "success": {
       "title": "メール送信完了",
-      "message": "登録されたメールアドレスの場合、IDを記載したメールを送信しました。"
+      "message": "登録されたメールアドレスの場合、アカウント名を記載したメールを送信しました。"
     }
   },
   "home": {
-    "yourId": "あなたのID",
     "captureCount": "捕獲数",
     "points": "ポイント",
+    "scanButton": "QR スキャン",
+    "howToPlay": "遊び方",
+    "profile": "プロフィール",
     "personalQr": "個人QRコード",
-    "qrHint": "ポイント利用時に提示",
+    "qrHint": "ポイント利用時に運営へ提示してください",
     "scanHistory": "スキャン履歴",
-    "pointHistory": "ポイント履歴",
+    "ranking": "ランキング",
     "noScans": "まだスキャンしていません",
     "noScansHint": "QRコードを探しに行こう！",
-    "noTransactions": "ポイント履歴はありません"
+    "noRanking": "まだランキングデータがありません",
+    "deleteAccount": "アカウントを削除",
+    "deleteConfirm1": "本当にアカウントを削除しますか？\nすべてのデータが完全に削除され、元に戻せません。",
+    "deleteConfirm2": "最終確認：本当に削除してよろしいですか？",
+    "dataLoadFailed": "データの読み込みに失敗しました"
+  },
+  "scan": {
+    "title": "QR スキャン",
+    "guide": "QRコードを枠内に合わせてください",
+    "cameraError": "カメラへのアクセスが許可されていません。\n端末の設定からカメラの権限を許可してください。",
+    "cameraFail": "カメラの起動に失敗しました",
+    "goHome": "ホームに戻る"
   },
   "capture": {
     "searching": "ジャイレオンを探しています...",
@@ -87,9 +106,18 @@
     "birdAppeared": "小鳥が遊びに来ました！",
     "watchButton": "見守る 👀",
     "catching": "捕獲中...!",
+    "escaped": "あっ...!",
+    "discovery": {
+      "rainbow": "！？ 虹色に輝いている！？",
+      "blue": "青く光るジャイレオン！",
+      "yellow": "黄色いジャイレオンだ！"
+    },
     "success": {
-      "title": "捕獲成功！🎉",
-      "message": "ジャイレオンを捕まえた！"
+      "title": "捕獲成功！🎉"
+    },
+    "escapedResult": {
+      "title": "逃げてしまった...💨",
+      "consolation": "慰めポイントをもらった"
     },
     "birdResult": {
       "title": "小鳥は飛んでいった...🐦",
@@ -97,7 +125,58 @@
     },
     "earnedPoints": "獲得ポイント",
     "totalPoints": "合計ポイント",
-    "totalCaptures": "捕獲数"
+    "totalCaptures": "捕獲数",
+    "characters": {
+      "jaileon": "ジャイレオン",
+      "yellow_jaileon": "黄ジャイレオン",
+      "blue_jaileon": "青ジャイレオン",
+      "rainbow_jaileon": "虹色ジャイレオン",
+      "bird": "小鳥"
+    },
+    "caughtMessage": "を捕まえた！",
+    "caughtMessageRainbow": "を捕まえた！！",
+    "escapedMessage": "は逃げてしまった..."
+  },
+  "profile": {
+    "title": "プロフィール編集",
+    "iconLabel": "アイコン",
+    "userIdLabel": "ユーザーID",
+    "nameLabel": "アカウント名",
+    "emailLabel": "メールアドレス",
+    "affiliationLabel": "身分",
+    "researchAreaLabel": "領域",
+    "updated": "プロフィールを更新しました",
+    "avatarLabels": {
+      "green": "緑",
+      "yellow": "黄",
+      "blue": "青",
+      "rainbow": "虹",
+      "bird": "鳥"
+    }
+  },
+  "info": {
+    "title": "遊び方・お知らせ",
+    "howToPlay": "遊び方",
+    "step1": "キャンパス内に設置されたQRコードを探そう",
+    "step2": "ホーム画面の「QR スキャン」ボタンでQRコードを読み取ろう",
+    "step3": "出現するキャラクターを捕まえてポイントをゲット！",
+    "step4": "ポイントを貯めてランキング上位を目指そう",
+    "characters": "キャラクター",
+    "spawnRate": "出現率",
+    "catchRate": "捕獲率",
+    "superRare": "超レア！",
+    "consolation": "参加賞",
+    "escapedLabel": "逃げられた場合",
+    "rules": "ルール",
+    "rule1": "同じQRコードは1日1回のみスキャンできます",
+    "rule2": "出現するキャラクターは日によって変わります",
+    "rule3": "貯めたポイントはイベントで利用できます",
+    "announcements": "お知らせ",
+    "releaseTitle": "JAIST Walk リリース！",
+    "releaseDate": "2026年2月",
+    "releaseDesc": "キャンパス内のQRコードを探して、ジャイレオンを捕まえよう！",
+    "contact": "お問い合わせ",
+    "contactDesc": "バグ報告・ご質問はこちら："
   },
   "admin": {
     "title": "管理画面",
@@ -130,14 +209,16 @@
   },
   "errors": {
     "invalidId": "無効なIDです",
-    "idNotFound": "IDが見つかりません",
+    "idNotFound": "アカウント名が正しくありません",
     "emailExists": "このメールアドレスは既に登録されています",
+    "nameExists": "このアカウント名は既に使用されています",
     "invalidQr": "無効なQRコードです",
     "inactiveQr": "このQRコードは現在無効です",
     "alreadyScanned": "本日このQRコードは既にスキャン済みです",
     "userNotFound": "ユーザーが見つかりません",
     "insufficientPoints": "ポイントが不足しています",
     "networkError": "通信エラーが発生しました",
-    "serverError": "サーバーエラーが発生しました"
+    "serverError": "サーバーエラーが発生しました",
+    "deleteFailed": "削除に失敗しました"
   }
 }
