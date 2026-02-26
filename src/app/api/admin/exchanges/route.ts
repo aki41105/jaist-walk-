@@ -1,19 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/session';
+import sql from '@/lib/db';
 
 export async function GET() {
   try {
     await requireAdmin();
 
-    const { data: exchanges, error } = await supabase
-      .from('exchanges')
-      .select('id, user_id, reward_id, points_spent, status, exchange_code, used_at, admin_id, created_at, rewards(name_ja, name_en), users!exchanges_user_id_fkey(name)')
-      .order('created_at', { ascending: false })
-      .limit(100);
+    const exchanges = await sql`
+      SELECT e.id, e.user_id, e.reward_id, e.points_spent, e.status,
+             e.exchange_code, e.used_at, e.admin_id, e.created_at,
+             json_build_object('name_ja', r.name_ja, 'name_en', r.name_en) as rewards,
+             json_build_object('name', u.name) as users
+      FROM exchanges e
+      LEFT JOIN rewards r ON r.id = e.reward_id
+      LEFT JOIN users u ON u.id = e.user_id
+      ORDER BY e.created_at DESC
+      LIMIT 100
+    `;
 
-    if (error) throw error;
-    return NextResponse.json(exchanges || []);
+    return NextResponse.json(exchanges);
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -33,22 +39,11 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: '無効なパラメータです' }, { status: 400 });
     }
 
-    const updateData: Record<string, unknown> = {
-      status,
-      admin_id: admin.id,
-    };
-
-    if (status === 'used') {
-      updateData.used_at = new Date().toISOString();
-    }
-
     // If cancelling, refund points
     if (status === 'cancelled') {
-      const { data: exchange } = await supabase
-        .from('exchanges')
-        .select('user_id, points_spent, status')
-        .eq('id', id)
-        .single();
+      const [exchange] = await sql`
+        SELECT user_id, points_spent, status FROM exchanges WHERE id = ${id}
+      `;
 
       if (!exchange) {
         return NextResponse.json({ error: '交換が見つかりません' }, { status: 404 });
@@ -58,7 +53,7 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: 'この交換は既に処理済みです' }, { status: 400 });
       }
 
-      // Refund points
+      // Refund points via Supabase RPC (this one works - it's an old function)
       await supabase.rpc('update_user_points', {
         p_user_id: exchange.user_id,
         p_amount: exchange.points_spent,
@@ -67,15 +62,18 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
-    const { data, error } = await supabase
-      .from('exchanges')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+    const usedAt = status === 'used' ? new Date().toISOString() : null;
 
-    if (error) throw error;
-    return NextResponse.json(data);
+    const [updated] = await sql`
+      UPDATE exchanges SET
+        status = ${status},
+        admin_id = ${admin.id},
+        used_at = COALESCE(${usedAt}, used_at)
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return NextResponse.json(updated);
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

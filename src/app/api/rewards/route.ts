@@ -1,20 +1,19 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
 import { requireAuth } from '@/lib/session';
+import sql from '@/lib/db';
 
 export async function GET() {
   try {
     await requireAuth();
 
-    const { data: rewards, error } = await supabase
-      .from('rewards')
-      .select('id, name_ja, name_en, description_ja, description_en, required_points, stock, is_active')
-      .eq('is_active', true)
-      .order('required_points', { ascending: true });
+    const rewards = await sql`
+      SELECT id, name_ja, name_en, description_ja, description_en, required_points, stock
+      FROM rewards
+      WHERE is_active = true
+      ORDER BY required_points ASC
+    `;
 
-    if (error) throw error;
-
-    return NextResponse.json(rewards || []);
+    return NextResponse.json(rewards);
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

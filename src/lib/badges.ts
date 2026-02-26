@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 
 export async function checkAndAwardBadges(userId: string): Promise<string[]> {
   // 1. Get user data
@@ -10,12 +11,12 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
 
   if (!user) return [];
 
-  // 2. Get existing badges via RPC
-  const { data: existingBadges } = await supabase.rpc('get_user_badges', {
-    p_user_id: userId,
-  });
+  // 2. Get existing badges via direct SQL
+  const existingBadges = await sql`
+    SELECT badge_id FROM user_badges WHERE user_id = ${userId}
+  `;
 
-  const earnedSet = new Set((existingBadges || []).map((b: { badge_id: string }) => b.badge_id));
+  const earnedSet = new Set(existingBadges.map(b => b.badge_id as string));
 
   // 3. Check conditions for each badge
   const newBadges: string[] = [];
@@ -122,12 +123,13 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     }
   }
 
-  // 4. Insert new badges via RPC
+  // 4. Insert new badges via direct SQL
   if (newBadges.length > 0) {
-    await supabase.rpc('insert_user_badges', {
-      p_user_id: userId,
-      p_badge_ids: newBadges,
-    });
+    await sql`
+      INSERT INTO user_badges (user_id, badge_id)
+      SELECT ${userId}, unnest(${newBadges}::text[])
+      ON CONFLICT (user_id, badge_id) DO NOTHING
+    `;
   }
 
   return newBadges;
