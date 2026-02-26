@@ -4,7 +4,7 @@ export default function Loading() {
       <div className="text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/jaileon-green.png"
+          src="/jaist-walk/images/jaileon-green.png"
           alt="ジャイレオン"
           width={64}
           height={64}

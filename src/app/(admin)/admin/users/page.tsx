@@ -199,7 +199,7 @@ export default function AdminUsersPage() {
                     <td colSpan={6} className="px-4 py-12">
                       <div className="text-center">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/images/jaileon-green.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
+                        <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
                         <p className="text-gray-500 text-sm">読み込み中...</p>
                       </div>
                     </td>

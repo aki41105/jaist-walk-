@@ -50,7 +50,7 @@ export default function InfoPage() {
           <h2 className="text-lg font-bold text-green-700 mb-3">{t('info.characters')}</h2>
           <div className="space-y-3 text-sm">
             <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
-              <Image src="/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
+              <Image src="/jaist-walk/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
                 <p className="font-bold text-green-700">{t('capture.characters.jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.spawnRate')} 45% ｜ {t('info.catchRate')} 50%</p>
@@ -58,7 +58,7 @@ export default function InfoPage() {
               <p className="font-bold text-green-600">100pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl">
-              <Image src="/images/jaileon-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
+              <Image src="/jaist-walk/images/jaileon-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
                 <p className="font-bold text-yellow-700">{t('capture.characters.yellow_jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.spawnRate')} 20% ｜ {t('info.catchRate')} 45%</p>
@@ -66,7 +66,7 @@ export default function InfoPage() {
               <p className="font-bold text-yellow-600">150pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
-              <Image src="/images/jaileon-blue.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
+              <Image src="/jaist-walk/images/jaileon-blue.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
                 <p className="font-bold text-blue-700">{t('capture.characters.blue_jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.spawnRate')} 10% ｜ {t('info.catchRate')} 40%</p>
@@ -74,7 +74,7 @@ export default function InfoPage() {
               <p className="font-bold text-blue-600">200pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl">
-              <Image src="/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-rainbow-glow" />
+              <Image src="/jaist-walk/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-rainbow-glow" />
               <div className="flex-1">
                 <p className="font-bold text-purple-700">{t('capture.characters.rainbow_jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.spawnRate')} 5% ｜ {t('info.catchRate')} 35%（{t('info.superRare')}）</p>
@@ -82,7 +82,7 @@ export default function InfoPage() {
               <p className="font-bold text-purple-600">500pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
-              <Image src="/images/jaileon-golden.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-golden-glow" />
+              <Image src="/jaist-walk/images/jaileon-golden.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-golden-glow" />
               <div className="flex-1">
                 <p className="font-bold text-amber-700">{t('capture.characters.golden_jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.goldenNote')} ｜ {t('info.catchRate')} 100%</p>
@@ -90,7 +90,7 @@ export default function InfoPage() {
               <p className="font-bold text-amber-600">300pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl">
-              <Image src="/images/bird-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
+              <Image src="/jaist-walk/images/bird-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
                 <p className="font-bold text-orange-700">{t('capture.characters.bird')}</p>
                 <p className="text-xs text-gray-500">{t('info.spawnRate')} 20% ｜ {t('info.catchRate')} 100%</p>

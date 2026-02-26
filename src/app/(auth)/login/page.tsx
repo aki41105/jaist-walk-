@@ -53,7 +53,7 @@ function LoginForm() {
         </div>
 
         <div className="text-center mb-8">
-          <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={96} height={96} className="mx-auto mb-2" />
+          <Image src="/jaist-walk/images/jaileon-logo.png" alt="ジャイレオン" width={96} height={96} className="mx-auto mb-2" />
           <h1 className="text-3xl font-bold text-green-700">{t('common.appName')}</h1>
           <p className="text-gray-500 mt-1">{t('login.subtitle')}</p>
         </div>
@@ -126,7 +126,7 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+            <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
             <p className="text-gray-500">Loading...</p>
           </div>
         </div>

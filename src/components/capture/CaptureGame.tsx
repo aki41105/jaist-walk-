@@ -111,7 +111,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-100 to-green-50">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/jaileon-green.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <img src="/jaist-walk/images/jaileon-green.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-green-700 font-medium animate-pulse">
             {t('capture.searching')}
           </p>
@@ -185,12 +185,12 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
               <Image
                 src={
                   outcome === 'blue_jaileon'
-                    ? '/images/jaileon-blue.png'
+                    ? '/jaist-walk/images/jaileon-blue.png'
                     : outcome === 'yellow_jaileon'
-                    ? '/images/jaileon-yellow.png'
+                    ? '/jaist-walk/images/jaileon-yellow.png'
                     : outcome === 'golden_jaileon'
-                    ? '/images/jaileon-golden.png'
-                    : '/images/jaileon-green.png'
+                    ? '/jaist-walk/images/jaileon-golden.png'
+                    : '/jaist-walk/images/jaileon-green.png'
                 }
                 alt={charName}
                 width={200}
@@ -221,7 +221,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
               }`}
             >
               <Image
-                src="/images/bird-yellow.png"
+                src="/jaist-walk/images/bird-yellow.png"
                 alt={t('capture.characters.bird')}
                 width={120}
                 height={120}

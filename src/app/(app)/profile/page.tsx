@@ -9,11 +9,11 @@ import { useLocale } from '@/lib/i18n';
 const AVATAR_KEYS: AvatarType[] = ['green', 'yellow', 'blue', 'rainbow', 'bird'];
 
 const AVATAR_IMAGES: Record<AvatarType, string> = {
-  green: '/images/jaileon-green.png',
-  yellow: '/images/jaileon-yellow.png',
-  blue: '/images/jaileon-blue.png',
-  rainbow: '/images/jaileon-logo.png',
-  bird: '/images/bird-yellow.png',
+  green: '/jaist-walk/images/jaileon-green.png',
+  yellow: '/jaist-walk/images/jaileon-yellow.png',
+  blue: '/jaist-walk/images/jaileon-blue.png',
+  rainbow: '/jaist-walk/images/jaileon-logo.png',
+  bird: '/jaist-walk/images/bird-yellow.png',
 };
 
 /** Resize image on client side using canvas (max 200x200) */
@@ -198,7 +198,7 @@ export default function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">{t('common.loading')}</p>
         </div>
       </div>

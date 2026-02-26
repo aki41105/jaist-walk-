@@ -9,11 +9,11 @@ import { useLocale } from '@/lib/i18n';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
 
 const AVATAR_IMAGES: Record<AvatarType, string> = {
-  green: '/images/jaileon-green.png',
-  yellow: '/images/jaileon-yellow.png',
-  blue: '/images/jaileon-blue.png',
-  rainbow: '/images/jaileon-logo.png',
-  bird: '/images/bird-yellow.png',
+  green: '/jaist-walk/images/jaileon-green.png',
+  yellow: '/jaist-walk/images/jaileon-yellow.png',
+  blue: '/jaist-walk/images/jaileon-blue.png',
+  rainbow: '/jaist-walk/images/jaileon-logo.png',
+  bird: '/jaist-walk/images/bird-yellow.png',
 };
 
 interface RankingEntry {
@@ -114,7 +114,7 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
@@ -303,11 +303,11 @@ export default function HomePage() {
                   <div key={scan.id} className="p-4 flex items-center gap-3">
                     <Image
                       src={
-                        scan.outcome === 'golden_jaileon' ? '/images/jaileon-golden.png' :
-                        scan.outcome === 'rainbow_jaileon' ? '/images/jaileon-green.png' :
-                        scan.outcome === 'blue_jaileon' ? '/images/jaileon-blue.png' :
-                        scan.outcome === 'yellow_jaileon' ? '/images/jaileon-yellow.png' :
-                        scan.outcome === 'jaileon' ? '/images/jaileon-green.png' : '/images/bird-yellow.png'
+                        scan.outcome === 'golden_jaileon' ? '/jaist-walk/images/jaileon-golden.png' :
+                        scan.outcome === 'rainbow_jaileon' ? '/jaist-walk/images/jaileon-green.png' :
+                        scan.outcome === 'blue_jaileon' ? '/jaist-walk/images/jaileon-blue.png' :
+                        scan.outcome === 'yellow_jaileon' ? '/jaist-walk/images/jaileon-yellow.png' :
+                        scan.outcome === 'jaileon' ? '/jaist-walk/images/jaileon-green.png' : '/jaist-walk/images/bird-yellow.png'
                       }
                       alt=""
                       width={32}
@@ -364,7 +364,7 @@ export default function HomePage() {
             {rankingLoading ? (
             <div className="p-8 text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/jaileon-green.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
+              <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
               <p className="text-gray-400">{t('common.loading')}</p>
             </div>
           ) : ranking.length === 0 ? (
