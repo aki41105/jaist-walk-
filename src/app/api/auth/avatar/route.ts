@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     await writeFile(join(avatarDir, fileName), buffer);
 
     // Build URL with cache-busting timestamp
-    const avatarUrl = `/avatars/${fileName}?t=${Date.now()}`;
+    const avatarUrl = `/jaist-walk/avatars/${fileName}?t=${Date.now()}`;
 
     await sql`
       UPDATE users SET avatar_url = ${avatarUrl} WHERE id = ${user.id}
