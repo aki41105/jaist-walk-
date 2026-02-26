@@ -19,21 +19,73 @@ export async function GET(request: NextRequest) {
 
     const { days } = parsed.data;
 
-    // Fetch all three stats in parallel
-    const [dailyResult, rankingResult, outcomeResult] = await Promise.all([
-      supabase.rpc('get_daily_scan_counts', { days_back: days }),
-      supabase.rpc('get_location_ranking', { days_back: days }),
-      supabase.rpc('get_outcome_distribution', { days_back: days }),
+    // Calculate start date
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - (days - 1));
+    const startDateStr = startDate.toISOString().split('T')[0];
+
+    // Fetch scans and locations in parallel
+    const [scansResult, locationsResult] = await Promise.all([
+      supabase
+        .from('scans')
+        .select('date, outcome, qr_location_id')
+        .gte('date', startDateStr),
+      supabase
+        .from('qr_locations')
+        .select('id, name_ja, name_en, location_number'),
     ]);
 
-    if (dailyResult.error) throw dailyResult.error;
-    if (rankingResult.error) throw rankingResult.error;
-    if (outcomeResult.error) throw outcomeResult.error;
+    if (scansResult.error) throw scansResult.error;
+    if (locationsResult.error) throw locationsResult.error;
+
+    const scans = scansResult.data || [];
+    const locations = locationsResult.data || [];
+
+    // Build daily scan counts (fill in zero-days)
+    const dailyCounts: Record<string, number> = {};
+    for (let i = 0; i < days; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - (days - 1 - i));
+      dailyCounts[d.toISOString().split('T')[0]] = 0;
+    }
+    for (const scan of scans) {
+      if (dailyCounts[scan.date] !== undefined) {
+        dailyCounts[scan.date]++;
+      }
+    }
+    const daily_scans = Object.entries(dailyCounts).map(([scan_date, scan_count]) => ({
+      scan_date,
+      scan_count,
+    }));
+
+    // Build location ranking
+    const locCounts: Record<string, number> = {};
+    for (const scan of scans) {
+      locCounts[scan.qr_location_id] = (locCounts[scan.qr_location_id] || 0) + 1;
+    }
+    const location_ranking = locations
+      .map(loc => ({
+        location_id: loc.id,
+        name_ja: loc.name_ja,
+        name_en: loc.name_en,
+        location_number: loc.location_number,
+        scan_count: locCounts[loc.id] || 0,
+      }))
+      .sort((a, b) => b.scan_count - a.scan_count);
+
+    // Build outcome distribution
+    const outcomeCounts: Record<string, number> = {};
+    for (const scan of scans) {
+      outcomeCounts[scan.outcome] = (outcomeCounts[scan.outcome] || 0) + 1;
+    }
+    const outcome_distribution = Object.entries(outcomeCounts)
+      .map(([outcome, outcome_count]) => ({ outcome, outcome_count }))
+      .sort((a, b) => b.outcome_count - a.outcome_count);
 
     return NextResponse.json({
-      daily_scans: dailyResult.data || [],
-      location_ranking: rankingResult.data || [],
-      outcome_distribution: outcomeResult.data || [],
+      daily_scans,
+      location_ranking,
+      outcome_distribution,
     });
   } catch (err) {
     if (err instanceof Error) {

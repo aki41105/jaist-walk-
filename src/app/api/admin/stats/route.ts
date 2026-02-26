@@ -6,11 +6,23 @@ export async function GET() {
   try {
     await requireAdmin();
 
-    const { data, error } = await supabase.rpc('get_admin_dashboard_stats');
+    const today = new Date().toISOString().split('T')[0];
 
-    if (error) throw error;
+    const [usersResult, scansResult, qrResult, pointsResult] = await Promise.all([
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('scans').select('*', { count: 'exact', head: true }).eq('date', today),
+      supabase.from('qr_locations').select('*', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('point_transactions').select('amount').gt('amount', 0),
+    ]);
 
-    return NextResponse.json(data);
+    const totalPointsDistributed = (pointsResult.data || []).reduce((sum, t) => sum + t.amount, 0);
+
+    return NextResponse.json({
+      total_users: usersResult.count || 0,
+      today_scans: scansResult.count || 0,
+      active_qr_codes: qrResult.count || 0,
+      total_points_distributed: totalPointsDistributed,
+    });
   } catch (err) {
     if (err instanceof Error) {
       if (err.message === 'Unauthorized') {
