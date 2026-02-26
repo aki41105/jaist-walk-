@@ -81,27 +81,23 @@ body {
 
 @keyframes net-catch {
   0% {
-    transform: translateY(80%) rotate(15deg) scale(0.7);
+    transform: translateY(-120%) rotate(-20deg);
     opacity: 0;
   }
-  15% {
-    transform: translateY(40%) rotate(8deg) scale(0.85);
-    opacity: 0.7;
+  20% {
+    transform: translateY(-50%) rotate(-10deg);
+    opacity: 0.8;
   }
-  35% {
-    transform: translateY(-10%) rotate(-3deg) scale(1.05);
+  45% {
+    transform: translateY(8%) rotate(4deg);
     opacity: 1;
   }
-  50% {
-    transform: translateY(3%) rotate(2deg) scale(1);
+  60% {
+    transform: translateY(-3%) rotate(-2deg);
     opacity: 1;
   }
-  62% {
-    transform: translateY(-2%) rotate(-1deg) scale(1);
-    opacity: 1;
-  }
-  72%, 100% {
-    transform: translateY(0%) rotate(0deg) scale(1);
+  75%, 100% {
+    transform: translateY(0%) rotate(0deg);
     opacity: 1;
   }
 }
