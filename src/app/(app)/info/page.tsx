@@ -81,6 +81,14 @@ export default function InfoPage() {
               </div>
               <p className="font-bold text-purple-600">500pt</p>
             </div>
+            <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
+              <Image src="/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-golden-glow" />
+              <div className="flex-1">
+                <p className="font-bold text-amber-700">{t('capture.characters.golden_jaileon')}</p>
+                <p className="text-xs text-gray-500">{t('info.goldenNote')} ｜ {t('info.catchRate')} 100%</p>
+              </div>
+              <p className="font-bold text-amber-600">300pt</p>
+            </div>
             <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl">
               <Image src="/images/bird-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
@@ -115,6 +123,10 @@ export default function InfoPage() {
             <li className="flex gap-2">
               <span className="text-green-500">-</span>
               <span>{t('info.rule3')}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-green-500">-</span>
+              <span>{t('info.rule4')}</span>
             </li>
           </ul>
         </div>

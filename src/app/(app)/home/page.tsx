@@ -33,6 +33,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'scans' | 'ranking'>('scans');
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [rankingLoading, setRankingLoading] = useState(false);
+  const [rankingMode, setRankingMode] = useState<'weekly' | 'alltime'>('weekly');
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -58,10 +59,11 @@ export default function HomePage() {
     }
   }, [router]);
 
-  const fetchRanking = useCallback(async () => {
+  const fetchRanking = useCallback(async (mode: 'weekly' | 'alltime') => {
     setRankingLoading(true);
     try {
-      const res = await fetch('/api/ranking');
+      const url = mode === 'weekly' ? '/api/ranking?mode=weekly' : '/api/ranking';
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         setRanking(data);
@@ -78,10 +80,10 @@ export default function HomePage() {
   }, [fetchProfile]);
 
   useEffect(() => {
-    if (activeTab === 'ranking' && ranking.length === 0) {
-      fetchRanking();
+    if (activeTab === 'ranking') {
+      fetchRanking(rankingMode);
     }
-  }, [activeTab, ranking.length, fetchRanking]);
+  }, [activeTab, rankingMode, fetchRanking]);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -181,7 +183,7 @@ export default function HomePage() {
 
       {/* Stats Cards */}
       <div className="px-4 -mt-4">
-        <div className="bg-white rounded-2xl shadow-lg p-4 grid grid-cols-2 gap-4">
+        <div className="bg-white rounded-2xl shadow-lg p-4 grid grid-cols-3 gap-4">
           <div className="text-center">
             <p className="text-3xl font-bold text-green-600">{profile.capture_count}</p>
             <p className="text-xs text-gray-500 mt-1">{t('home.captureCount')}</p>
@@ -189,6 +191,10 @@ export default function HomePage() {
           <div className="text-center">
             <p className="text-3xl font-bold text-yellow-500">{profile.points}</p>
             <p className="text-xs text-gray-500 mt-1">{t('home.points')}</p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-orange-500">{profile.streak}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('home.streak')}</p>
           </div>
         </div>
       </div>
@@ -282,6 +288,7 @@ export default function HomePage() {
                   <div key={scan.id} className="p-4 flex items-center gap-3">
                     <Image
                       src={
+                        scan.outcome === 'golden_jaileon' ? '/images/jaileon-green.png' :
                         scan.outcome === 'rainbow_jaileon' ? '/images/jaileon-logo.png' :
                         scan.outcome === 'blue_jaileon' ? '/images/jaileon-blue.png' :
                         scan.outcome === 'yellow_jaileon' ? '/images/jaileon-yellow.png' :
@@ -290,7 +297,7 @@ export default function HomePage() {
                       alt=""
                       width={32}
                       height={32}
-                      className="w-8 h-8 object-contain shrink-0"
+                      className={`w-8 h-8 object-contain shrink-0 ${scan.outcome === 'golden_jaileon' ? 'animate-golden-glow' : ''}`}
                     />
                     <div className="flex-1">
                       <p className="font-medium text-sm">{scan.location_name}</p>
@@ -299,6 +306,7 @@ export default function HomePage() {
                       </p>
                     </div>
                     <p className={`font-bold text-sm ${
+                      scan.outcome === 'golden_jaileon' ? 'text-amber-600' :
                       scan.outcome === 'rainbow_jaileon' ? 'text-purple-600' :
                       scan.outcome === 'blue_jaileon' ? 'text-blue-600' :
                       scan.outcome === 'yellow_jaileon' ? 'text-yellow-600' :
@@ -310,7 +318,32 @@ export default function HomePage() {
                 ))}
               </div>
             )
-          ) : rankingLoading ? (
+          ) : (
+            <>
+            {/* Ranking mode toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-0.5 mx-3 mt-3 mb-1">
+              <button
+                onClick={() => setRankingMode('weekly')}
+                className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  rankingMode === 'weekly'
+                    ? 'bg-white text-green-700 shadow-sm'
+                    : 'text-gray-500'
+                }`}
+              >
+                {t('home.weeklyRanking')}
+              </button>
+              <button
+                onClick={() => setRankingMode('alltime')}
+                className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  rankingMode === 'alltime'
+                    ? 'bg-white text-green-700 shadow-sm'
+                    : 'text-gray-500'
+                }`}
+              >
+                {t('home.allTimeRanking')}
+              </button>
+            </div>
+            {rankingLoading ? (
             <div className="p-8 text-center text-gray-400">
               <p>{t('common.loading')}</p>
             </div>
@@ -363,6 +396,8 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          )}
+            </>
           )}
         </div>
       </div>

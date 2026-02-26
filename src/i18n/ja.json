@@ -86,6 +86,11 @@
     "noScans": "まだスキャンしていません",
     "noScansHint": "QRコードを探しに行こう！",
     "noRanking": "まだランキングデータがありません",
+    "weeklyRanking": "週間",
+    "allTimeRanking": "累計",
+    "streak": "連続ログイン",
+    "streakDays": "日",
+    "streakBonus": "連続ボーナス",
     "deleteAccount": "アカウントを削除",
     "deleteConfirm1": "本当にアカウントを削除しますか？\nすべてのデータが完全に削除され、元に戻せません。",
     "deleteConfirm2": "最終確認：本当に削除してよろしいですか？",
@@ -110,7 +115,8 @@
     "discovery": {
       "rainbow": "！？ 虹色に輝いている！？",
       "blue": "青く光るジャイレオン！",
-      "yellow": "黄色いジャイレオンだ！"
+      "yellow": "黄色いジャイレオンだ！",
+      "golden": "朝の金色ジャイレオン！✨"
     },
     "success": {
       "title": "捕獲成功！🎉"
@@ -131,10 +137,12 @@
       "yellow_jaileon": "黄ジャイレオン",
       "blue_jaileon": "青ジャイレオン",
       "rainbow_jaileon": "虹色ジャイレオン",
+      "golden_jaileon": "金色ジャイレオン",
       "bird": "小鳥"
     },
     "caughtMessage": "を捕まえた！",
     "caughtMessageRainbow": "を捕まえた！！",
+    "caughtMessageGolden": "を捕まえた！！✨",
     "escapedMessage": "は逃げてしまった..."
   },
   "profile": {
@@ -171,6 +179,8 @@
     "rule1": "同じQRコードは1日1回のみスキャンできます",
     "rule2": "出現するキャラクターは日によって変わります",
     "rule3": "貯めたポイントはイベントで利用できます",
+    "rule4": "連続ログインでボーナスポイント獲得（3日:+50pt, 7日:+150pt, 14日:+300pt, 30日:+500pt）",
+    "goldenNote": "朝7〜10時限定・その日の最初のスキャンのみ",
     "announcements": "お知らせ",
     "releaseTitle": "JAIST Walk リリース！",
     "releaseDate": "2026年2月",

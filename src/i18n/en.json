@@ -86,6 +86,11 @@
     "noScans": "No scans yet",
     "noScansHint": "Go find some QR codes!",
     "noRanking": "No ranking data yet",
+    "weeklyRanking": "Weekly",
+    "allTimeRanking": "All Time",
+    "streak": "Login Streak",
+    "streakDays": " days",
+    "streakBonus": "Streak Bonus",
     "deleteAccount": "Delete Account",
     "deleteConfirm1": "Are you sure you want to delete your account?\nAll data will be permanently deleted and cannot be undone.",
     "deleteConfirm2": "Final confirmation: Are you sure you want to delete?",
@@ -110,7 +115,8 @@
     "discovery": {
       "rainbow": "!? It's shining in rainbow colors!?",
       "blue": "A blue glowing Jaileon!",
-      "yellow": "A yellow Jaileon!"
+      "yellow": "A yellow Jaileon!",
+      "golden": "A Golden Morning Jaileon! ✨"
     },
     "success": {
       "title": "Capture Success! 🎉"
@@ -131,10 +137,12 @@
       "yellow_jaileon": "Yellow Jaileon",
       "blue_jaileon": "Blue Jaileon",
       "rainbow_jaileon": "Rainbow Jaileon",
+      "golden_jaileon": "Golden Jaileon",
       "bird": "Little Bird"
     },
     "caughtMessage": " was caught!",
     "caughtMessageRainbow": " was caught!!",
+    "caughtMessageGolden": " was caught!! ✨",
     "escapedMessage": " escaped..."
   },
   "profile": {
@@ -171,6 +179,8 @@
     "rule1": "Each QR code can only be scanned once per day",
     "rule2": "Characters change depending on the day",
     "rule3": "Collected points can be used at events",
+    "rule4": "Login streak bonuses: 3 days +50pt, 7 days +150pt, 14 days +300pt, 30 days +500pt",
+    "goldenNote": "Morning only (7-10 AM) · First scan of the day",
     "announcements": "Announcements",
     "releaseTitle": "JAIST Walk Released!",
     "releaseDate": "February 2026",

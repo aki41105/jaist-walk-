@@ -8,7 +8,7 @@ export type Affiliation = 'student' | 'faculty' | 'staff' | 'other';
 export type ResearchArea = 'cs' | 'is' | 'ms' | 'other';
 
 // Capture outcomes
-export type CaptureOutcome = 'jaileon' | 'yellow_jaileon' | 'blue_jaileon' | 'rainbow_jaileon' | 'bird';
+export type CaptureOutcome = 'jaileon' | 'yellow_jaileon' | 'blue_jaileon' | 'rainbow_jaileon' | 'bird' | 'golden_jaileon';
 
 // Capture game states
 export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'ESCAPED' | 'RESULT';
@@ -112,6 +112,8 @@ export interface CaptureResponse {
   total_points: number;
   capture_count: number;
   location_name: string;
+  streak?: number;
+  streak_bonus?: number;
 }
 
 export interface PointOperationRequest {
@@ -136,6 +138,7 @@ export interface UserProfile {
   avatar_url: string | null;
   points: number;
   capture_count: number;
+  streak: number;
   recent_scans: (Scan & { location_name: string })[];
   recent_transactions: PointTransaction[];
 }

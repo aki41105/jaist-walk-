@@ -11,6 +11,7 @@ const CATCH_RATES: Record<CaptureOutcome, number> = {
   blue_jaileon: 0.40,
   rainbow_jaileon: 0.35,
   bird: 1.0,
+  golden_jaileon: 1.0,
 };
 
 const SUCCESS_POINTS: Record<CaptureOutcome, number> = {
@@ -19,6 +20,7 @@ const SUCCESS_POINTS: Record<CaptureOutcome, number> = {
   blue_jaileon: 200,
   rainbow_jaileon: 500,
   bird: 10,
+  golden_jaileon: 300,
 };
 
 const ESCAPE_POINTS = 5;
@@ -29,7 +31,57 @@ const OUTCOME_NAMES: Record<CaptureOutcome, string> = {
   blue_jaileon: '青ジャイレオン',
   rainbow_jaileon: '虹色ジャイレオン',
   bird: '小鳥',
+  golden_jaileon: '金色ジャイレオン',
 };
+
+// Streak milestone bonuses
+const STREAK_BONUSES: Record<number, number> = {
+  3: 50,
+  7: 150,
+  14: 300,
+  30: 500,
+};
+
+function isJSTMorning(): boolean {
+  const now = new Date();
+  const jstHour = (now.getUTCHours() + 9) % 24;
+  return jstHour >= 7 && jstHour < 10;
+}
+
+async function getUserStreak(userId: string, today: string): Promise<number> {
+  const { data: scanDates } = await supabase
+    .from('scans')
+    .select('date')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .limit(60);
+
+  if (!scanDates || scanDates.length === 0) return 0;
+
+  const uniqueDates = [...new Set(scanDates.map(s => s.date))].sort().reverse();
+
+  // Count streak backwards from today (or yesterday if no scan today yet)
+  let streak = 0;
+  const checkDate = new Date(today + 'T00:00:00Z');
+
+  for (const dateStr of uniqueDates) {
+    const expected = new Date(checkDate);
+    expected.setUTCDate(expected.getUTCDate() - streak);
+    const expectedStr = expected.toISOString().split('T')[0];
+
+    if (dateStr === expectedStr) {
+      streak++;
+    } else if (streak === 0 && dateStr === new Date(new Date(today + 'T00:00:00Z').getTime() - 86400000).toISOString().split('T')[0]) {
+      // If no scan today yet, start counting from yesterday
+      streak++;
+      checkDate.setUTCDate(checkDate.getUTCDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -68,7 +120,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if already scanned today
+    // Check if already scanned today at this location
     const { data: existingScan } = await supabase
       .from('scans')
       .select('id')
@@ -84,20 +136,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get daily outcome for this QR
-    const outcome = await getDailyOutcome(qrLocation.id, today);
+    // Check if this is the user's first scan today (for golden jaileon)
+    const { count: todayScans } = await supabase
+      .from('scans')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('date', today);
+
+    const isFirstScanToday = (todayScans || 0) === 0;
+    const isMorning = isJSTMorning();
+
+    // Determine outcome
+    let outcome: CaptureOutcome;
+    if (isFirstScanToday && isMorning) {
+      outcome = 'golden_jaileon';
+    } else {
+      outcome = await getDailyOutcome(qrLocation.id, today);
+    }
 
     // Determine capture success
     const catchRate = CATCH_RATES[outcome];
     const captured = Math.random() < catchRate;
     const pointsEarned = captured ? SUCCESS_POINTS[outcome] : ESCAPE_POINTS;
 
+    // Check streak bonus (awarded on first scan of the day)
+    let streakBonus = 0;
+    let streakCount = 0;
+    if (isFirstScanToday) {
+      streakCount = (await getUserStreak(user.id, today)) + 1; // +1 for today
+      streakBonus = STREAK_BONUSES[streakCount] || 0;
+    }
+
     // Record scan
     const { error: scanError } = await supabase.from('scans').insert({
       user_id: user.id,
       qr_location_id: qrLocation.id,
       outcome,
-      points_earned: pointsEarned,
+      points_earned: pointsEarned + streakBonus,
       date: today,
     });
 
@@ -118,7 +193,7 @@ export async function POST(request: NextRequest) {
       reason = `${charName}発見 (${qrLocation.name_ja})`;
     } else {
       reason = captured
-        ? `${charName}捕獲${outcome === 'rainbow_jaileon' ? '！' : ''} (${qrLocation.name_ja})`
+        ? `${charName}捕獲${outcome === 'rainbow_jaileon' || outcome === 'golden_jaileon' ? '！' : ''} (${qrLocation.name_ja})`
         : `${charName}に逃げられた (${qrLocation.name_ja})`;
     }
 
@@ -127,6 +202,15 @@ export async function POST(request: NextRequest) {
       p_amount: pointsEarned,
       p_reason: reason,
     });
+
+    // Record streak bonus as separate transaction
+    if (streakBonus > 0) {
+      await supabase.rpc('update_user_points', {
+        p_user_id: user.id,
+        p_amount: streakBonus,
+        p_reason: `${streakCount}日連続スキャンボーナス！`,
+      });
+    }
 
     // Update capture count for jaileon-type captures that succeeded
     if (captured && outcome !== 'bird') {
@@ -157,6 +241,8 @@ export async function POST(request: NextRequest) {
       total_points: updatedUser?.points ?? 0,
       capture_count: updatedUser?.capture_count ?? 0,
       location_name: qrLocation.name_ja,
+      streak: isFirstScanToday ? streakCount : undefined,
+      streak_bonus: streakBonus > 0 ? streakBonus : undefined,
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {

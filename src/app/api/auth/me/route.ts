@@ -33,6 +33,39 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(20);
 
+    // Calculate streak
+    const today = new Date().toISOString().split('T')[0];
+    const { data: scanDates } = await supabase
+      .from('scans')
+      .select('date')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false })
+      .limit(60);
+
+    let streak = 0;
+    if (scanDates && scanDates.length > 0) {
+      const uniqueDates = [...new Set(scanDates.map(s => s.date))].sort().reverse();
+      const checkDate = new Date(today + 'T00:00:00Z');
+      for (const dateStr of uniqueDates) {
+        const expected = new Date(checkDate);
+        expected.setUTCDate(expected.getUTCDate() - streak);
+        if (dateStr === expected.toISOString().split('T')[0]) {
+          streak++;
+        } else if (streak === 0) {
+          // Check yesterday
+          const yesterday = new Date(checkDate.getTime() - 86400000).toISOString().split('T')[0];
+          if (dateStr === yesterday) {
+            streak++;
+            checkDate.setUTCDate(checkDate.getUTCDate() - 1);
+          } else {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+
     // Do not expose full email to client - mask it for privacy
     const emailParts = user.email.split('@');
     const maskedLocal = emailParts[0].slice(0, 2) + '***';
@@ -49,6 +82,7 @@ export async function GET() {
       avatar_url: user.avatar_url || null,
       points: user.points,
       capture_count: user.capture_count,
+      streak,
       recent_scans: (recentScans || []).map((scan: Record<string, unknown>) => ({
         id: scan.id as string,
         user_id: scan.user_id as string,

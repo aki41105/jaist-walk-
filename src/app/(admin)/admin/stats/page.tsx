@@ -32,6 +32,7 @@ const OUTCOME_LABELS: Record<string, { label: string; color: string }> = {
   yellow_jaileon: { label: 'イエロー', color: 'bg-yellow-400' },
   blue_jaileon: { label: 'ブルー', color: 'bg-blue-500' },
   rainbow_jaileon: { label: 'レインボー', color: 'bg-purple-500' },
+  golden_jaileon: { label: 'ゴールデン', color: 'bg-amber-500' },
   bird: { label: 'バード', color: 'bg-gray-400' },
 };
 
