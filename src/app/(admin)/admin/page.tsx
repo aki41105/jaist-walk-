@@ -1,39 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
+interface DashboardStats {
+  total_users: number;
+  today_scans: number;
+  active_qr_codes: number;
+  total_points_distributed: number;
+}
 
 export default function AdminPage() {
   const router = useRouter();
-  const [searchId, setSearchId] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  useEffect(() => {
+    fetch('/api/admin/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data.total_users !== undefined) setStats(data);
+      })
+      .catch(() => {})
+      .finally(() => setStatsLoading(false));
+  }, []);
 
-    try {
-      const res = await fetch(`/api/users?id=${encodeURIComponent(searchId.toUpperCase().trim())}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error);
-        return;
-      }
-
-      router.push(`/admin/points?user=${encodeURIComponent(data.id)}`);
-    } catch {
-      setError('通信エラーが発生しました');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navItems = [
+    { href: '/admin/users', label: 'ユーザー管理', desc: 'ユーザー一覧・検索・フィルター', icon: '👤' },
+    { href: '/admin/locations', label: 'QRロケーション', desc: 'QRコード管理・追加・状態切替', icon: '📍' },
+    { href: '/admin/stats', label: 'スキャン統計', desc: '日別スキャン数・ランキング・分布', icon: '📊' },
+  ];
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">管理画面</h1>
           <button
@@ -44,35 +44,54 @@ export default function AdminPage() {
           </button>
         </div>
 
-        <form onSubmit={handleSearch} className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-          <div>
-            <label htmlFor="searchId" className="block text-sm font-medium text-gray-700 mb-1">
-              ユーザーID検索
-            </label>
-            <input
-              id="searchId"
-              type="text"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
-              placeholder="JW-XXXXXX"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-center text-xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent uppercase"
-              maxLength={9}
-              required
-            />
-          </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          {statsLoading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow p-4 animate-pulse">
+                <div className="h-3 bg-gray-200 rounded w-20 mb-2" />
+                <div className="h-7 bg-gray-200 rounded w-16" />
+              </div>
+            ))
+          ) : stats ? (
+            <>
+              <div className="bg-white rounded-2xl shadow p-4">
+                <p className="text-xs text-gray-500">総ユーザー数</p>
+                <p className="text-2xl font-bold text-gray-800">{stats.total_users}</p>
+              </div>
+              <div className="bg-white rounded-2xl shadow p-4">
+                <p className="text-xs text-gray-500">今日のスキャン</p>
+                <p className="text-2xl font-bold text-blue-600">{stats.today_scans}</p>
+              </div>
+              <div className="bg-white rounded-2xl shadow p-4">
+                <p className="text-xs text-gray-500">アクティブQR</p>
+                <p className="text-2xl font-bold text-green-600">{stats.active_qr_codes}</p>
+              </div>
+              <div className="bg-white rounded-2xl shadow p-4">
+                <p className="text-xs text-gray-500">総配布ポイント</p>
+                <p className="text-2xl font-bold text-yellow-500">{stats.total_points_distributed.toLocaleString()}</p>
+              </div>
+            </>
+          ) : null}
+        </div>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gray-800 hover:bg-gray-900 disabled:bg-gray-400 text-white font-bold rounded-xl transition-colors"
-          >
-            {loading ? '検索中...' : 'ユーザーを検索'}
-          </button>
-        </form>
+        {/* Navigation Links */}
+        <div className="space-y-3">
+          {navItems.map(item => (
+            <button
+              key={item.href}
+              onClick={() => router.push(item.href)}
+              className="w-full bg-white rounded-2xl shadow p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left"
+            >
+              <span className="text-2xl">{item.icon}</span>
+              <div>
+                <p className="font-bold text-gray-800">{item.label}</p>
+                <p className="text-sm text-gray-500">{item.desc}</p>
+              </div>
+              <span className="ml-auto text-gray-400">→</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
