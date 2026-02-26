@@ -127,11 +127,23 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { id, is_active } = parsed.data;
+    const { id, is_active, name_ja, name_en } = parsed.data;
+
+    const updates: Record<string, unknown> = {};
+    if (is_active !== undefined) updates.is_active = is_active;
+    if (name_ja !== undefined) updates.name_ja = name_ja;
+    if (name_en !== undefined) updates.name_en = name_en;
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { error: '更新する項目がありません' },
+        { status: 400 }
+      );
+    }
 
     const { data: location, error } = await supabase
       .from('qr_locations')
-      .update({ is_active })
+      .update(updates)
       .eq('id', id)
       .select()
       .single();

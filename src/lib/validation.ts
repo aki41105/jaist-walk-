@@ -50,7 +50,9 @@ export const createLocationSchema = z.object({
 // Admin: update location
 export const updateLocationSchema = z.object({
   id: z.string().uuid('無効なロケーションIDです'),
-  is_active: z.boolean(),
+  is_active: z.boolean().optional(),
+  name_ja: z.string().min(1).max(100).optional(),
+  name_en: z.string().min(1).max(100).optional(),
 });
 
 // Admin: scan stats query
