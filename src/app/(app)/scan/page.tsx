@@ -131,11 +131,13 @@ export default function ScanPage() {
           setProcessing(false);
           return;
         }
-        handleFound(data);
-        if (!extractQrUuid(data)) {
-          setError('有効なQRコードではありません。JAIST Walkのスポットを撮影してください。');
+        const uuid = extractQrUuid(data);
+        if (!uuid) {
+          setError(`有効なQRコードではありません。\n読み取りデータ: ${data}`);
           setProcessing(false);
+          return;
         }
+        handleFound(data);
       } catch {
         setError('画像の処理に失敗しました。');
         setProcessing(false);
