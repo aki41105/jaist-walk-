@@ -109,9 +109,11 @@ export default function ScanPage() {
             </button>
           </div>
         ) : scanned ? (
-          <div className="text-center">
-            <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
-            <p className="text-white">{t('common.loading')}</p>
+          <div className="absolute inset-0 bg-gradient-to-b from-green-100 to-green-50 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-5xl animate-bounce mb-4">🔍</div>
+              <p className="text-green-700 font-medium animate-pulse">{t('capture.searching')}</p>
+            </div>
           </div>
         ) : (
           <div className="w-full h-full">
