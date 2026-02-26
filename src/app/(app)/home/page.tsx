@@ -34,6 +34,7 @@ export default function HomePage() {
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [rankingLoading, setRankingLoading] = useState(false);
   const [rankingMode, setRankingMode] = useState<'weekly' | 'alltime'>('weekly');
+  const [announcements, setAnnouncements] = useState<{ id: string; title: string; body: string; created_at: string }[]>([]);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -77,6 +78,10 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchProfile();
+    fetch('/jaist-walk/api/announcements')
+      .then(res => res.ok ? res.json() : [])
+      .then(data => setAnnouncements(data))
+      .catch(() => {});
   }, [fetchProfile]);
 
   useEffect(() => {
@@ -199,6 +204,24 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Announcements */}
+      {announcements.length > 0 && (
+        <div className="px-4 mt-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
+            <p className="text-sm font-bold text-yellow-700 mb-2">{t('home.announcements')}</p>
+            <div className="space-y-2">
+              {announcements.map(a => (
+                <div key={a.id} className="bg-white rounded-xl p-3">
+                  <p className="text-sm font-bold text-gray-800">{a.title}</p>
+                  <p className="text-xs text-gray-600 mt-1 whitespace-pre-wrap">{a.body}</p>
+                  <p className="text-xs text-gray-400 mt-1">{new Date(a.created_at).toLocaleDateString('ja-JP')}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* QR Scan Button */}
       <div className="px-4 mt-4">

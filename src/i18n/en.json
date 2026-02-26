@@ -76,6 +76,7 @@
   "home": {
     "captureCount": "Captures",
     "points": "Points",
+    "announcements": "Announcements",
     "scanButton": "QR Scan",
     "howToPlay": "How to Play",
     "profile": "Profile",

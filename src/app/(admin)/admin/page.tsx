@@ -26,6 +26,7 @@ export default function AdminPage() {
   }, []);
 
   const navItems = [
+    { href: '/admin/announcements', label: 'お知らせ管理', desc: 'お知らせの作成・編集・公開管理', icon: '📢' },
     { href: '/admin/users', label: 'ユーザー管理', desc: 'ユーザー一覧・検索・フィルター', icon: '👤' },
     { href: '/admin/locations', label: 'QRロケーション', desc: 'QRコード管理・追加・状態切替', icon: '📍' },
     { href: '/admin/stats', label: 'スキャン統計', desc: '日別スキャン数・ランキング・分布', icon: '📊' },
