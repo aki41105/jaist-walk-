@@ -114,16 +114,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const [existingScan] = await sql`
-      SELECT id FROM scans
-      WHERE user_id = ${user.id} AND qr_location_id = ${qrLocation.id} AND date = ${today}
-    `;
+    const isTest = qrLocation.is_test as boolean;
 
-    if (existingScan) {
-      return NextResponse.json(
-        { error: '本日このQRコードは既にスキャン済みです', code: 'ALREADY_SCANNED' },
-        { status: 409 }
-      );
+    if (isTest) {
+      // Test QR: delete existing scan for today so it can be re-scanned
+      await sql`
+        DELETE FROM scans
+        WHERE user_id = ${user.id} AND qr_location_id = ${qrLocation.id} AND date = ${today}
+      `;
+    } else {
+      const [existingScan] = await sql`
+        SELECT id FROM scans
+        WHERE user_id = ${user.id} AND qr_location_id = ${qrLocation.id} AND date = ${today}
+      `;
+
+      if (existingScan) {
+        return NextResponse.json(
+          { error: '本日このQRコードは既にスキャン済みです', code: 'ALREADY_SCANNED' },
+          { status: 409 }
+        );
+      }
     }
 
     const [todayScansResult] = await sql`
