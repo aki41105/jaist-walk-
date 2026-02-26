@@ -81,23 +81,31 @@ body {
 
 @keyframes net-catch {
   0% {
-    transform: translateY(-120%) rotate(-20deg);
+    transform: rotate(75deg);
     opacity: 0;
   }
-  20% {
-    transform: translateY(-50%) rotate(-10deg);
-    opacity: 0.8;
+  15% {
+    transform: rotate(55deg);
+    opacity: 0.7;
   }
-  45% {
-    transform: translateY(8%) rotate(4deg);
+  35% {
+    transform: rotate(15deg);
     opacity: 1;
   }
-  60% {
-    transform: translateY(-3%) rotate(-2deg);
+  55% {
+    transform: rotate(-8deg);
     opacity: 1;
   }
-  75%, 100% {
-    transform: translateY(0%) rotate(0deg);
+  70% {
+    transform: rotate(3deg);
+    opacity: 1;
+  }
+  82% {
+    transform: rotate(-1deg);
+    opacity: 1;
+  }
+  90%, 100% {
+    transform: rotate(0deg);
     opacity: 1;
   }
 }
@@ -143,7 +151,8 @@ body {
 }
 
 .animate-net-catch {
-  animation: net-catch 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: net-catch 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  transform-origin: bottom center;
 }
 
 .animate-pulse-glow {
