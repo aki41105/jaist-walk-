@@ -62,7 +62,7 @@ export default function HomePage() {
   const fetchRanking = useCallback(async (mode: 'weekly' | 'alltime') => {
     setRankingLoading(true);
     try {
-      const url = mode === 'weekly' ? '/api/ranking?mode=weekly' : '/api/ranking';
+      const url = mode === 'weekly' ? '/jaist-walk/api/ranking?mode=weekly' : '/jaist-walk/api/ranking';
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
