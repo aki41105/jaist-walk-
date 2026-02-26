@@ -146,13 +146,8 @@ export async function POST(request: NextRequest) {
 
     let outcome: CaptureOutcome;
     if (isTest) {
-      // Test QR: random outcome each scan based on existing probabilities
-      const roll = Math.random();
-      if (roll < 0.05) outcome = 'rainbow_jaileon';
-      else if (roll < 0.15) outcome = 'blue_jaileon';
-      else if (roll < 0.35) outcome = 'yellow_jaileon';
-      else if (roll < 0.80) outcome = 'jaileon';
-      else outcome = 'bird';
+      // TODO: temporary - force golden_jaileon for testing
+      outcome = 'golden_jaileon';
     } else if (isFirstScanToday && isMorning) {
       outcome = 'golden_jaileon';
     } else {
