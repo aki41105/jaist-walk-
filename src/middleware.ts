@@ -24,20 +24,24 @@ export function middleware(request: NextRequest) {
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     if (sessionToken) {
       const redirectTo = getSafeRedirect(request.nextUrl.searchParams.get('redirect'));
-      return NextResponse.redirect(new URL(redirectTo, request.url));
+      const url = request.nextUrl.clone();
+      url.pathname = redirectTo;
+      url.search = '';
+      return NextResponse.redirect(url);
     }
     return NextResponse.next();
   }
 
   // Protected paths - redirect to login if not logged in, preserving the original URL
   if (!sessionToken) {
-    const loginUrl = new URL('/login', request.url);
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
     // Preserve the original destination so user can be redirected after login
     const destination = pathname + request.nextUrl.search;
     if (destination !== '/home' && destination !== '/') {
-      loginUrl.searchParams.set('redirect', destination);
+      url.searchParams.set('redirect', destination);
     }
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
