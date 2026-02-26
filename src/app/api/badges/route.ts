@@ -6,27 +6,21 @@ export async function GET() {
   try {
     const user = await requireAuth();
 
-    // Get all badges
-    const { data: badges, error: badgeError } = await supabase
-      .from('badges')
-      .select('*')
-      .order('sort_order', { ascending: true });
-
+    // Get all badges via RPC (bypasses PostgREST schema cache issue)
+    const { data: badges, error: badgeError } = await supabase.rpc('get_all_badges');
     if (badgeError) throw badgeError;
 
-    // Get user's earned badges
-    const { data: userBadges, error: ubError } = await supabase
-      .from('user_badges')
-      .select('badge_id, earned_at')
-      .eq('user_id', user.id);
-
+    // Get user's earned badges via RPC
+    const { data: userBadges, error: ubError } = await supabase.rpc('get_user_badges', {
+      p_user_id: user.id,
+    });
     if (ubError) throw ubError;
 
     const earnedMap = new Map(
-      (userBadges || []).map(ub => [ub.badge_id, ub.earned_at])
+      (userBadges || []).map((ub: { badge_id: string; earned_at: string }) => [ub.badge_id, ub.earned_at])
     );
 
-    const result = (badges || []).map(badge => ({
+    const result = (badges || []).map((badge: { id: string; name_ja: string; name_en: string; description_ja: string; description_en: string; icon: string }) => ({
       id: badge.id,
       name_ja: badge.name_ja,
       name_en: badge.name_en,
@@ -37,7 +31,7 @@ export async function GET() {
       earned_at: earnedMap.get(badge.id) || null,
     }));
 
-    const earned_count = result.filter(b => b.earned).length;
+    const earned_count = result.filter((b: { earned: boolean }) => b.earned).length;
 
     return NextResponse.json({
       badges: result,
@@ -49,6 +43,6 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     console.error('Badges error:', err);
-    return NextResponse.json({ error: 'サーバーエラーが発生しました', debug: JSON.stringify(err) }, { status: 500 });
+    return NextResponse.json({ error: 'サーバーエラーが発生しました' }, { status: 500 });
   }
 }

@@ -10,13 +10,12 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
 
   if (!user) return [];
 
-  // 2. Get existing badges
-  const { data: existingBadges } = await supabase
-    .from('user_badges')
-    .select('badge_id')
-    .eq('user_id', userId);
+  // 2. Get existing badges via RPC
+  const { data: existingBadges } = await supabase.rpc('get_user_badges', {
+    p_user_id: userId,
+  });
 
-  const earnedSet = new Set((existingBadges || []).map(b => b.badge_id));
+  const earnedSet = new Set((existingBadges || []).map((b: { badge_id: string }) => b.badge_id));
 
   // 3. Check conditions for each badge
   const newBadges: string[] = [];
@@ -47,7 +46,7 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .eq('outcome', 'rainbow_jaileon')
-      .gt('points_earned', 10); // successful capture = more than escape points
+      .gt('points_earned', 10);
     if (count && count > 0) newBadges.push('rainbow_catch');
   }
 
@@ -80,7 +79,7 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     }
   }
 
-  // Streak badges - calculate current streak
+  // Streak badges
   if (!earnedSet.has('streak_3') || !earnedSet.has('streak_7') ||
       !earnedSet.has('streak_14') || !earnedSet.has('streak_30')) {
     const today = new Date().toISOString().split('T')[0];
@@ -123,11 +122,12 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     }
   }
 
-  // 4. Insert new badges
+  // 4. Insert new badges via RPC
   if (newBadges.length > 0) {
-    await supabase.from('user_badges').insert(
-      newBadges.map(badge_id => ({ user_id: userId, badge_id }))
-    );
+    await supabase.rpc('insert_user_badges', {
+      p_user_id: userId,
+      p_badge_ids: newBadges,
+    });
   }
 
   return newBadges;
