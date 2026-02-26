@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAdmin } from '@/lib/session';
 
 export async function GET(request: NextRequest) {
@@ -17,13 +17,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const query = supabase.from('users').select('*');
-    if (name) {
-      query.eq('name', name);
-    } else {
-      query.eq('id', id!);
-    }
-    const { data: user } = await query.single();
+    const [user] = name
+      ? await sql`SELECT * FROM users WHERE name = ${name}`
+      : await sql`SELECT * FROM users WHERE id = ${id}`;
 
     if (!user) {
       return NextResponse.json(
@@ -32,17 +28,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch recent transactions
-    const { data: transactions } = await supabase
-      .from('point_transactions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(50);
+    const transactions = await sql`
+      SELECT * FROM point_transactions
+      WHERE user_id = ${user.id}
+      ORDER BY created_at DESC
+      LIMIT 50
+    `;
 
     return NextResponse.json({
       ...user,
-      recent_transactions: transactions || [],
+      recent_transactions: transactions,
     });
   } catch (err) {
     if (err instanceof Error) {

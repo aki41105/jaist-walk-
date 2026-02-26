@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAdmin } from '@/lib/session';
 import { adminUserListSchema } from '@/lib/validation';
 
@@ -19,41 +19,53 @@ export async function GET(request: NextRequest) {
 
     const { search, affiliation, research_area, sort, order, page, per_page } = parsed.data;
 
-    let query = supabase
-      .from('users')
-      .select('id, name, email, affiliation, research_area, role, points, capture_count, created_at', { count: 'exact' });
+    const offset = (page - 1) * per_page;
+    const orderDir = order === 'asc' ? sql`ASC` : sql`DESC`;
 
-    // Text search (ID, name, or email partial match)
+    // Build dynamic WHERE clauses
+    const conditions = [];
     if (search) {
-      query = query.or(`id.ilike.%${search}%,name.ilike.%${search}%,email.ilike.%${search}%`);
+      conditions.push(sql`(id ILIKE ${'%' + search + '%'} OR name ILIKE ${'%' + search + '%'} OR email ILIKE ${'%' + search + '%'})`);
     }
-
-    // Filters
     if (affiliation) {
-      query = query.eq('affiliation', affiliation);
+      conditions.push(sql`affiliation = ${affiliation}`);
     }
     if (research_area) {
-      query = query.eq('research_area', research_area);
+      conditions.push(sql`research_area = ${research_area}`);
     }
 
-    // Sort
-    query = query.order(sort, { ascending: order === 'asc' });
+    const whereClause = conditions.length > 0
+      ? sql`WHERE ${conditions.reduce((acc, cond, i) => i === 0 ? cond : sql`${acc} AND ${cond}`)}`
+      : sql``;
 
-    // Pagination
-    const from = (page - 1) * per_page;
-    const to = from + per_page - 1;
-    query = query.range(from, to);
+    // Map sort column safely
+    const sortColumns: Record<string, ReturnType<typeof sql>> = {
+      created_at: sql`created_at`,
+      points: sql`points`,
+      capture_count: sql`capture_count`,
+      name: sql`name`,
+    };
+    const sortCol = sortColumns[sort] || sql`created_at`;
 
-    const { data: users, count, error } = await query;
+    const [countResult] = await sql`
+      SELECT COUNT(*) as total FROM users ${whereClause}
+    `;
 
-    if (error) throw error;
+    const users = await sql`
+      SELECT id, name, email, affiliation, research_area, role, points, capture_count, created_at
+      FROM users ${whereClause}
+      ORDER BY ${sortCol} ${orderDir}
+      LIMIT ${per_page} OFFSET ${offset}
+    `;
+
+    const total = Number(countResult.total);
 
     return NextResponse.json({
-      users: users || [],
-      total: count || 0,
+      users,
+      total,
       page,
       per_page,
-      total_pages: Math.ceil((count || 0) / per_page),
+      total_pages: Math.ceil(total / per_page),
     });
   } catch (err) {
     if (err instanceof Error) {

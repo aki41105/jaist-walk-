@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { recoverSchema } from '@/lib/validation';
 import { sendRecoveryEmail } from '@/lib/email';
 
@@ -17,16 +17,13 @@ export async function POST(request: NextRequest) {
 
     const { email } = parsed.data;
 
-    const { data: user } = await supabase
-      .from('users')
-      .select('id, name')
-      .eq('email', email)
-      .single();
+    const [user] = await sql`
+      SELECT id, name FROM users WHERE email = ${email}
+    `;
 
-    // Always return success to prevent email enumeration
     if (user) {
       try {
-        await sendRecoveryEmail(email, user.name);
+        await sendRecoveryEmail(email, user.name as string);
       } catch {
         console.error('Failed to send recovery email');
       }

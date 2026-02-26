@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { captureSchema } from '@/lib/validation';
 import { getDailyOutcome } from '@/lib/qr-outcome';
@@ -34,7 +34,6 @@ const OUTCOME_NAMES: Record<CaptureOutcome, string> = {
   golden_jaileon: '早起きジャイレオン',
 };
 
-// Streak milestone bonuses
 const STREAK_BONUSES: Record<number, number> = {
   3: 50,
   7: 150,
@@ -49,18 +48,17 @@ function isJSTMorning(): boolean {
 }
 
 async function getUserStreak(userId: string, today: string): Promise<number> {
-  const { data: scanDates } = await supabase
-    .from('scans')
-    .select('date')
-    .eq('user_id', userId)
-    .order('date', { ascending: false })
-    .limit(60);
+  const scanDates = await sql`
+    SELECT DISTINCT date FROM scans
+    WHERE user_id = ${userId}
+    ORDER BY date DESC
+    LIMIT 60
+  `;
 
-  if (!scanDates || scanDates.length === 0) return 0;
+  if (scanDates.length === 0) return 0;
 
-  const uniqueDates = [...new Set(scanDates.map(s => s.date))].sort().reverse();
+  const uniqueDates = scanDates.map(s => s.date as string).sort().reverse();
 
-  // Count streak backwards from today (or yesterday if no scan today yet)
   let streak = 0;
   const checkDate = new Date(today + 'T00:00:00Z');
 
@@ -72,7 +70,6 @@ async function getUserStreak(userId: string, today: string): Promise<number> {
     if (dateStr === expectedStr) {
       streak++;
     } else if (streak === 0 && dateStr === new Date(new Date(today + 'T00:00:00Z').getTime() - 86400000).toISOString().split('T')[0]) {
-      // If no scan today yet, start counting from yesterday
       streak++;
       checkDate.setUTCDate(checkDate.getUTCDate() - 1);
     } else {
@@ -99,12 +96,9 @@ export async function POST(request: NextRequest) {
     const { qr_code } = parsed.data;
     const today = new Date().toISOString().split('T')[0];
 
-    // Find QR location
-    const { data: qrLocation } = await supabase
-      .from('qr_locations')
-      .select('*')
-      .eq('code', qr_code)
-      .single();
+    const [qrLocation] = await sql`
+      SELECT * FROM qr_locations WHERE code = ${qr_code}
+    `;
 
     if (!qrLocation) {
       return NextResponse.json(
@@ -120,14 +114,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if already scanned today at this location
-    const { data: existingScan } = await supabase
-      .from('scans')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('qr_location_id', qrLocation.id)
-      .eq('date', today)
-      .single();
+    const [existingScan] = await sql`
+      SELECT id FROM scans
+      WHERE user_id = ${user.id} AND qr_location_id = ${qrLocation.id} AND date = ${today}
+    `;
 
     if (existingScan) {
       return NextResponse.json(
@@ -136,57 +126,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if this is the user's first scan today (for golden jaileon)
-    const { count: todayScans } = await supabase
-      .from('scans')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('date', today);
+    const [todayScansResult] = await sql`
+      SELECT COUNT(*) as count FROM scans
+      WHERE user_id = ${user.id} AND date = ${today}
+    `;
 
-    const isFirstScanToday = (todayScans || 0) === 0;
+    const isFirstScanToday = Number(todayScansResult.count) === 0;
     const isMorning = isJSTMorning();
 
-    // Determine outcome
     let outcome: CaptureOutcome;
     if (isFirstScanToday && isMorning) {
       outcome = 'golden_jaileon';
     } else {
-      outcome = await getDailyOutcome(qrLocation.id, today);
+      outcome = await getDailyOutcome(qrLocation.id as string, today);
     }
 
-    // Determine capture success
     const catchRate = CATCH_RATES[outcome];
     const captured = Math.random() < catchRate;
     const pointsEarned = captured ? SUCCESS_POINTS[outcome] : ESCAPE_POINTS;
 
-    // Check streak bonus (awarded on first scan of the day)
     let streakBonus = 0;
     let streakCount = 0;
     if (isFirstScanToday) {
-      streakCount = (await getUserStreak(user.id, today)) + 1; // +1 for today
+      streakCount = (await getUserStreak(user.id, today)) + 1;
       streakBonus = STREAK_BONUSES[streakCount] || 0;
     }
 
-    // Record scan
-    const { error: scanError } = await supabase.from('scans').insert({
-      user_id: user.id,
-      qr_location_id: qrLocation.id,
-      outcome,
-      points_earned: pointsEarned + streakBonus,
-      date: today,
-    });
-
-    if (scanError) {
-      if (scanError.code === '23505') {
+    try {
+      await sql`
+        INSERT INTO scans (user_id, qr_location_id, outcome, points_earned, date)
+        VALUES (${user.id}, ${qrLocation.id}, ${outcome}, ${pointsEarned + streakBonus}, ${today})
+      `;
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('23505')) {
         return NextResponse.json(
           { error: '本日このQRコードは既にスキャン済みです', code: 'ALREADY_SCANNED' },
           { status: 409 }
         );
       }
-      throw scanError;
+      throw e;
     }
 
-    // Build reason message
     const charName = OUTCOME_NAMES[outcome];
     let reason: string;
     if (outcome === 'bird') {
@@ -197,49 +177,33 @@ export async function POST(request: NextRequest) {
         : `${charName}に逃げられた (${qrLocation.name_ja})`;
     }
 
-    await supabase.rpc('update_user_points', {
-      p_user_id: user.id,
-      p_amount: pointsEarned,
-      p_reason: reason,
-    });
+    await sql`SELECT update_user_points(${user.id}, ${pointsEarned}, ${reason}, NULL)`;
 
-    // Record streak bonus as separate transaction
     if (streakBonus > 0) {
-      await supabase.rpc('update_user_points', {
-        p_user_id: user.id,
-        p_amount: streakBonus,
-        p_reason: `${streakCount}日連続スキャンボーナス！`,
-      });
+      await sql`SELECT update_user_points(${user.id}, ${streakBonus}, ${`${streakCount}日連続スキャンボーナス！`}, NULL)`;
     }
 
-    // Update capture count for jaileon-type captures that succeeded
     if (captured && outcome !== 'bird') {
-      await supabase
-        .from('users')
-        .update({ capture_count: user.capture_count + 1 })
-        .eq('id', user.id);
+      await sql`
+        UPDATE users SET capture_count = capture_count + 1 WHERE id = ${user.id}
+      `;
     }
 
-    // Record anonymous statistics
-    await supabase.from('privacy_scan_log').insert({
-      affiliation: user.affiliation,
-      research_area: user.research_area,
-      location_number: qrLocation.location_number,
-    });
+    await sql`
+      INSERT INTO privacy_scan_log (affiliation, research_area, location_number)
+      VALUES (${user.affiliation}, ${user.research_area}, ${qrLocation.location_number})
+    `;
 
-    // Get updated user data
-    const { data: updatedUser } = await supabase
-      .from('users')
-      .select('points, capture_count')
-      .eq('id', user.id)
-      .single();
+    const [updatedUser] = await sql`
+      SELECT points, capture_count FROM users WHERE id = ${user.id}
+    `;
 
     return NextResponse.json({
       outcome,
       captured,
       points_earned: pointsEarned,
-      total_points: updatedUser?.points ?? 0,
-      capture_count: updatedUser?.capture_count ?? 0,
+      total_points: (updatedUser?.points as number) ?? 0,
+      capture_count: (updatedUser?.capture_count as number) ?? 0,
       location_name: qrLocation.name_ja,
       streak: isFirstScanToday ? streakCount : undefined,
       streak_bonus: streakBonus > 0 ? streakBonus : undefined,

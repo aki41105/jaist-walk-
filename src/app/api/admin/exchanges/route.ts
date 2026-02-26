@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/session';
 import sql from '@/lib/db';
 
@@ -39,7 +38,6 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: '無効なパラメータです' }, { status: 400 });
     }
 
-    // If cancelling, refund points
     if (status === 'cancelled') {
       const [exchange] = await sql`
         SELECT user_id, points_spent, status FROM exchanges WHERE id = ${id}
@@ -53,13 +51,7 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: 'この交換は既に処理済みです' }, { status: 400 });
       }
 
-      // Refund points via Supabase RPC (this one works - it's an old function)
-      await supabase.rpc('update_user_points', {
-        p_user_id: exchange.user_id,
-        p_amount: exchange.points_spent,
-        p_reason: 'ポイント交換キャンセル（返還）',
-        p_admin_id: admin.id,
-      });
+      await sql`SELECT update_user_points(${exchange.user_id}, ${exchange.points_spent}, ${'ポイント交換キャンセル（返還）'}, ${admin.id})`;
     }
 
     const usedAt = status === 'used' ? new Date().toISOString() : null;

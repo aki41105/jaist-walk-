@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAdmin } from '@/lib/session';
 import { pointOperationSchema } from '@/lib/validation';
 
@@ -18,12 +18,9 @@ export async function POST(request: NextRequest) {
 
     const { user_id, amount, reason } = parsed.data;
 
-    // Verify target user exists
-    const { data: targetUser } = await supabase
-      .from('users')
-      .select('id, points')
-      .eq('id', user_id)
-      .single();
+    const [targetUser] = await sql`
+      SELECT id, points FROM users WHERE id = ${user_id}
+    `;
 
     if (!targetUser) {
       return NextResponse.json(
@@ -32,28 +29,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use the safe point update function
-    const { data, error } = await supabase.rpc('update_user_points', {
-      p_user_id: user_id,
-      p_amount: amount,
-      p_reason: reason,
-      p_admin_id: admin.id,
-    });
-
-    if (error) {
-      if (error.message.includes('Insufficient points')) {
+    try {
+      const result = await sql`SELECT update_user_points(${user_id}, ${amount}, ${reason}, ${admin.id})`;
+      return NextResponse.json({
+        success: true,
+        new_points: result[0]?.update_user_points ?? 0,
+      });
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('Insufficient points')) {
         return NextResponse.json(
           { error: 'ポイントが不足しています' },
           { status: 400 }
         );
       }
-      throw error;
+      throw e;
     }
-
-    return NextResponse.json({
-      success: true,
-      new_points: data?.[0]?.new_points ?? 0,
-    });
   } catch (err) {
     if (err instanceof Error) {
       if (err.message === 'Unauthorized') {

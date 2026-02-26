@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const BUCKET_NAME = 'avatars';
-
-async function ensureBucket() {
-  const { data } = await supabase.storage.getBucket(BUCKET_NAME);
-  if (!data) {
-    await supabase.storage.createBucket(BUCKET_NAME, {
-      public: true,
-      fileSizeLimit: MAX_FILE_SIZE,
-      allowedMimeTypes: ALLOWED_TYPES,
-    });
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,48 +35,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await ensureBucket();
-
     const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
     const fileName = `${user.id}.${ext}`;
 
+    // Ensure avatars directory exists
+    const avatarDir = join(process.cwd(), 'public', 'avatars');
+    await mkdir(avatarDir, { recursive: true });
+
+    // Write file to disk
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
+    const buffer = Buffer.from(arrayBuffer);
+    await writeFile(join(avatarDir, fileName), buffer);
 
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(fileName, buffer, {
-        contentType: file.type,
-        upsert: true,
-      });
+    // Build URL with cache-busting timestamp
+    const avatarUrl = `/avatars/${fileName}?t=${Date.now()}`;
 
-    if (uploadError) {
-      console.error('Avatar upload error:', uploadError.message);
-      return NextResponse.json(
-        { error: 'アップロードに失敗しました' },
-        { status: 500 },
-      );
-    }
-
-    const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(fileName);
-
-    // Append cache-busting timestamp
-    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
-
-    const { error: updateError } = await supabase
-      .from('users')
-      .update({ avatar_url: avatarUrl })
-      .eq('id', user.id);
-
-    if (updateError) {
-      console.error('Avatar URL update error:', updateError.message);
-      return NextResponse.json(
-        { error: 'プロフィールの更新に失敗しました' },
-        { status: 500 },
-      );
-    }
+    await sql`
+      UPDATE users SET avatar_url = ${avatarUrl} WHERE id = ${user.id}
+    `;
 
     return NextResponse.json({ avatar_url: avatarUrl });
   } catch {

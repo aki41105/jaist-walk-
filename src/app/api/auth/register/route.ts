@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { generateUserId, createSession } from '@/lib/session';
 import { registerSchema } from '@/lib/validation';
 import { sendRegistrationEmail } from '@/lib/email';
@@ -18,12 +18,9 @@ export async function POST(request: NextRequest) {
 
     const { name, email, affiliation, research_area } = parsed.data;
 
-    // Check if name already exists
-    const { data: existingName } = await supabase
-      .from('users')
-      .select('id')
-      .eq('name', name)
-      .single();
+    const [existingName] = await sql`
+      SELECT id FROM users WHERE name = ${name}
+    `;
 
     if (existingName) {
       return NextResponse.json(
@@ -32,12 +29,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if email already exists
-    const { data: existing } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', email)
-      .single();
+    const [existing] = await sql`
+      SELECT id FROM users WHERE email = ${email}
+    `;
 
     if (existing) {
       return NextResponse.json(
@@ -46,16 +40,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique user ID
     let userId: string;
     let attempts = 0;
     do {
       userId = generateUserId();
-      const { data } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', userId)
-        .single();
+      const [data] = await sql`
+        SELECT id FROM users WHERE id = ${userId}
+      `;
       if (!data) break;
       attempts++;
     } while (attempts < 10);
@@ -67,32 +58,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create user
-    const { error: insertError } = await supabase.from('users').insert({
-      id: userId,
-      name,
-      email,
-      affiliation,
-      research_area,
-    });
+    await sql`
+      INSERT INTO users (id, name, email, affiliation, research_area)
+      VALUES (${userId}, ${name}, ${email}, ${affiliation}, ${research_area})
+    `;
 
-    if (insertError) {
-      console.error('User insert error:', insertError.message, insertError.code);
-      return NextResponse.json(
-        { error: '登録に失敗しました' },
-        { status: 500 }
-      );
-    }
-
-    // Send email with ID
     try {
       await sendRegistrationEmail(email, name);
     } catch {
-      // Email failure shouldn't block registration
       console.error('Failed to send registration email');
     }
 
-    // Create session
     await createSession(userId);
 
     return NextResponse.json({ user_id: userId, name }, { status: 201 });

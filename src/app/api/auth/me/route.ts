@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/session';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import type { UserProfile, CaptureOutcome } from '@/types';
 
 export async function GET() {
@@ -14,37 +14,33 @@ export async function GET() {
       );
     }
 
-    // Fetch recent scans with location names
-    const { data: recentScans } = await supabase
-      .from('scans')
-      .select(`
-        *,
-        qr_locations (name_ja, name_en)
-      `)
-      .eq('user_id', user.id)
-      .order('scanned_at', { ascending: false })
-      .limit(20);
+    const recentScans = await sql`
+      SELECT s.*, ql.name_ja, ql.name_en
+      FROM scans s
+      LEFT JOIN qr_locations ql ON ql.id = s.qr_location_id
+      WHERE s.user_id = ${user.id}
+      ORDER BY s.scanned_at DESC
+      LIMIT 20
+    `;
 
-    // Fetch recent point transactions
-    const { data: recentTransactions } = await supabase
-      .from('point_transactions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20);
+    const recentTransactions = await sql`
+      SELECT * FROM point_transactions
+      WHERE user_id = ${user.id}
+      ORDER BY created_at DESC
+      LIMIT 20
+    `;
 
-    // Calculate streak
     const today = new Date().toISOString().split('T')[0];
-    const { data: scanDates } = await supabase
-      .from('scans')
-      .select('date')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false })
-      .limit(60);
+    const scanDates = await sql`
+      SELECT DISTINCT date FROM scans
+      WHERE user_id = ${user.id}
+      ORDER BY date DESC
+      LIMIT 60
+    `;
 
     let streak = 0;
-    if (scanDates && scanDates.length > 0) {
-      const uniqueDates = [...new Set(scanDates.map(s => s.date))].sort().reverse();
+    if (scanDates.length > 0) {
+      const uniqueDates = scanDates.map(s => s.date as string).sort().reverse();
       const checkDate = new Date(today + 'T00:00:00Z');
       for (const dateStr of uniqueDates) {
         const expected = new Date(checkDate);
@@ -52,7 +48,6 @@ export async function GET() {
         if (dateStr === expected.toISOString().split('T')[0]) {
           streak++;
         } else if (streak === 0) {
-          // Check yesterday
           const yesterday = new Date(checkDate.getTime() - 86400000).toISOString().split('T')[0];
           if (dateStr === yesterday) {
             streak++;
@@ -66,7 +61,6 @@ export async function GET() {
       }
     }
 
-    // Do not expose full email to client - mask it for privacy
     const emailParts = user.email.split('@');
     const maskedLocal = emailParts[0].slice(0, 2) + '***';
     const maskedEmail = `${maskedLocal}@${emailParts[1]}`;
@@ -83,7 +77,7 @@ export async function GET() {
       points: user.points,
       capture_count: user.capture_count,
       streak,
-      recent_scans: (recentScans || []).map((scan: Record<string, unknown>) => ({
+      recent_scans: recentScans.map((scan) => ({
         id: scan.id as string,
         user_id: scan.user_id as string,
         qr_location_id: scan.qr_location_id as string,
@@ -91,9 +85,9 @@ export async function GET() {
         points_earned: scan.points_earned as number,
         date: scan.date as string,
         scanned_at: scan.scanned_at as string,
-        location_name: (scan.qr_locations as Record<string, string>)?.name_ja || '',
+        location_name: (scan.name_ja as string) || '',
       })),
-      recent_transactions: (recentTransactions || []) as UserProfile['recent_transactions'],
+      recent_transactions: recentTransactions as unknown as UserProfile['recent_transactions'],
     };
 
     return NextResponse.json(profile);

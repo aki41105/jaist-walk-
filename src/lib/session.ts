@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { randomBytes } from 'crypto';
-import { supabase } from './supabase';
+import sql from '@/lib/db';
 import type { User } from '@/types';
 
 const SESSION_COOKIE_NAME = 'jw_session';
@@ -11,7 +11,7 @@ export function generateSessionToken(): string {
 }
 
 export function generateUserId(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No I, O, 0, 1 to avoid confusion
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
   const bytes = randomBytes(6);
   for (let i = 0; i < 6; i++) {
@@ -25,11 +25,10 @@ export async function createSession(userId: string): Promise<string> {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + SESSION_DURATION_DAYS);
 
-  await supabase.from('sessions').insert({
-    user_id: userId,
-    token,
-    expires_at: expiresAt.toISOString(),
-  });
+  await sql`
+    INSERT INTO sessions (user_id, token, expires_at)
+    VALUES (${userId}, ${token}, ${expiresAt.toISOString()})
+  `;
 
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
@@ -49,38 +48,31 @@ export async function getCurrentUser(): Promise<User | null> {
 
   if (!token) return null;
 
-  const { data: session } = await supabase
-    .from('sessions')
-    .select('user_id, expires_at')
-    .eq('token', token)
-    .single();
+  const [session] = await sql`
+    SELECT user_id, expires_at FROM sessions WHERE token = ${token}
+  `;
 
   if (!session) {
-    // Session not found in DB (e.g. after data reset) - clear stale cookie
     cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
-  // Check expiration
-  if (new Date(session.expires_at) < new Date()) {
-    await supabase.from('sessions').delete().eq('token', token);
+  if (new Date(session.expires_at as string) < new Date()) {
+    await sql`DELETE FROM sessions WHERE token = ${token}`;
     cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
-  const { data: user } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', session.user_id)
-    .single();
+  const [user] = await sql`
+    SELECT * FROM users WHERE id = ${session.user_id}
+  `;
 
   if (!user) {
-    // User deleted but session remains - clear cookie
     cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
-  return user as User | null;
+  return user as unknown as User;
 }
 
 export async function destroySession(): Promise<void> {
@@ -88,7 +80,7 @@ export async function destroySession(): Promise<void> {
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 
   if (token) {
-    await supabase.from('sessions').delete().eq('token', token);
+    await sql`DELETE FROM sessions WHERE token = ${token}`;
     cookieStore.delete(SESSION_COOKIE_NAME);
   }
 }

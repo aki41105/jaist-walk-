@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { createSession } from '@/lib/session';
 import { loginSchema } from '@/lib/validation';
 
@@ -17,11 +17,9 @@ export async function POST(request: NextRequest) {
 
     const { name } = parsed.data;
 
-    const { data: user } = await supabase
-      .from('users')
-      .select('id')
-      .eq('name', name)
-      .single();
+    const [user] = await sql`
+      SELECT id FROM users WHERE name = ${name}
+    `;
 
     if (!user) {
       return NextResponse.json(
@@ -30,7 +28,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await createSession(user.id);
+    await createSession(user.id as string);
 
     return NextResponse.json({ success: true });
   } catch {

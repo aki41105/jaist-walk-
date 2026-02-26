@@ -1,36 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAdmin } from '@/lib/session';
 import { createLocationSchema, updateLocationSchema } from '@/lib/validation';
 
-// GET: List all locations with scan counts
 export async function GET() {
   try {
     await requireAdmin();
 
-    const { data: locations, error } = await supabase
-      .from('qr_locations')
-      .select('*')
-      .order('location_number', { ascending: true });
+    const locations = await sql`
+      SELECT * FROM qr_locations ORDER BY location_number ASC
+    `;
 
-    if (error) throw error;
+    const scanCounts = await sql`
+      SELECT qr_location_id, COUNT(*)::int as count FROM scans GROUP BY qr_location_id
+    `;
 
-    // Get scan counts per location
-    const { data: scanCounts, error: scanError } = await supabase
-      .from('scans')
-      .select('qr_location_id');
-
-    if (scanError) throw scanError;
-
-    // Count scans per location
     const countMap: Record<string, number> = {};
-    for (const scan of scanCounts || []) {
-      countMap[scan.qr_location_id] = (countMap[scan.qr_location_id] || 0) + 1;
+    for (const sc of scanCounts) {
+      countMap[sc.qr_location_id as string] = sc.count as number;
     }
 
-    const locationsWithCounts = (locations || []).map(loc => ({
+    const locationsWithCounts = locations.map(loc => ({
       ...loc,
-      scan_count: countMap[loc.id] || 0,
+      scan_count: countMap[loc.id as string] || 0,
     }));
 
     return NextResponse.json({ locations: locationsWithCounts });
@@ -51,7 +43,6 @@ export async function GET() {
   }
 }
 
-// POST: Create a new location
 export async function POST(request: NextRequest) {
   try {
     await requireAdmin();
@@ -68,12 +59,9 @@ export async function POST(request: NextRequest) {
 
     const { name_ja, name_en, location_number } = parsed.data;
 
-    // Check for duplicate location_number
-    const { data: existing } = await supabase
-      .from('qr_locations')
-      .select('id')
-      .eq('location_number', location_number)
-      .single();
+    const [existing] = await sql`
+      SELECT id FROM qr_locations WHERE location_number = ${location_number}
+    `;
 
     if (existing) {
       return NextResponse.json(
@@ -82,17 +70,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: location, error } = await supabase
-      .from('qr_locations')
-      .insert({
-        name_ja,
-        name_en,
-        location_number,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
+    const [location] = await sql`
+      INSERT INTO qr_locations (name_ja, name_en, location_number)
+      VALUES (${name_ja}, ${name_en}, ${location_number})
+      RETURNING *
+    `;
 
     return NextResponse.json({ location }, { status: 201 });
   } catch (err) {
@@ -112,7 +94,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PATCH: Update location (toggle active status)
 export async function PATCH(request: NextRequest) {
   try {
     await requireAdmin();
@@ -141,14 +122,14 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const { data: location, error } = await supabase
-      .from('qr_locations')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
+    const [location] = await sql`
+      UPDATE qr_locations SET
+        is_active = COALESCE(${updates.is_active !== undefined ? updates.is_active : null}, is_active),
+        name_ja = COALESCE(${updates.name_ja !== undefined ? updates.name_ja as string : null}, name_ja),
+        name_en = COALESCE(${updates.name_en !== undefined ? updates.name_en as string : null}, name_en)
+      WHERE id = ${id}
+      RETURNING *
+    `;
 
     if (!location) {
       return NextResponse.json(

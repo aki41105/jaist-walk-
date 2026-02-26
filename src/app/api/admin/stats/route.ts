@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAdmin } from '@/lib/session';
 
 export async function GET() {
@@ -8,20 +8,18 @@ export async function GET() {
 
     const today = new Date().toISOString().split('T')[0];
 
-    const [usersResult, scansResult, qrResult, pointsResult] = await Promise.all([
-      supabase.from('users').select('*', { count: 'exact', head: true }),
-      supabase.from('scans').select('*', { count: 'exact', head: true }).eq('date', today),
-      supabase.from('qr_locations').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('point_transactions').select('amount').gt('amount', 0),
+    const [[usersResult], [scansResult], [qrResult], [pointsResult]] = await Promise.all([
+      sql`SELECT COUNT(*) as count FROM users`,
+      sql`SELECT COUNT(*) as count FROM scans WHERE date = ${today}`,
+      sql`SELECT COUNT(*) as count FROM qr_locations WHERE is_active = true`,
+      sql`SELECT COALESCE(SUM(amount), 0) as total FROM point_transactions WHERE amount > 0`,
     ]);
 
-    const totalPointsDistributed = (pointsResult.data || []).reduce((sum, t) => sum + t.amount, 0);
-
     return NextResponse.json({
-      total_users: usersResult.count || 0,
-      today_scans: scansResult.count || 0,
-      active_qr_codes: qrResult.count || 0,
-      total_points_distributed: totalPointsDistributed,
+      total_users: Number(usersResult.count),
+      today_scans: Number(scansResult.count),
+      active_qr_codes: Number(qrResult.count),
+      total_points_distributed: Number(pointsResult.total),
     });
   } catch (err) {
     if (err instanceof Error) {

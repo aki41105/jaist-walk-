@@ -1,44 +1,40 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 
 export async function GET() {
   try {
     const user = await requireAuth();
 
-    // Get all active locations
-    const { data: locations, error: locError } = await supabase
-      .from('qr_locations')
-      .select('id, name_ja, name_en, location_number')
-      .eq('is_active', true)
-      .order('location_number', { ascending: true });
+    const locations = await sql`
+      SELECT id, name_ja, name_en, location_number
+      FROM qr_locations
+      WHERE is_active = true
+      ORDER BY location_number ASC
+    `;
 
-    if (locError) throw locError;
+    const visits = await sql`
+      SELECT qr_location_id, scanned_at
+      FROM scans
+      WHERE user_id = ${user.id}
+      ORDER BY scanned_at ASC
+    `;
 
-    // Get user's visited locations (distinct qr_location_id)
-    const { data: visits, error: visitError } = await supabase
-      .from('scans')
-      .select('qr_location_id, scanned_at')
-      .eq('user_id', user.id)
-      .order('scanned_at', { ascending: true });
-
-    if (visitError) throw visitError;
-
-    // Build first-visit map
     const firstVisitMap = new Map<string, string>();
-    for (const v of visits || []) {
-      if (!firstVisitMap.has(v.qr_location_id)) {
-        firstVisitMap.set(v.qr_location_id, v.scanned_at);
+    for (const v of visits) {
+      const locId = v.qr_location_id as string;
+      if (!firstVisitMap.has(locId)) {
+        firstVisitMap.set(locId, v.scanned_at as string);
       }
     }
 
-    const result = (locations || []).map(loc => ({
-      id: loc.id,
-      name_ja: loc.name_ja,
-      name_en: loc.name_en,
-      location_number: loc.location_number,
-      visited: firstVisitMap.has(loc.id),
-      visited_date: firstVisitMap.get(loc.id) || null,
+    const result = locations.map(loc => ({
+      id: loc.id as string,
+      name_ja: loc.name_ja as string,
+      name_en: loc.name_en as string,
+      location_number: loc.location_number as number,
+      visited: firstVisitMap.has(loc.id as string),
+      visited_date: firstVisitMap.get(loc.id as string) || null,
     }));
 
     const visited_count = result.filter(l => l.visited).length;

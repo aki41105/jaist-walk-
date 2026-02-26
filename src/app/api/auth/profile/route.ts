@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import sql from '@/lib/db';
 import { getCurrentUser } from '@/lib/session';
 import { z } from 'zod';
 
@@ -41,23 +41,18 @@ export async function PUT(request: NextRequest) {
 
     const updates: Record<string, string | null> = {};
 
-    // Avatar update (no uniqueness check needed)
     if (parsed.data.avatar && parsed.data.avatar !== user.avatar) {
       updates.avatar = parsed.data.avatar;
     }
 
-    // Avatar URL update (custom image)
     if (parsed.data.avatar_url !== undefined) {
       updates.avatar_url = parsed.data.avatar_url;
     }
 
-    // Check name uniqueness
     if (parsed.data.name && parsed.data.name !== user.name) {
-      const { data: existingName } = await supabase
-        .from('users')
-        .select('id')
-        .eq('name', parsed.data.name)
-        .single();
+      const [existingName] = await sql`
+        SELECT id FROM users WHERE name = ${parsed.data.name}
+      `;
 
       if (existingName) {
         return NextResponse.json(
@@ -68,13 +63,10 @@ export async function PUT(request: NextRequest) {
       updates.name = parsed.data.name;
     }
 
-    // Check email uniqueness
     if (parsed.data.email && parsed.data.email !== user.email) {
-      const { data: existingEmail } = await supabase
-        .from('users')
-        .select('id')
-        .eq('email', parsed.data.email)
-        .single();
+      const [existingEmail] = await sql`
+        SELECT id FROM users WHERE email = ${parsed.data.email}
+      `;
 
       if (existingEmail) {
         return NextResponse.json(
@@ -89,18 +81,14 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: true, message: '変更はありません' });
     }
 
-    const { error } = await supabase
-      .from('users')
-      .update(updates)
-      .eq('id', user.id);
-
-    if (error) {
-      console.error('Profile update error:', error.message);
-      return NextResponse.json(
-        { error: 'プロフィールの更新に失敗しました' },
-        { status: 500 }
-      );
-    }
+    await sql`
+      UPDATE users SET
+        name = COALESCE(${updates.name ?? null}, name),
+        email = COALESCE(${updates.email ?? null}, email),
+        avatar = COALESCE(${updates.avatar ?? null}, avatar),
+        avatar_url = ${updates.avatar_url !== undefined ? updates.avatar_url : null}
+      WHERE id = ${user.id}
+    `;
 
     return NextResponse.json({ success: true });
   } catch {
