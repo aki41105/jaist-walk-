@@ -2,7 +2,8 @@
 
 export function NetAnimation() {
   return (
-    <div className="absolute inset-0 flex items-center justify-center animate-net-catch">
+    <div className="absolute inset-0 flex items-center justify-center" style={{ perspective: '600px' }}>
+      <div className="animate-net-catch" style={{ transformOrigin: 'center top' }}>
       <svg
         width="220"
         height="280"
@@ -94,6 +95,7 @@ export function NetAnimation() {
         <line x1="103" y1="260" x2="117" y2="260" stroke="#6B3410" strokeWidth="2.5" />
         <rect x="100" y="245" width="20" height="25" rx="3" fill="none" stroke="#6B3410" strokeWidth="1.5" />
       </svg>
+      </div>
     </div>
   );
 }
