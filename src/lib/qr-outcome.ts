@@ -1,6 +1,13 @@
 import { createHash } from 'crypto';
-import sql from '@/lib/db';
+import sql from './db';
 import type { CaptureOutcome } from '@/types';
+
+// Outcome thresholds (cumulative):
+// 0.00 - 0.05 = rainbow_jaileon (5%)
+// 0.05 - 0.15 = blue_jaileon (10%)
+// 0.15 - 0.35 = yellow_jaileon (20%)
+// 0.35 - 0.80 = jaileon/green (45%)
+// 0.80 - 1.00 = bird (20%)
 
 function determineOutcome(seed: string, qrLocationId: string, date: string): CaptureOutcome {
   const hash = createHash('sha256')
@@ -24,6 +31,7 @@ export async function getDailyOutcome(
   const [existing] = await sql`
     SELECT outcome FROM daily_qr_outcomes
     WHERE qr_location_id = ${qrLocationId} AND date = ${date}
+    LIMIT 1
   `;
 
   if (existing) {
@@ -36,7 +44,6 @@ export async function getDailyOutcome(
   await sql`
     INSERT INTO daily_qr_outcomes (qr_location_id, date, outcome)
     VALUES (${qrLocationId}, ${date}, ${outcome})
-    ON CONFLICT (qr_location_id, date) DO NOTHING
   `;
 
   return outcome;

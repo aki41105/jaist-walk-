@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { randomBytes } from 'crypto';
-import sql from '@/lib/db';
+import sql from './db';
 import type { User } from '@/types';
 
 const SESSION_COOKIE_NAME = 'jw_session';
@@ -11,7 +11,7 @@ export function generateSessionToken(): string {
 }
 
 export function generateUserId(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No I, O, 0, 1 to avoid confusion
   let code = '';
   const bytes = randomBytes(6);
   for (let i = 0; i < 6; i++) {
@@ -33,7 +33,7 @@ export async function createSession(userId: string): Promise<string> {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.COOKIE_SECURE === 'true',
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     maxAge: SESSION_DURATION_DAYS * 24 * 60 * 60,
@@ -49,7 +49,7 @@ export async function getCurrentUser(): Promise<User | null> {
   if (!token) return null;
 
   const [session] = await sql`
-    SELECT user_id, expires_at FROM sessions WHERE token = ${token}
+    SELECT user_id, expires_at FROM sessions WHERE token = ${token} LIMIT 1
   `;
 
   if (!session) {
@@ -57,14 +57,15 @@ export async function getCurrentUser(): Promise<User | null> {
     return null;
   }
 
-  if (new Date(session.expires_at as string) < new Date()) {
+  // Check expiration
+  if (new Date(session.expires_at) < new Date()) {
     await sql`DELETE FROM sessions WHERE token = ${token}`;
     cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
   const [user] = await sql`
-    SELECT * FROM users WHERE id = ${session.user_id}
+    SELECT * FROM users WHERE id = ${session.user_id} LIMIT 1
   `;
 
   if (!user) {
@@ -72,7 +73,7 @@ export async function getCurrentUser(): Promise<User | null> {
     return null;
   }
 
-  return user as unknown as User;
+  return user as User | null;
 }
 
 export async function destroySession(): Promise<void> {

@@ -1,43 +1,49 @@
 import sql from '@/lib/db';
 
 export async function checkAndAwardBadges(userId: string): Promise<string[]> {
+  // 1. Get user data
   const [user] = await sql`
-    SELECT points, capture_count FROM users WHERE id = ${userId}
+    SELECT points, capture_count FROM users WHERE id = ${userId} LIMIT 1
   `;
 
   if (!user) return [];
 
+  // 2. Get existing badges
   const existingBadges = await sql`
     SELECT badge_id FROM user_badges WHERE user_id = ${userId}
   `;
 
   const earnedSet = new Set(existingBadges.map(b => b.badge_id as string));
 
+  // 3. Check conditions for each badge
   const newBadges: string[] = [];
 
-  if (!earnedSet.has('first_capture') && (user.capture_count as number) >= 1) {
+  // Capture count badges
+  if (!earnedSet.has('first_capture') && user.capture_count >= 1) {
     newBadges.push('first_capture');
   }
-  if (!earnedSet.has('captures_10') && (user.capture_count as number) >= 10) {
+  if (!earnedSet.has('captures_10') && user.capture_count >= 10) {
     newBadges.push('captures_10');
   }
-  if (!earnedSet.has('captures_50') && (user.capture_count as number) >= 50) {
+  if (!earnedSet.has('captures_50') && user.capture_count >= 50) {
     newBadges.push('captures_50');
   }
 
-  if (!earnedSet.has('points_1000') && (user.points as number) >= 1000) {
+  // Points badges
+  if (!earnedSet.has('points_1000') && user.points >= 1000) {
     newBadges.push('points_1000');
   }
-  if (!earnedSet.has('points_5000') && (user.points as number) >= 5000) {
+  if (!earnedSet.has('points_5000') && user.points >= 5000) {
     newBadges.push('points_5000');
   }
 
+  // Rainbow / Golden catch badges - check scans for successful captures
   if (!earnedSet.has('rainbow_catch')) {
     const [result] = await sql`
       SELECT COUNT(*) as count FROM scans
       WHERE user_id = ${userId} AND outcome = 'rainbow_jaileon' AND points_earned > 10
     `;
-    if (Number(result.count) > 0) newBadges.push('rainbow_catch');
+    if (result && Number(result.count) > 0) newBadges.push('rainbow_catch');
   }
 
   if (!earnedSet.has('golden_catch')) {
@@ -45,22 +51,26 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
       SELECT COUNT(*) as count FROM scans
       WHERE user_id = ${userId} AND outcome = 'golden_jaileon' AND points_earned > 10
     `;
-    if (Number(result.count) > 0) newBadges.push('golden_catch');
+    if (result && Number(result.count) > 0) newBadges.push('golden_catch');
   }
 
+  // All locations badge
   if (!earnedSet.has('all_locations')) {
     const [activeResult] = await sql`
       SELECT COUNT(*) as count FROM qr_locations WHERE is_active = true
     `;
+    const activeCount = Number(activeResult?.count || 0);
+
     const visitedLocs = await sql`
       SELECT DISTINCT qr_location_id FROM scans WHERE user_id = ${userId}
     `;
-    const activeCount = Number(activeResult.count);
+
     if (activeCount > 0 && visitedLocs.length >= activeCount) {
       newBadges.push('all_locations');
     }
   }
 
+  // Streak badges
   if (!earnedSet.has('streak_3') || !earnedSet.has('streak_7') ||
       !earnedSet.has('streak_14') || !earnedSet.has('streak_30')) {
     const today = new Date().toISOString().split('T')[0];
@@ -72,7 +82,7 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     `;
 
     if (scanDates.length > 0) {
-      const uniqueDates = scanDates.map(s => s.date as string).sort().reverse();
+      const uniqueDates = scanDates.map(s => s.date as string);
       let streak = 0;
       const checkDate = new Date(today + 'T00:00:00Z');
 
@@ -103,6 +113,7 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     }
   }
 
+  // 4. Insert new badges
   if (newBadges.length > 0) {
     await sql`
       INSERT INTO user_badges (user_id, badge_id)

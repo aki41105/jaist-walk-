@@ -83,10 +83,10 @@ export async function PUT(request: NextRequest) {
 
     await sql`
       UPDATE users SET
-        name = COALESCE(${updates.name ?? null}, name),
-        email = COALESCE(${updates.email ?? null}, email),
-        avatar = COALESCE(${updates.avatar ?? null}, avatar),
-        avatar_url = ${updates.avatar_url !== undefined ? updates.avatar_url : null}
+        name = ${updates.name ?? user.name},
+        email = ${updates.email ?? user.email},
+        avatar = ${updates.avatar ?? user.avatar ?? 'green'},
+        avatar_url = ${updates.avatar_url !== undefined ? updates.avatar_url : (user.avatar_url ?? null)}
       WHERE id = ${user.id}
     `;
 
