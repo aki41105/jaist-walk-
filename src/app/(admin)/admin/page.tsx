@@ -49,12 +49,13 @@ export default function AdminPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {statsLoading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow p-4 animate-pulse">
-                <div className="h-3 bg-gray-200 rounded w-20 mb-2" />
-                <div className="h-7 bg-gray-200 rounded w-16" />
+            <div className="col-span-2 flex justify-center py-8">
+              <div className="text-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+                <p className="text-gray-500">読み込み中...</p>
               </div>
-            ))
+            </div>
           ) : stats ? (
             <>
               <div className="bg-white rounded-2xl shadow p-4">

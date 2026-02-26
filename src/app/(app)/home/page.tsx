@@ -362,8 +362,10 @@ export default function HomePage() {
               </button>
             </div>
             {rankingLoading ? (
-            <div className="p-8 text-center text-gray-400">
-              <p>{t('common.loading')}</p>
+            <div className="p-8 text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/jaileon-green.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
+              <p className="text-gray-400">{t('common.loading')}</p>
             </div>
           ) : ranking.length === 0 ? (
             <div className="p-8 text-center text-gray-400">

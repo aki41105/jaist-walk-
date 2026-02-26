@@ -113,13 +113,12 @@ export default function AdminStatsPage() {
         )}
 
         {loading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-lg p-4 animate-pulse">
-                <div className="h-5 bg-gray-200 rounded w-32 mb-4" />
-                <div className="h-40 bg-gray-200 rounded" />
-              </div>
-            ))}
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+              <p className="text-gray-500">読み込み中...</p>
+            </div>
           </div>
         ) : data ? (
           <div className="space-y-4">

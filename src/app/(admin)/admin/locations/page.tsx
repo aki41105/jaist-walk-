@@ -222,12 +222,13 @@ export default function AdminLocationsPage() {
         {/* Locations List */}
         <div className="space-y-3">
           {loading ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl shadow p-4 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-32 mb-2" />
-                <div className="h-3 bg-gray-200 rounded w-20" />
+            <div className="flex items-center justify-center py-16">
+              <div className="text-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+                <p className="text-gray-500">読み込み中...</p>
               </div>
-            ))
+            </div>
           ) : locations.length > 0 ? (
             locations.map(loc => (
               <div key={loc.id} className="bg-white rounded-2xl shadow p-4">

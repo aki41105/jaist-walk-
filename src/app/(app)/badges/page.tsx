@@ -42,7 +42,11 @@ export default function BadgesPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">{t('common.loading')}</p>
+        <div className="text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <p className="text-gray-500">{t('common.loading')}</p>
+        </div>
       </div>
     );
   }
