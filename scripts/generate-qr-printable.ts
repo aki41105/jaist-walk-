@@ -3,16 +3,15 @@
  *
  * Usage: npx tsx scripts/generate-qr-printable.ts
  *
- * Fetches QR locations from Supabase and generates a printable A4 HTML file
+ * Fetches QR locations from PostgreSQL and generates a printable A4 HTML file
  * with QR codes for all campus locations.
  *
  * Requires .env.local with:
- *   NEXT_PUBLIC_SUPABASE_URL
- *   SUPABASE_SERVICE_ROLE_KEY
+ *   DATABASE_URL
  *   NEXT_PUBLIC_APP_URL (optional, defaults to https://jaist-walk.vercel.app)
  */
 
-import { createClient } from '@supabase/supabase-js';
+import postgres from 'postgres';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 
@@ -35,17 +34,16 @@ try {
   console.warn('[warn] .env.local not found, using environment variables');
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const databaseUrl = process.env.DATABASE_URL;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://jaist-walk.vercel.app';
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.');
-  console.error('Set them in .env.local or as environment variables.');
+if (!databaseUrl) {
+  console.error('Error: DATABASE_URL must be set.');
+  console.error('Set it in .env.local or as an environment variable.');
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const sql = postgres(databaseUrl);
 
 interface QrLocation {
   id: string;
@@ -260,22 +258,16 @@ ${locationCards}
 }
 
 async function main() {
-  console.log('Fetching QR locations from Supabase...');
+  console.log('Fetching QR locations from database...');
 
-  const { data: locations, error } = await supabase
-    .from('qr_locations')
-    .select('*')
-    .eq('is_active', true)
-    .order('location_number', { ascending: true });
+  const locations = await sql`
+    SELECT * FROM qr_locations
+    WHERE is_active = true
+    ORDER BY location_number ASC
+  `;
 
-  if (error) {
-    console.error('Error fetching locations:', error.message);
-    process.exit(1);
-  }
-
-  if (!locations || locations.length === 0) {
+  if (locations.length === 0) {
     console.error('No QR locations found in database.');
-    console.error('Run generate-qr-locations.ts first and insert the SQL into Supabase.');
     process.exit(1);
   }
 
@@ -284,13 +276,15 @@ async function main() {
     console.log(`  #${loc.location_number} ${loc.name_ja} (${loc.name_en})`);
   }
 
-  const html = generateHtml(locations as QrLocation[]);
+  const html = generateHtml(locations as unknown as QrLocation[]);
   const outputPath = resolve(__dirname, '..', 'qr-codes.html');
   writeFileSync(outputPath, html, 'utf-8');
 
   console.log('');
   console.log(`QR codes HTML generated: ${outputPath}`);
   console.log('Open in a browser and press Ctrl+P to print.');
+
+  await sql.end();
 }
 
 main().catch((err) => {
