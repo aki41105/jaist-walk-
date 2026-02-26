@@ -201,3 +201,17 @@ body {
 .animate-escape-poof {
   animation: escape-poof 0.8s ease-in forwards;
 }
+
+/* QR scan line animation */
+@keyframes scan {
+  0%, 100% {
+    top: 0;
+  }
+  50% {
+    top: calc(100% - 2px);
+  }
+}
+
+.animate-scan {
+  animation: scan 2s ease-in-out infinite;
+}

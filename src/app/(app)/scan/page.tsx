@@ -1,9 +1,15 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import jsQR from 'jsqr';
 import { useLocale } from '@/lib/i18n';
+
+const Scanner = dynamic(
+  () => import('@yudiel/react-qr-scanner').then((mod) => mod.Scanner),
+  { ssr: false },
+);
 
 /** Play a short pop sound using Web Audio API */
 function playPopSound() {
@@ -38,7 +44,6 @@ function extractQrUuid(raw: string): string | null {
   } catch {
     // not a URL – treat the raw value as a UUID directly
   }
-  // bare UUID pattern
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw)) {
     return raw;
   }
@@ -70,7 +75,46 @@ export default function ScanPage() {
   const [error, setError] = useState<string | null>(null);
   const [scanned, setScanned] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [cameraAvailable, setCameraAvailable] = useState<boolean | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check if live camera is available (requires HTTPS)
+  useEffect(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraAvailable(false);
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then((stream) => {
+        stream.getTracks().forEach((track) => track.stop());
+        setCameraAvailable(true);
+      })
+      .catch(() => {
+        setCameraAvailable(false);
+      });
+  }, []);
+
+  const handleFound = useCallback(
+    (raw: string) => {
+      if (scanned) return;
+      const uuid = extractQrUuid(raw);
+      if (uuid) {
+        setScanned(true);
+        playPopSound();
+        if (navigator.vibrate) navigator.vibrate(100);
+        router.push(`/capture?qr=${encodeURIComponent(uuid)}`);
+      }
+    },
+    [scanned, router],
+  );
+
+  const handleScan = useCallback(
+    (results: { rawValue: string }[]) => {
+      if (results.length === 0) return;
+      handleFound(results[0].rawValue);
+    },
+    [handleFound],
+  );
 
   const handleCapture = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,31 +131,36 @@ export default function ScanPage() {
           setProcessing(false);
           return;
         }
-
-        const uuid = extractQrUuid(data);
-        if (!uuid) {
+        handleFound(data);
+        if (!extractQrUuid(data)) {
           setError('有効なQRコードではありません。JAIST Walkのスポットを撮影してください。');
           setProcessing(false);
-          return;
         }
-
-        setScanned(true);
-        playPopSound();
-        if (navigator.vibrate) navigator.vibrate(100);
-        router.push(`/capture?qr=${encodeURIComponent(uuid)}`);
       } catch {
         setError('画像の処理に失敗しました。');
         setProcessing(false);
       }
 
-      // Reset input so the same file can be selected again
       if (fileInputRef.current) fileInputRef.current.value = '';
     },
-    [scanned, router],
+    [scanned, handleFound],
   );
 
+  // Loading state while checking camera
+  if (cameraAvailable === null) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/jaist-walk/images/jaileon-green.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <p className="text-white/80 text-sm">カメラを確認中...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex flex-col">
+    <div className={`min-h-screen flex flex-col ${cameraAvailable ? 'bg-black' : 'bg-gradient-to-b from-green-50 to-green-100'}`}>
       {/* Header */}
       <div className="bg-green-600 text-white px-4 py-4 flex items-center gap-3 z-10">
         <button
@@ -123,16 +172,47 @@ export default function ScanPage() {
         <h1 className="text-lg font-bold">{t('scan.title')}</h1>
       </div>
 
-      {/* Main area */}
-      <div className="flex-1 flex items-center justify-center px-6">
+      <div className="flex-1 relative flex items-center justify-center">
         {scanned ? (
-          <div className="text-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/jaist-walk/images/jaileon-green.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
-            <p className="text-green-700 font-medium animate-pulse">ジャイレオンを探しています...</p>
+          <div className={`text-center ${cameraAvailable ? 'absolute inset-0 bg-gradient-to-b from-green-100 to-green-50 flex items-center justify-center' : ''}`}>
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/jaist-walk/images/jaileon-green.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+              <p className="text-green-700 font-medium animate-pulse">ジャイレオンを探しています...</p>
+            </div>
+          </div>
+        ) : cameraAvailable ? (
+          /* Live scanner with frame overlay */
+          <div className="w-full h-full">
+            <Scanner
+              onScan={handleScan}
+              onError={() => setCameraAvailable(false)}
+              sound={false}
+              styles={{
+                container: { width: '100%', height: '100%' },
+                video: { objectFit: 'cover' as const },
+              }}
+              components={{ finder: false }}
+            />
+            {/* Scan frame overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-64 h-64 relative">
+                {/* Corner brackets */}
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-400 rounded-tl-lg" />
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-400 rounded-tr-lg" />
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-400 rounded-bl-lg" />
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-400 rounded-br-lg" />
+                {/* Scan line animation */}
+                <div className="absolute left-2 right-2 h-0.5 bg-green-400/80 animate-scan" />
+              </div>
+            </div>
+            <p className="absolute bottom-8 left-0 right-0 text-center text-white/80 text-sm">
+              {t('scan.guide')}
+            </p>
           </div>
         ) : (
-          <div className="text-center w-full max-w-sm">
+          /* Fallback: file capture */
+          <div className="text-center w-full max-w-sm px-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/jaist-walk/images/jaileon-green.png" alt="" width={80} height={80} className="mx-auto mb-6" />
 
@@ -140,7 +220,6 @@ export default function ScanPage() {
               QRコードを撮影してジャイレオンを捕まえよう！
             </p>
 
-            {/* Hidden file input */}
             <input
               ref={fileInputRef}
               type="file"
@@ -150,7 +229,6 @@ export default function ScanPage() {
               className="hidden"
             />
 
-            {/* Camera button */}
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={processing}
