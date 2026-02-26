@@ -280,12 +280,18 @@ export default function HomePage() {
               <div className="divide-y divide-gray-50">
                 {profile.recent_scans.map((scan: Scan & { location_name: string }) => (
                   <div key={scan.id} className="p-4 flex items-center gap-3">
-                    <div className="text-2xl">
-                      {scan.outcome === 'rainbow_jaileon' ? '🌈' :
-                       scan.outcome === 'blue_jaileon' ? '💙' :
-                       scan.outcome === 'yellow_jaileon' ? '💛' :
-                       scan.outcome === 'jaileon' ? '🦎' : '🐦'}
-                    </div>
+                    <Image
+                      src={
+                        scan.outcome === 'rainbow_jaileon' ? '/images/jaileon-logo.png' :
+                        scan.outcome === 'blue_jaileon' ? '/images/jaileon-blue.png' :
+                        scan.outcome === 'yellow_jaileon' ? '/images/jaileon-yellow.png' :
+                        scan.outcome === 'jaileon' ? '/images/jaileon-green.png' : '/images/bird-yellow.png'
+                      }
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 object-contain shrink-0"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-sm">{scan.location_name}</p>
                       <p className="text-xs text-gray-400">
