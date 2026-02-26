@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jaist-walk-v1';
+const CACHE_NAME = 'jaist-walk-v2';
 const STATIC_ASSETS = [
   '/jaist-walk/',
   '/jaist-walk/home',
