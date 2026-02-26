@@ -34,7 +34,7 @@ export default function BadgesPage() {
         if (res.status === 401) { router.push('/login'); return null; }
         return res.json();
       })
-      .then(d => { if (d) setData(d); })
+      .then(d => { if (d && d.badges) setData(d); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [router]);

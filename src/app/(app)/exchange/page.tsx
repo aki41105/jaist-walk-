@@ -50,8 +50,8 @@ export default function ExchangePage() {
         profileRes.json(),
       ]);
 
-      setRewards(rewardsData);
-      setExchanges(exchangesData);
+      if (Array.isArray(rewardsData)) setRewards(rewardsData);
+      if (Array.isArray(exchangesData)) setExchanges(exchangesData);
       setUserPoints(profileData.points || 0);
     } catch {
       // ignore
