@@ -213,6 +213,27 @@ export default function HomePage() {
       {/* Quick links */}
       <div className="px-4 mt-4 grid grid-cols-2 gap-3">
         <button
+          onClick={() => router.push('/locations')}
+          className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
+        >
+          <span>{'\uD83D\uDDFA\uFE0F'}</span>
+          {t('home.map')}
+        </button>
+        <button
+          onClick={() => router.push('/badges')}
+          className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
+        >
+          <span>{'\uD83C\uDFC5'}</span>
+          {t('home.badges')}
+        </button>
+        <button
+          onClick={() => router.push('/exchange')}
+          className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
+        >
+          <span>{'\uD83C\uDF81'}</span>
+          {t('home.exchange')}
+        </button>
+        <button
           onClick={() => router.push('/info')}
           className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
         >
@@ -288,7 +309,7 @@ export default function HomePage() {
                   <div key={scan.id} className="p-4 flex items-center gap-3">
                     <Image
                       src={
-                        scan.outcome === 'golden_jaileon' ? '/images/jaileon-green.png' :
+                        scan.outcome === 'golden_jaileon' ? '/images/jaileon-golden.png' :
                         scan.outcome === 'rainbow_jaileon' ? '/images/jaileon-logo.png' :
                         scan.outcome === 'blue_jaileon' ? '/images/jaileon-blue.png' :
                         scan.outcome === 'yellow_jaileon' ? '/images/jaileon-yellow.png' :

@@ -91,6 +91,9 @@
     "streak": "連続ログイン",
     "streakDays": "日",
     "streakBonus": "連続ボーナス",
+    "map": "マップ",
+    "badges": "バッジ",
+    "exchange": "交換所",
     "deleteAccount": "アカウントを削除",
     "deleteConfirm1": "本当にアカウントを削除しますか？\nすべてのデータが完全に削除され、元に戻せません。",
     "deleteConfirm2": "最終確認：本当に削除してよろしいですか？",
@@ -215,6 +218,52 @@
       "history": "ポイント履歴",
       "noHistory": "履歴はありません",
       "adminNote": "管理者"
+    }
+  },
+  "locations": {
+    "title": "ロケーション制覇マップ",
+    "subtitle": "全てのロケーションを制覇しよう！",
+    "completed": "制覇",
+    "firstVisit": "初訪問"
+  },
+  "badges": {
+    "title": "バッジ・実績",
+    "earned": "獲得",
+    "newBadge": "バッジ獲得！",
+    "shareTitle": "JAIST Walk バッジ",
+    "names": {
+      "first_capture": "初捕獲",
+      "captures_10": "10匹捕獲",
+      "captures_50": "50匹捕獲",
+      "rainbow_catch": "虹色ゲット",
+      "golden_catch": "金色ゲット",
+      "all_locations": "全ロケーション制覇",
+      "streak_3": "3日連続",
+      "streak_7": "7日連続",
+      "streak_14": "14日連続",
+      "streak_30": "30日連続",
+      "points_1000": "1000pt達成",
+      "points_5000": "5000pt達成"
+    }
+  },
+  "share": {
+    "button": "シェア",
+    "copied": "コピーしました！"
+  },
+  "exchange": {
+    "title": "ポイント交換",
+    "currentPoints": "現在のポイント",
+    "exchangeButton": "交換する",
+    "stock": "残り",
+    "noRewards": "現在交換できる景品はありません",
+    "confirmExchange": "{name}を{points}ptで交換しますか？",
+    "success": "交換成功！",
+    "showToStaff": "スタッフに見せてください",
+    "history": "交換履歴",
+    "status": {
+      "pending": "未使用",
+      "used": "使用済み",
+      "cancelled": "キャンセル"
     }
   },
   "errors": {

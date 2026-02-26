@@ -91,6 +91,9 @@
     "streak": "Login Streak",
     "streakDays": " days",
     "streakBonus": "Streak Bonus",
+    "map": "Map",
+    "badges": "Badges",
+    "exchange": "Exchange",
     "deleteAccount": "Delete Account",
     "deleteConfirm1": "Are you sure you want to delete your account?\nAll data will be permanently deleted and cannot be undone.",
     "deleteConfirm2": "Final confirmation: Are you sure you want to delete?",
@@ -215,6 +218,52 @@
       "history": "Point History",
       "noHistory": "No history",
       "adminNote": "Admin"
+    }
+  },
+  "locations": {
+    "title": "Location Map",
+    "subtitle": "Visit all locations!",
+    "completed": "visited",
+    "firstVisit": "First visit"
+  },
+  "badges": {
+    "title": "Badges & Achievements",
+    "earned": "earned",
+    "newBadge": "Badge Earned!",
+    "shareTitle": "JAIST Walk Badge",
+    "names": {
+      "first_capture": "First Capture",
+      "captures_10": "10 Captures",
+      "captures_50": "50 Captures",
+      "rainbow_catch": "Rainbow Catch",
+      "golden_catch": "Golden Catch",
+      "all_locations": "All Locations",
+      "streak_3": "3-Day Streak",
+      "streak_7": "7-Day Streak",
+      "streak_14": "14-Day Streak",
+      "streak_30": "30-Day Streak",
+      "points_1000": "1000 Points",
+      "points_5000": "5000 Points"
+    }
+  },
+  "share": {
+    "button": "Share",
+    "copied": "Copied!"
+  },
+  "exchange": {
+    "title": "Point Exchange",
+    "currentPoints": "Current Points",
+    "exchangeButton": "Exchange",
+    "stock": "Stock",
+    "noRewards": "No rewards available",
+    "confirmExchange": "Exchange {name} for {points}pt?",
+    "success": "Exchange Successful!",
+    "showToStaff": "Show this to the staff",
+    "history": "Exchange History",
+    "status": {
+      "pending": "Unused",
+      "used": "Used",
+      "cancelled": "Cancelled"
     }
   },
   "errors": {

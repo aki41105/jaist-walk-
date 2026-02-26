@@ -59,3 +59,30 @@ export const updateLocationSchema = z.object({
 export const scanStatsSchema = z.object({
   days: z.coerce.number().int().min(1).max(90).optional().default(7),
 });
+
+// Exchange: request
+export const exchangeSchema = z.object({
+  reward_id: z.string().uuid('無効な景品IDです'),
+});
+
+// Admin: create reward
+export const createRewardSchema = z.object({
+  name_ja: z.string().min(1, '日本語名を入力してください').max(100),
+  name_en: z.string().min(1, '英語名を入力してください').max(100),
+  description_ja: z.string().max(500).optional().default(''),
+  description_en: z.string().max(500).optional().default(''),
+  required_points: z.number().int().min(1, '必要ポイントは1以上にしてください'),
+  stock: z.number().int().min(0, '在庫は0以上にしてください'),
+});
+
+// Admin: update reward
+export const updateRewardSchema = z.object({
+  id: z.string().uuid('無効な景品IDです'),
+  name_ja: z.string().min(1).max(100).optional(),
+  name_en: z.string().min(1).max(100).optional(),
+  description_ja: z.string().max(500).optional(),
+  description_en: z.string().max(500).optional(),
+  required_points: z.number().int().min(1).optional(),
+  stock: z.number().int().min(0).optional(),
+  is_active: z.boolean().optional(),
+});

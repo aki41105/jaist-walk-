@@ -6,6 +6,7 @@ import type { CaptureState, CaptureOutcome, CaptureResponse } from '@/types';
 import { Confetti } from './Confetti';
 import { NetAnimation } from './NetAnimation';
 import { useLocale } from '@/lib/i18n';
+import { ShareButton } from '@/components/ui/ShareButton';
 
 interface CaptureGameProps {
   qrCode: string;
@@ -13,7 +14,7 @@ interface CaptureGameProps {
 }
 
 export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [state, setState] = useState<CaptureState>('LOADING');
   const [outcome, setOutcome] = useState<CaptureOutcome | null>(null);
   const [captured, setCaptured] = useState<boolean>(true);
@@ -186,6 +187,8 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
                     ? '/images/jaileon-blue.png'
                     : outcome === 'yellow_jaileon'
                     ? '/images/jaileon-yellow.png'
+                    : outcome === 'golden_jaileon'
+                    ? '/images/jaileon-golden.png'
                     : '/images/jaileon-green.png'
                 }
                 alt={charName}
@@ -326,12 +329,31 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
               )}
             </div>
 
-            <button
-              onClick={onComplete}
-              className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors"
-            >
-              {t('capture.goHome')}
-            </button>
+            {/* Badge toast */}
+            {result.new_badges && result.new_badges.length > 0 && (
+              <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-3 mb-4">
+                <p className="text-yellow-700 font-bold text-sm mb-1">{t('badges.newBadge')}</p>
+                {result.new_badges.map((badgeId: string) => (
+                  <p key={badgeId} className="text-yellow-600 text-sm">
+                    {t(`badges.names.${badgeId}`)}
+                  </p>
+                ))}
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <button
+                onClick={onComplete}
+                className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors"
+              >
+                {t('capture.goHome')}
+              </button>
+              <ShareButton
+                title="JAIST Walk"
+                text={`JAIST Walk${locale === 'ja' ? 'で' : ': caught '}${charName}${locale === 'ja' ? 'を捕まえた！' : '!'} +${result.points_earned}pt #JAISTWalk`}
+                className="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium"
+              />
+            </div>
           </div>
         )}
       </div>

@@ -114,6 +114,52 @@ export interface CaptureResponse {
   location_name: string;
   streak?: number;
   streak_bonus?: number;
+  new_badges?: string[];
+}
+
+// Badge types
+export interface Badge {
+  id: string;
+  name_ja: string;
+  name_en: string;
+  description_ja: string;
+  description_en: string;
+  icon: string;
+  sort_order: number;
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+}
+
+// Exchange types
+export type ExchangeStatus = 'pending' | 'used' | 'cancelled';
+
+export interface Reward {
+  id: string;
+  name_ja: string;
+  name_en: string;
+  description_ja: string;
+  description_en: string;
+  required_points: number;
+  stock: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface Exchange {
+  id: string;
+  user_id: string;
+  reward_id: string;
+  points_spent: number;
+  status: ExchangeStatus;
+  exchange_code: string;
+  used_at: string | null;
+  admin_id: string | null;
+  created_at: string;
 }
 
 export interface PointOperationRequest {
