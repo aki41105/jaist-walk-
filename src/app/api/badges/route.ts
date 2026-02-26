@@ -49,6 +49,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     console.error('Badges error:', err);
-    return NextResponse.json({ error: 'サーバーエラーが発生しました' }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: 'サーバーエラーが発生しました', debug: msg }, { status: 500 });
   }
 }
