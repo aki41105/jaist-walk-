@@ -53,7 +53,7 @@ export default function InfoPage() {
               <Image src="/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
                 <p className="font-bold text-green-700">{t('capture.characters.jaileon')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 30% ｜ {t('info.catchRate')} 50%</p>
+                <p className="text-xs text-gray-500">{t('info.spawnRate')} 45% ｜ {t('info.catchRate')} 50%</p>
               </div>
               <p className="font-bold text-green-600">100pt</p>
             </div>
@@ -85,7 +85,7 @@ export default function InfoPage() {
               <Image src="/images/bird-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
               <div className="flex-1">
                 <p className="font-bold text-orange-700">{t('capture.characters.bird')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 35% ｜ {t('info.catchRate')} 100%</p>
+                <p className="text-xs text-gray-500">{t('info.spawnRate')} 20% ｜ {t('info.catchRate')} 100%</p>
               </div>
               <p className="font-bold text-orange-600">10pt</p>
             </div>
