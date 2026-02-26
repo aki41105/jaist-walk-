@@ -108,9 +108,9 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-100 to-green-50">
         <div className="text-center">
-          <div className="text-5xl animate-bounce mb-4">🔍</div>
+          <Image src="/images/jaileon-logo.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" priority />
           <p className="text-green-700 font-medium animate-pulse">
-            {t('capture.searching')}
+            ジャイレオンを探しています...
           </p>
         </div>
       </div>

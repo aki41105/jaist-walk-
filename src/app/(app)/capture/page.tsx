@@ -39,8 +39,8 @@ export default function CapturePage() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-100 to-green-50">
           <div className="text-center">
-            <div className="text-5xl animate-bounce mb-4">🔍</div>
-            <p className="text-green-700 font-medium animate-pulse">さがしています...</p>
+            <img src="/images/jaileon-logo.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+            <p className="text-green-700 font-medium animate-pulse">ジャイレオンを探しています...</p>
           </div>
         </div>
       }
