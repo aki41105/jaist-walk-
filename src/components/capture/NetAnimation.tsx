@@ -4,65 +4,36 @@ export function NetAnimation() {
   return (
     <div className="absolute inset-0 flex items-center justify-center animate-net-catch">
       <svg
-        width="200"
-        height="220"
-        viewBox="0 0 200 220"
+        width="220"
+        height="280"
+        viewBox="0 0 220 280"
         fill="none"
         className="opacity-80"
       >
-        {/* Net handle - coming from top right, angled */}
-        <line
-          x1="100"
-          y1="10"
-          x2="100"
-          y2="100"
-          stroke="#8B4513"
-          strokeWidth="7"
-          strokeLinecap="round"
-        />
-        {/* Handle grip lines */}
-        <line x1="94" y1="20" x2="106" y2="20" stroke="#6B3410" strokeWidth="2" />
-        <line x1="94" y1="30" x2="106" y2="30" stroke="#6B3410" strokeWidth="2" />
-
-        {/* Net rim */}
-        <ellipse
-          cx="100"
-          cy="130"
-          rx="75"
-          ry="35"
-          stroke="#8B4513"
-          strokeWidth="4"
-          fill="none"
-        />
-        {/* Rim to handle connector */}
-        <line x1="100" y1="100" x2="100" y2="95" stroke="#8B4513" strokeWidth="5" strokeLinecap="round" />
-        <line x1="100" y1="95" x2="25" y2="130" stroke="#8B4513" strokeWidth="3" />
-        <line x1="100" y1="95" x2="175" y2="130" stroke="#8B4513" strokeWidth="3" />
-
-        {/* Net mesh - vertical lines hanging down */}
+        {/* Net mesh bag - billowing upward from rim */}
         <path
-          d="M25,130 Q40,175 60,200 Q80,215 100,220 Q120,215 140,200 Q160,175 175,130"
+          d="M25,120 Q35,70 60,40 Q80,20 110,15 Q140,20 160,40 Q185,70 195,120"
           stroke="#d4a373"
           strokeWidth="2"
           fill="none"
           strokeDasharray="8,4"
         />
         <path
-          d="M40,130 Q52,168 70,190 Q85,205 100,210 Q115,205 130,190 Q148,168 160,130"
+          d="M42,120 Q50,78 72,52 Q88,35 110,30 Q132,35 148,52 Q170,78 178,120"
           stroke="#d4a373"
           strokeWidth="2"
           fill="none"
           strokeDasharray="8,4"
         />
         <path
-          d="M60,130 Q70,160 85,180 Q92,190 100,195 Q108,190 115,180 Q130,160 140,130"
+          d="M62,120 Q70,88 86,68 Q96,55 110,50 Q124,55 134,68 Q150,88 158,120"
           stroke="#d4a373"
           strokeWidth="2"
           fill="none"
           strokeDasharray="8,4"
         />
         <path
-          d="M80,130 Q88,155 95,170 Q98,178 100,180 Q102,178 105,170 Q112,155 120,130"
+          d="M85,120 Q90,95 100,80 Q105,72 110,68 Q115,72 120,80 Q130,95 135,120"
           stroke="#d4a373"
           strokeWidth="1.5"
           fill="none"
@@ -71,26 +42,57 @@ export function NetAnimation() {
 
         {/* Horizontal mesh lines */}
         <path
-          d="M35,150 Q100,170 165,150"
+          d="M35,90 Q110,65 185,90"
           stroke="#d4a373"
           strokeWidth="1.5"
           fill="none"
           strokeDasharray="6,3"
         />
         <path
-          d="M50,170 Q100,192 150,170"
+          d="M48,65 Q110,40 172,65"
           stroke="#d4a373"
           strokeWidth="1.5"
           fill="none"
           strokeDasharray="6,3"
         />
         <path
-          d="M65,190 Q100,208 135,190"
+          d="M68,42 Q110,22 152,42"
           stroke="#d4a373"
           strokeWidth="1.5"
           fill="none"
           strokeDasharray="6,3"
         />
+
+        {/* Net rim - the opening */}
+        <ellipse
+          cx="110"
+          cy="120"
+          rx="85"
+          ry="32"
+          stroke="#8B4513"
+          strokeWidth="4.5"
+          fill="none"
+        />
+
+        {/* Rim to handle connectors */}
+        <line x1="110" y1="152" x2="110" y2="165" stroke="#8B4513" strokeWidth="4" />
+        <line x1="25" y1="120" x2="100" y2="160" stroke="#8B4513" strokeWidth="2.5" opacity="0.5" />
+        <line x1="195" y1="120" x2="120" y2="160" stroke="#8B4513" strokeWidth="2.5" opacity="0.5" />
+
+        {/* Net handle - extending down toward user */}
+        <line
+          x1="110"
+          y1="165"
+          x2="110"
+          y2="275"
+          stroke="#8B4513"
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
+        {/* Handle grip */}
+        <line x1="103" y1="250" x2="117" y2="250" stroke="#6B3410" strokeWidth="2.5" />
+        <line x1="103" y1="260" x2="117" y2="260" stroke="#6B3410" strokeWidth="2.5" />
+        <rect x="100" y="245" width="20" height="25" rx="3" fill="none" stroke="#6B3410" strokeWidth="1.5" />
       </svg>
     </div>
   );
