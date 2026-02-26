@@ -29,7 +29,7 @@ export default function BadgesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/badges')
+    fetch('/jaist-walk/api/badges')
       .then(res => {
         if (res.status === 401) { router.push('/login'); return null; }
         return res.json();

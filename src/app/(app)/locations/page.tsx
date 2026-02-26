@@ -26,7 +26,7 @@ export default function LocationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/locations/progress')
+    fetch('/jaist-walk/api/locations/progress')
       .then(res => {
         if (res.status === 401) { router.push('/login'); return null; }
         return res.json();

@@ -16,7 +16,7 @@ export default function AdminPage() {
   const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/stats')
+    fetch('/jaist-walk/api/admin/stats')
       .then(res => res.json())
       .then(data => {
         if (data.total_users !== undefined) setStats(data);

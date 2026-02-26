@@ -18,7 +18,7 @@ export default function RecoverPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/recover', {
+      const res = await fetch('/jaist-walk/api/auth/recover', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

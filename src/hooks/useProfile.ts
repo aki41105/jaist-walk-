@@ -13,7 +13,7 @@ export function useProfile() {
   const fetchProfile = useCallback(async () => {
     try {
       setError(null);
-      const res = await fetch('/api/auth/me');
+      const res = await fetch('/jaist-walk/api/auth/me');
 
       if (res.status === 401) {
         router.push('/login');

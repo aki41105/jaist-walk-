@@ -63,7 +63,7 @@ export default function ProfilePage() {
 
   const fetchProfile = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
+      const res = await fetch('/jaist-walk/api/auth/me');
       if (res.status === 401) {
         router.push('/login');
         return;
@@ -97,7 +97,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append('file', resized, 'avatar.jpg');
 
-      const res = await fetch('/api/auth/avatar', {
+      const res = await fetch('/jaist-walk/api/auth/avatar', {
         method: 'POST',
         body: formData,
       });
@@ -128,7 +128,7 @@ export default function ProfilePage() {
     setSaving(true);
 
     try {
-      const res = await fetch('/api/auth/profile', {
+      const res = await fetch('/jaist-walk/api/auth/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name.trim(), avatar, avatar_url: null }),
@@ -163,7 +163,7 @@ export default function ProfilePage() {
     setSaving(true);
 
     try {
-      const res = await fetch('/api/auth/profile', {
+      const res = await fetch('/jaist-walk/api/auth/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

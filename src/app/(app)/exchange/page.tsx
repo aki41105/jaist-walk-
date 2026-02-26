@@ -37,9 +37,9 @@ export default function ExchangePage() {
   const fetchData = useCallback(async () => {
     try {
       const [rewardsRes, exchangesRes, profileRes] = await Promise.all([
-        fetch('/api/rewards'),
-        fetch('/api/exchange'),
-        fetch('/api/auth/me'),
+        fetch('/jaist-walk/api/rewards'),
+        fetch('/jaist-walk/api/exchange'),
+        fetch('/jaist-walk/api/auth/me'),
       ]);
 
       if (profileRes.status === 401) { router.push('/login'); return; }
@@ -74,7 +74,7 @@ export default function ExchangePage() {
     setSuccessCode(null);
 
     try {
-      const res = await fetch('/api/exchange', {
+      const res = await fetch('/jaist-walk/api/exchange', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reward_id: rewardId }),

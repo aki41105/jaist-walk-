@@ -1,13 +1,13 @@
 const CACHE_NAME = 'jaist-walk-v1';
 const STATIC_ASSETS = [
-  '/',
-  '/home',
-  '/login',
-  '/images/jaileon-green.png',
-  '/images/jaileon-blue.png',
-  '/images/jaileon-yellow.png',
-  '/images/bird-yellow.png',
-  '/manifest.json',
+  '/jaist-walk/',
+  '/jaist-walk/home',
+  '/jaist-walk/login',
+  '/jaist-walk/images/jaileon-green.png',
+  '/jaist-walk/images/jaileon-blue.png',
+  '/jaist-walk/images/jaileon-yellow.png',
+  '/jaist-walk/images/bird-yellow.png',
+  '/jaist-walk/manifest.json',
 ];
 
 // Install - cache static assets
@@ -59,7 +59,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Fallback to cache
         return caches.match(request).then((cached) => {
-          return cached || caches.match('/home');
+          return cached || caches.match('/jaist-walk/home');
         });
       })
   );

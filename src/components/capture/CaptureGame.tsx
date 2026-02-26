@@ -37,7 +37,7 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
 
   const startCapture = useCallback(async () => {
     try {
-      const res = await fetch('/api/capture', {
+      const res = await fetch('/jaist-walk/api/capture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ qr_code: qrCode }),

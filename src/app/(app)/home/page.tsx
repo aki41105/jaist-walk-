@@ -37,7 +37,7 @@ export default function HomePage() {
 
   const fetchProfile = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
+      const res = await fetch('/jaist-walk/api/auth/me');
       if (res.status === 401) {
         router.push('/login');
         return;
@@ -86,7 +86,7 @@ export default function HomePage() {
   }, [activeTab, rankingMode, fetchRanking]);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    await fetch('/jaist-walk/api/auth/logout', { method: 'POST' });
     router.push('/login');
   };
 
@@ -95,7 +95,7 @@ export default function HomePage() {
     if (!confirm(t('home.deleteConfirm2'))) return;
 
     try {
-      const res = await fetch('/api/auth/delete', { method: 'POST' });
+      const res = await fetch('/jaist-walk/api/auth/delete', { method: 'POST' });
       if (res.ok) {
         localStorage.removeItem('jw_profile_cache');
         localStorage.removeItem('jw_profile_updated');
@@ -256,7 +256,7 @@ export default function HomePage() {
           <div className="bg-white rounded-b-2xl shadow px-4 pb-4 flex justify-center">
             <div className="bg-gray-100 rounded-xl p-4 text-center">
               <QRCode
-                data={`${typeof window !== 'undefined' ? window.location.origin : ''}/admin/points?user=${encodeURIComponent(profile.name)}`}
+                data={`${typeof window !== 'undefined' ? window.location.origin : ''}/jaist-walk/admin/points?user=${encodeURIComponent(profile.name)}`}
                 size={200}
               />
               <p className="text-xs text-gray-500 mt-3">{t('home.qrHint')}</p>

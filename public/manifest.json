@@ -2,19 +2,19 @@
   "name": "JAIST Walk",
   "short_name": "JAIST Walk",
   "description": "JAISTキャンパスお散歩アプリ - ジャイレオンを捕まえよう！",
-  "start_url": "/home",
+  "start_url": "/jaist-walk/home",
   "display": "standalone",
   "background_color": "#f0fdf4",
   "theme_color": "#16a34a",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/images/jaileon-green.png",
+      "src": "/jaist-walk/images/jaileon-green.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/images/jaileon-green.png",
+      "src": "/jaist-walk/images/jaileon-green.png",
       "sizes": "512x512",
       "type": "image/png"
     }

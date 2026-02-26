@@ -54,7 +54,7 @@ export default function AdminStatsPage() {
     setError('');
 
     try {
-      const res = await fetch(`/api/admin/scans?days=${days}`);
+      const res = await fetch(`/jaist-walk/api/admin/scans?days=${days}`);
       if (res.status === 401) { router.push('/login'); return; }
       if (res.status === 403) { setError('アクセス権限がありません'); return; }
       const json = await res.json();

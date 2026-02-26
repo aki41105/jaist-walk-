@@ -28,7 +28,7 @@ export default function AdminRewardsPage() {
 
   const fetchRewards = async () => {
     try {
-      const res = await fetch('/api/admin/rewards');
+      const res = await fetch('/jaist-walk/api/admin/rewards');
       if (res.status === 401) { router.push('/login'); return; }
       const data = await res.json();
       setRewards(data);
@@ -41,7 +41,7 @@ export default function AdminRewardsPage() {
   const handleCreate = async () => {
     setSubmitting(true);
     try {
-      const res = await fetch('/api/admin/rewards', {
+      const res = await fetch('/jaist-walk/api/admin/rewards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -59,7 +59,7 @@ export default function AdminRewardsPage() {
   };
 
   const handleToggle = async (id: string, isActive: boolean) => {
-    await fetch('/api/admin/rewards', {
+    await fetch('/jaist-walk/api/admin/rewards', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, is_active: !isActive }),
@@ -73,7 +73,7 @@ export default function AdminRewardsPage() {
     const stock = parseInt(input);
     if (isNaN(stock) || stock < 0) { alert('有効な数値を入力してください'); return; }
 
-    await fetch('/api/admin/rewards', {
+    await fetch('/jaist-walk/api/admin/rewards', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, stock }),

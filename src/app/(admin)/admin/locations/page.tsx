@@ -29,7 +29,7 @@ export default function AdminLocationsPage() {
 
   const fetchLocations = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/locations');
+      const res = await fetch('/jaist-walk/api/admin/locations');
       if (res.status === 401) { router.push('/login'); return; }
       if (res.status === 403) { setError('アクセス権限がありません'); return; }
       const json = await res.json();
@@ -48,7 +48,7 @@ export default function AdminLocationsPage() {
 
   const handleToggle = async (id: string, currentActive: boolean) => {
     try {
-      const res = await fetch('/api/admin/locations', {
+      const res = await fetch('/jaist-walk/api/admin/locations', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, is_active: !currentActive }),
@@ -84,7 +84,7 @@ export default function AdminLocationsPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/admin/locations', {
+      const res = await fetch('/jaist-walk/api/admin/locations', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: editingId, name_ja: editNameJa.trim(), name_en: editNameEn.trim() }),
@@ -111,7 +111,7 @@ export default function AdminLocationsPage() {
     setFormError('');
 
     try {
-      const res = await fetch('/api/admin/locations', {
+      const res = await fetch('/jaist-walk/api/admin/locations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -6,7 +6,7 @@ export function useServiceWorker() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
-        .register('/sw.js')
+        .register('/jaist-walk/sw.js')
         .then((registration) => {
           console.log('SW registered:', registration.scope);
         })

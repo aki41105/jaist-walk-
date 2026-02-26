@@ -23,7 +23,7 @@ function PointsContent() {
   const fetchUser = useCallback(async () => {
     if (!userName) return;
     try {
-      const res = await fetch(`/api/users?name=${encodeURIComponent(userName)}`);
+      const res = await fetch(`/jaist-walk/api/users?name=${encodeURIComponent(userName)}`);
       const data = await res.json();
       if (res.status === 401) {
         router.push('/login');
@@ -56,7 +56,7 @@ function PointsContent() {
     setSuccess('');
 
     try {
-      const res = await fetch('/api/points', {
+      const res = await fetch('/jaist-walk/api/points', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

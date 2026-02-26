@@ -23,7 +23,7 @@ export default function AdminExchangesPage() {
 
   const fetchExchanges = async () => {
     try {
-      const res = await fetch('/api/admin/exchanges');
+      const res = await fetch('/jaist-walk/api/admin/exchanges');
       if (res.status === 401) { router.push('/login'); return; }
       const data = await res.json();
       setExchanges(data);
@@ -38,7 +38,7 @@ export default function AdminExchangesPage() {
     if (!confirm(msg)) return;
 
     try {
-      const res = await fetch('/api/admin/exchanges', {
+      const res = await fetch('/jaist-walk/api/admin/exchanges', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, status: newStatus }),
