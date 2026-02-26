@@ -119,7 +119,7 @@
       "rainbow": "!? It's shining in rainbow colors!?",
       "blue": "A blue glowing Jaileon!",
       "yellow": "A yellow Jaileon!",
-      "golden": "A Golden Morning Jaileon! ✨"
+      "golden": "An Early Bird Jaileon! ✨"
     },
     "success": {
       "title": "Capture Success! 🎉"
@@ -140,7 +140,7 @@
       "yellow_jaileon": "Yellow Jaileon",
       "blue_jaileon": "Blue Jaileon",
       "rainbow_jaileon": "Rainbow Jaileon",
-      "golden_jaileon": "Golden Jaileon",
+      "golden_jaileon": "Early Bird Jaileon",
       "bird": "Little Bird"
     },
     "caughtMessage": " was caught!",

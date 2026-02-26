@@ -74,7 +74,7 @@ export default function InfoPage() {
               <p className="font-bold text-blue-600">200pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl">
-              <Image src="/images/jaileon-logo.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
+              <Image src="/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-rainbow-glow" />
               <div className="flex-1">
                 <p className="font-bold text-purple-700">{t('capture.characters.rainbow_jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.spawnRate')} 5% ｜ {t('info.catchRate')} 35%（{t('info.superRare')}）</p>
@@ -82,7 +82,7 @@ export default function InfoPage() {
               <p className="font-bold text-purple-600">500pt</p>
             </div>
             <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
-              <Image src="/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-golden-glow" />
+              <Image src="/images/jaileon-golden.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-golden-glow" />
               <div className="flex-1">
                 <p className="font-bold text-amber-700">{t('capture.characters.golden_jaileon')}</p>
                 <p className="text-xs text-gray-500">{t('info.goldenNote')} ｜ {t('info.catchRate')} 100%</p>

@@ -113,7 +113,8 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Image src="/images/jaileon-logo.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
@@ -220,13 +221,6 @@ export default function HomePage() {
           {t('home.map')}
         </button>
         <button
-          onClick={() => router.push('/badges')}
-          className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
-        >
-          <span>{'\uD83C\uDFC5'}</span>
-          {t('home.badges')}
-        </button>
-        <button
           onClick={() => router.push('/exchange')}
           className="py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium text-sm rounded-2xl shadow transition-colors flex items-center justify-center gap-2"
         >
@@ -310,7 +304,7 @@ export default function HomePage() {
                     <Image
                       src={
                         scan.outcome === 'golden_jaileon' ? '/images/jaileon-golden.png' :
-                        scan.outcome === 'rainbow_jaileon' ? '/images/jaileon-logo.png' :
+                        scan.outcome === 'rainbow_jaileon' ? '/images/jaileon-green.png' :
                         scan.outcome === 'blue_jaileon' ? '/images/jaileon-blue.png' :
                         scan.outcome === 'yellow_jaileon' ? '/images/jaileon-yellow.png' :
                         scan.outcome === 'jaileon' ? '/images/jaileon-green.png' : '/images/bird-yellow.png'
@@ -318,7 +312,10 @@ export default function HomePage() {
                       alt=""
                       width={32}
                       height={32}
-                      className={`w-8 h-8 object-contain shrink-0 ${scan.outcome === 'golden_jaileon' ? 'animate-golden-glow' : ''}`}
+                      className={`w-8 h-8 object-contain shrink-0 ${
+                        scan.outcome === 'golden_jaileon' ? 'animate-golden-glow' :
+                        scan.outcome === 'rainbow_jaileon' ? 'animate-rainbow-glow' : ''
+                      }`}
                     />
                     <div className="flex-1">
                       <p className="font-medium text-sm">{scan.location_name}</p>

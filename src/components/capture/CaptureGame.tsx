@@ -110,7 +110,8 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-100 to-green-50">
         <div className="text-center">
-          <Image src="/images/jaileon-logo.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" priority />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/jaileon-green.png" alt="" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-green-700 font-medium animate-pulse">
             {t('capture.searching')}
           </p>
@@ -328,18 +329,6 @@ export function CaptureGame({ qrCode, onComplete }: CaptureGameProps) {
                 </div>
               )}
             </div>
-
-            {/* Badge toast */}
-            {result.new_badges && result.new_badges.length > 0 && (
-              <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-3 mb-4">
-                <p className="text-yellow-700 font-bold text-sm mb-1">{t('badges.newBadge')}</p>
-                {result.new_badges.map((badgeId: string) => (
-                  <p key={badgeId} className="text-yellow-600 text-sm">
-                    {t(`badges.names.${badgeId}`)}
-                  </p>
-                ))}
-              </div>
-            )}
 
             <div className="flex gap-2">
               <button

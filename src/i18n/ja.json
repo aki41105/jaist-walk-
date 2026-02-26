@@ -119,7 +119,7 @@
       "rainbow": "！？ 虹色に輝いている！？",
       "blue": "青く光るジャイレオン！",
       "yellow": "黄色いジャイレオンだ！",
-      "golden": "朝の金色ジャイレオン！✨"
+      "golden": "早起きジャイレオン発見！✨"
     },
     "success": {
       "title": "捕獲成功！🎉"
@@ -140,7 +140,7 @@
       "yellow_jaileon": "黄ジャイレオン",
       "blue_jaileon": "青ジャイレオン",
       "rainbow_jaileon": "虹色ジャイレオン",
-      "golden_jaileon": "金色ジャイレオン",
+      "golden_jaileon": "早起きジャイレオン",
       "bird": "小鳥"
     },
     "caughtMessage": "を捕まえた！",

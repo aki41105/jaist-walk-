@@ -3,7 +3,6 @@ import { supabase } from '@/lib/supabase';
 import { requireAuth } from '@/lib/session';
 import { captureSchema } from '@/lib/validation';
 import { getDailyOutcome } from '@/lib/qr-outcome';
-import { checkAndAwardBadges } from '@/lib/badges';
 import type { CaptureOutcome } from '@/types';
 
 const CATCH_RATES: Record<CaptureOutcome, number> = {
@@ -32,7 +31,7 @@ const OUTCOME_NAMES: Record<CaptureOutcome, string> = {
   blue_jaileon: '青ジャイレオン',
   rainbow_jaileon: '虹色ジャイレオン',
   bird: '小鳥',
-  golden_jaileon: '金色ジャイレオン',
+  golden_jaileon: '早起きジャイレオン',
 };
 
 // Streak milestone bonuses
@@ -235,14 +234,6 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    // Check and award badges
-    let new_badges: string[] = [];
-    try {
-      new_badges = await checkAndAwardBadges(user.id);
-    } catch (e) {
-      console.error('Badge check error:', e);
-    }
-
     return NextResponse.json({
       outcome,
       captured,
@@ -252,7 +243,6 @@ export async function POST(request: NextRequest) {
       location_name: qrLocation.name_ja,
       streak: isFirstScanToday ? streakCount : undefined,
       streak_bonus: streakBonus > 0 ? streakBonus : undefined,
-      new_badges,
     });
   } catch (err) {
     if (err instanceof Error && err.message === 'Unauthorized') {
