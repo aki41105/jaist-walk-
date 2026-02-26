@@ -9,7 +9,7 @@ export async function GET() {
     const locations = await sql`
       SELECT id, name_ja, name_en, location_number
       FROM qr_locations
-      WHERE is_active = true
+      WHERE is_active = true AND is_test = false
       ORDER BY location_number ASC
     `;
 

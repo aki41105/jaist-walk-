@@ -116,6 +116,13 @@ export async function POST(request: NextRequest) {
 
     const isTest = qrLocation.is_test as boolean;
 
+    if (isTest && user.role !== 'admin') {
+      return NextResponse.json(
+        { error: '無効なQRコードです', code: 'INVALID_QR' },
+        { status: 404 }
+      );
+    }
+
     if (isTest) {
       // Test QR: delete existing scan for today so it can be re-scanned
       await sql`

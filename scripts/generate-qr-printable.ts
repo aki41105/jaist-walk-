@@ -262,7 +262,7 @@ async function main() {
 
   const locations = await sql`
     SELECT * FROM qr_locations
-    WHERE is_active = true
+    WHERE is_active = true AND is_test = false
     ORDER BY location_number ASC
   `;
 
