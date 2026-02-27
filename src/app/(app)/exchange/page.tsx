@@ -112,16 +112,16 @@ export default function ExchangePage() {
   return (
     <div className="min-h-screen pb-8">
       {/* Header */}
-      <div className="bg-purple-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
-        <div className="flex items-center justify-between mb-2">
-          <button onClick={() => router.push('/home')} className="text-purple-200 hover:text-white text-sm">
-            {t('common.back')}
-          </button>
-        </div>
-        <h1 className="text-xl font-bold">{t('exchange.title')}</h1>
-        <div className="mt-2 bg-purple-500 rounded-xl p-3 flex items-center justify-between">
-          <span className="text-purple-100 text-sm">{t('exchange.currentPoints')}</span>
-          <span className="text-2xl font-bold">{userPoints}pt</span>
+      <div className="bg-purple-600 text-white px-4 py-4 flex items-center gap-3">
+        <button
+          onClick={() => router.push('/home')}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-500 hover:bg-purple-400 transition-colors"
+        >
+          <span className="text-xl">&larr;</span>
+        </button>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold">{t('exchange.title')}</h1>
+          <span className="text-purple-200 text-sm">{userPoints}pt</span>
         </div>
       </div>
 

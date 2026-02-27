@@ -61,14 +61,17 @@ export default function LocationsPage() {
   return (
     <div className="min-h-screen pb-8">
       {/* Header */}
-      <div className="bg-green-600 text-white px-4 py-6 rounded-b-3xl shadow-lg">
-        <div className="flex items-center justify-between mb-2">
-          <button onClick={() => router.push('/home')} className="text-green-100 hover:text-white text-sm">
-            {t('common.back')}
-          </button>
+      <div className="bg-green-600 text-white px-4 py-4 flex items-center gap-3">
+        <button
+          onClick={() => router.push('/home')}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-400 transition-colors"
+        >
+          <span className="text-xl">&larr;</span>
+        </button>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold">{t('locations.title')}</h1>
+          <span className="text-green-100 text-sm">{t('locations.subtitle')}</span>
         </div>
-        <h1 className="text-xl font-bold">{t('locations.title')}</h1>
-        <p className="text-green-100 text-sm mt-1">{t('locations.subtitle')}</p>
       </div>
 
       {/* Progress */}

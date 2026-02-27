@@ -62,16 +62,17 @@ export default function BadgesPage() {
   return (
     <div className="min-h-screen pb-8">
       {/* Header */}
-      <div className="bg-yellow-500 text-white px-4 py-6 rounded-b-3xl shadow-lg">
-        <div className="flex items-center justify-between mb-2">
-          <button onClick={() => router.push('/home')} className="text-yellow-100 hover:text-white text-sm">
-            {t('common.back')}
-          </button>
+      <div className="bg-yellow-500 text-white px-4 py-4 flex items-center gap-3">
+        <button
+          onClick={() => router.push('/home')}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-yellow-400 hover:bg-yellow-300 transition-colors"
+        >
+          <span className="text-xl">&larr;</span>
+        </button>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold">{t('badges.title')}</h1>
+          <span className="text-yellow-100 text-sm">{data.earned_count}/{data.total_count} {t('badges.earned')}</span>
         </div>
-        <h1 className="text-xl font-bold">{t('badges.title')}</h1>
-        <p className="text-yellow-100 text-sm mt-1">
-          {data.earned_count}/{data.total_count} {t('badges.earned')}
-        </p>
       </div>
 
       {/* Badge Grid */}

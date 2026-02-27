@@ -141,12 +141,15 @@ function PointsContent() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto">
-        <button
-          onClick={() => router.push('/admin')}
-          className="text-green-600 hover:text-green-700 text-sm font-medium mb-4 block"
-        >
-          ← 検索に戻る
-        </button>
+        <div className="flex items-center gap-3 mb-4">
+          <button
+            onClick={() => router.push('/admin')}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          >
+            <span className="text-xl text-gray-600">&larr;</span>
+          </button>
+          <h1 className="text-2xl font-bold text-gray-800">ポイント付与</h1>
+        </div>
 
         {/* User Info */}
         <div className="bg-white rounded-2xl shadow-lg p-4 mb-4">

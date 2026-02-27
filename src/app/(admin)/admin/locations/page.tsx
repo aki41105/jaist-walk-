@@ -147,14 +147,13 @@ export default function AdminLocationsPage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
-        <button
-          onClick={() => router.push('/admin')}
-          className="text-green-600 hover:text-green-700 text-sm font-medium mb-4 block"
-        >
-          ← 管理画面に戻る
-        </button>
-
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <button
+            onClick={() => router.push('/admin')}
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          >
+            <span className="text-xl text-gray-600">&larr;</span>
+          </button>
           <h1 className="text-2xl font-bold text-gray-800">QRロケーション管理</h1>
           <button
             onClick={() => setShowForm(!showForm)}
