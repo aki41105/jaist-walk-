@@ -13,6 +13,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/home';
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { t } = useLocale();
@@ -26,12 +27,16 @@ function LoginForm() {
       const res = await fetch('/jaist-walk/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify({ name: name.trim(), password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.needs_password_setup) {
+          router.push('/setup-password');
+          return;
+        }
         setError(data.error);
         return;
       }
@@ -75,6 +80,21 @@ function LoginForm() {
             />
           </div>
 
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('login.passwordLabel')}
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t('login.passwordPlaceholder')}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-center text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            />
+          </div>
+
           {error && (
             <p className="text-red-500 text-sm text-center">{error}</p>
           )}
@@ -96,6 +116,12 @@ function LoginForm() {
             {t('login.registerLink')}
           </Link>
           <Link
+            href="/setup-password"
+            className="block text-orange-500 hover:text-orange-600 text-sm font-medium"
+          >
+            {t('login.needsPasswordSetup')}
+          </Link>
+          <Link
             href="/recover"
             className="block text-gray-500 hover:text-gray-700 text-sm"
           >
@@ -103,14 +129,17 @@ function LoginForm() {
           </Link>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center space-y-2">
+          <p className="text-xs text-orange-500">
+            {t('login.browserNote')}
+          </p>
           <p className="text-xs text-gray-400">
             {t('info.contactDesc')}{' '}
             <a
-              href="mailto:jaist-walk@jaist.ac.jp"
+              href="mailto:laboratry@ml.jaist.ac.jp"
               className="text-green-600 hover:underline"
             >
-              jaist-walk@jaist.ac.jp
+              laboratry@ml.jaist.ac.jp
             </a>
           </p>
         </div>
@@ -126,7 +155,7 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+            <img src="/jaist-walk/images/jai01-front.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
             <p className="text-gray-500">Loading...</p>
           </div>
         </div>

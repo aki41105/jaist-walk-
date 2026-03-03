@@ -11,6 +11,8 @@ export default function RegisterPage() {
   const { t } = useLocale();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [affiliation, setAffiliation] = useState('');
   const [researchArea, setResearchArea] = useState('');
   const [agreed, setAgreed] = useState(false);
@@ -35,6 +37,12 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (password !== passwordConfirm) {
+      setError(t('register.passwordMismatch'));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -44,6 +52,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name,
           email,
+          password,
           affiliation,
           research_area: researchArea,
         }),
@@ -118,6 +127,7 @@ export default function RegisterPage() {
               placeholder={t('register.namePlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
+              minLength={3}
               maxLength={50}
             />
           </div>
@@ -135,6 +145,38 @@ export default function RegisterPage() {
               placeholder={t('register.emailPlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('register.passwordLabel')}
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t('register.passwordPlaceholder')}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+              minLength={8}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="passwordConfirm" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('register.passwordConfirmLabel')}
+            </label>
+            <input
+              id="passwordConfirm"
+              type="password"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              placeholder={t('register.passwordConfirmPlaceholder')}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+              minLength={8}
             />
           </div>
 

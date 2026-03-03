@@ -5,16 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import type { UserProfile, AvatarType } from '@/types';
 import { useLocale } from '@/lib/i18n';
-
-const AVATAR_KEYS: AvatarType[] = ['green', 'yellow', 'blue', 'rainbow', 'bird'];
-
-const AVATAR_IMAGES: Record<AvatarType, string> = {
-  green: '/jaist-walk/images/jaileon-green.png',
-  yellow: '/jaist-walk/images/jaileon-yellow.png',
-  blue: '/jaist-walk/images/jaileon-blue.png',
-  rainbow: '/jaist-walk/images/jaileon-logo.png',
-  bird: '/jaist-walk/images/bird-yellow.png',
-};
+import { AVATAR_KEYS as CHAR_AVATAR_KEYS, getAvatarImagePath, CHARACTERS } from '@/lib/characters';
 
 /** Resize image on client side using canvas (max 200x200) */
 function resizeImage(file: File, maxSize: number): Promise<Blob> {
@@ -31,7 +22,6 @@ function resizeImage(file: File, maxSize: number): Promise<Blob> {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d')!;
-      // Fill white background to prevent transparent areas from becoming black
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, width, height);
       ctx.drawImage(img, 0, 0, width, height);
@@ -48,12 +38,12 @@ function resizeImage(file: File, maxSize: number): Promise<Blob> {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState<AvatarType>('green');
+  const [avatar, setAvatar] = useState<AvatarType>('jai01_front');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [useCustomAvatar, setUseCustomAvatar] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -71,7 +61,7 @@ export default function ProfilePage() {
       const data = await res.json();
       setProfile(data);
       setName(data.name);
-      setAvatar(data.avatar || 'green');
+      setAvatar(data.avatar || 'jai01_front');
       setAvatarUrl(data.avatar_url || null);
       setUseCustomAvatar(!!data.avatar_url);
     } catch {
@@ -117,7 +107,6 @@ export default function ProfilePage() {
       setError(t('errors.networkError'));
     } finally {
       setUploading(false);
-      // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -169,7 +158,6 @@ export default function ProfilePage() {
         body: JSON.stringify({
           name: name.trim(),
           avatar,
-          // Clear avatar_url when switching back to preset
           ...(useCustomAvatar ? {} : { avatar_url: null }),
         }),
       });
@@ -198,7 +186,7 @@ export default function ProfilePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <img src="/jaist-walk/images/jai01-front.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
@@ -209,7 +197,7 @@ export default function ProfilePage() {
 
   const hasChanges =
     name.trim() !== profile.name ||
-    avatar !== (profile.avatar || 'green') ||
+    avatar !== (profile.avatar || 'jai01_front') ||
     (useCustomAvatar !== !!profile.avatar_url);
 
   const affiliationLabel = (key: string) => {
@@ -232,10 +220,9 @@ export default function ProfilePage() {
     return map[key] || key;
   };
 
-  // Current display avatar
   const displayAvatarSrc = useCustomAvatar && avatarUrl
     ? avatarUrl
-    : AVATAR_IMAGES[avatar];
+    : getAvatarImagePath(avatar);
 
   return (
     <div className="min-h-screen pb-8">
@@ -269,30 +256,38 @@ export default function ProfilePage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('profile.iconLabel')}
             </label>
-            <div className="flex gap-3 justify-center flex-wrap">
-              {AVATAR_KEYS.map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => handleSelectPreset(key)}
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-                    !useCustomAvatar && avatar === key
-                      ? 'ring-3 ring-green-500 bg-green-50 scale-110'
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                >
-                  <Image src={AVATAR_IMAGES[key]} alt={t(`profile.avatarLabels.${key}`)} width={40} height={40} className="object-contain" />
-                </button>
-              ))}
+            <div className="grid grid-cols-7 gap-2 justify-items-center">
+              {CHAR_AVATAR_KEYS.map((key) => {
+                const charDef = CHARACTERS[key];
+                const imgPath = getAvatarImagePath(key);
+                const label = charDef
+                  ? (locale === 'ja' ? charDef.nameJa : charDef.nameEn)
+                  : key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleSelectPreset(key as AvatarType)}
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                      !useCustomAvatar && avatar === key
+                        ? 'ring-2 ring-green-500 bg-green-50 scale-110'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                    title={label}
+                  >
+                    <Image src={imgPath} alt={label} width={32} height={32} className="object-contain" />
+                  </button>
+                );
+              })}
 
               {/* Custom upload button */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
                   useCustomAvatar
-                    ? 'ring-3 ring-green-500 bg-green-50 scale-110'
+                    ? 'ring-2 ring-green-500 bg-green-50 scale-110'
                     : 'bg-gray-100 hover:bg-gray-200'
                 }`}
               >
@@ -300,9 +295,9 @@ export default function ProfilePage() {
                   <span className="text-xs text-gray-400 animate-pulse">...</span>
                 ) : avatarUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={avatarUrl} alt="Custom" className="w-10 h-10 rounded-xl object-cover" />
+                  <img src={avatarUrl} alt="Custom" className="w-8 h-8 rounded-lg object-cover" />
                 ) : (
-                  <span className="text-2xl text-gray-400">+</span>
+                  <span className="text-xl text-gray-400">+</span>
                 )}
               </button>
             </div>
@@ -314,7 +309,7 @@ export default function ProfilePage() {
                   onClick={handleRemoveCustomAvatar}
                   className="text-xs text-red-400 hover:text-red-600"
                 >
-                  カスタム画像を削除
+                  {locale === 'ja' ? 'カスタム画像を削除' : 'Remove custom image'}
                 </button>
               </div>
             )}
@@ -327,7 +322,9 @@ export default function ProfilePage() {
               className="hidden"
             />
             <p className="text-xs text-gray-400 text-center mt-2">
-              +ボタンで好きな画像をアップロード（JPEG/PNG/WebP、2MB以下）
+              {locale === 'ja'
+                ? '+ボタンで好きな画像をアップロード（JPEG/PNG/WebP、2MB以下）'
+                : 'Upload custom image with + button (JPEG/PNG/WebP, max 2MB)'}
             </p>
           </div>
 
@@ -353,6 +350,7 @@ export default function ProfilePage() {
               onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
+              minLength={3}
               maxLength={50}
             />
           </div>

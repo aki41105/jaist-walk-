@@ -37,21 +37,24 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
     newBadges.push('points_5000');
   }
 
-  // Rainbow / Golden catch badges - check scans for successful captures
-  if (!earnedSet.has('rainbow_catch')) {
+  // Super Rare catch badge - check scans for successful super rare captures
+  if (!earnedSet.has('super_rare_catch')) {
     const [result] = await sql`
       SELECT COUNT(*) as count FROM scans
-      WHERE user_id = ${userId} AND outcome = 'rainbow_jaileon' AND points_earned > 10
+      WHERE user_id = ${userId}
+        AND outcome IN ('jai10_back', 'jai19_wall', 'jai20_globe', 'jai21_rest')
+        AND points_earned > 10
     `;
-    if (result && Number(result.count) > 0) newBadges.push('rainbow_catch');
+    if (result && Number(result.count) > 0) newBadges.push('super_rare_catch');
   }
 
-  if (!earnedSet.has('golden_catch')) {
+  // Morning catch badge
+  if (!earnedSet.has('morning_catch')) {
     const [result] = await sql`
       SELECT COUNT(*) as count FROM scans
-      WHERE user_id = ${userId} AND outcome = 'golden_jaileon' AND points_earned > 10
+      WHERE user_id = ${userId} AND outcome = 'morning_jai23' AND points_earned > 10
     `;
-    if (result && Number(result.count) > 0) newBadges.push('golden_catch');
+    if (result && Number(result.count) > 0) newBadges.push('morning_catch');
   }
 
   // All locations badge

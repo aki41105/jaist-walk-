@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import sql from '@/lib/db';
 import { generateUserId, createSession } from '@/lib/session';
 import { registerSchema } from '@/lib/validation';
+import { hashPassword } from '@/lib/password';
 import { sendRegistrationEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email, affiliation, research_area } = parsed.data;
+    const { name, email, password, affiliation, research_area } = parsed.data;
 
     const [existingName] = await sql`
       SELECT id FROM users WHERE name = ${name}
@@ -58,9 +59,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const passwordHash = await hashPassword(password);
+
     await sql`
-      INSERT INTO users (id, name, email, affiliation, research_area)
-      VALUES (${userId}, ${name}, ${email}, ${affiliation}, ${research_area})
+      INSERT INTO users (id, name, email, affiliation, research_area, password_hash)
+      VALUES (${userId}, ${name}, ${email}, ${affiliation}, ${research_area}, ${passwordHash})
     `;
 
     try {

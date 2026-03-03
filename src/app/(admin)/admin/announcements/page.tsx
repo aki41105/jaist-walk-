@@ -114,7 +114,7 @@ export default function AdminAnnouncementsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <img src="/jaist-walk/images/jai01-front.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">読み込み中...</p>
         </div>
       </div>
@@ -124,14 +124,14 @@ export default function AdminAnnouncementsPage() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">お知らせ管理</h1>
+        <div className="flex items-center gap-3 mb-4">
           <button
             onClick={() => router.push('/admin')}
-            className="text-green-600 hover:text-green-700 text-sm font-medium"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
           >
-            ← 管理画面
+            <span className="text-xl text-gray-600">&larr;</span>
           </button>
+          <h1 className="text-2xl font-bold text-gray-800">お知らせ管理</h1>
         </div>
 
         {error && (

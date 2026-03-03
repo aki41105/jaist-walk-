@@ -7,14 +7,7 @@ import Image from 'next/image';
 import { QRCode } from '@/components/ui/QRCode';
 import { useLocale } from '@/lib/i18n';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
-
-const AVATAR_IMAGES: Record<AvatarType, string> = {
-  green: '/jaist-walk/images/jaileon-green.png',
-  yellow: '/jaist-walk/images/jaileon-yellow.png',
-  blue: '/jaist-walk/images/jaileon-blue.png',
-  rainbow: '/jaist-walk/images/jaileon-logo.png',
-  bird: '/jaist-walk/images/bird-yellow.png',
-};
+import { getAvatarImagePath, getOutcomeImagePath, CHARACTERS } from '@/lib/characters';
 
 interface RankingEntry {
   name: string;
@@ -46,11 +39,9 @@ export default function HomePage() {
       const data = await res.json();
       setProfile(data);
 
-      // Cache for offline
       localStorage.setItem('jw_profile_cache', JSON.stringify(data));
       localStorage.setItem('jw_profile_updated', new Date().toISOString());
     } catch {
-      // Try loading from cache
       const cached = localStorage.getItem('jw_profile_cache');
       if (cached) {
         setProfile(JSON.parse(cached));
@@ -119,7 +110,7 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+          <img src="/jaist-walk/images/jai01-front.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
           <p className="text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
@@ -149,6 +140,12 @@ export default function HomePage() {
     return `${index + 1}`;
   };
 
+  const getScanOutcomeColor = (outcome: string): string => {
+    const charDef = CHARACTERS[outcome];
+    if (!charDef) return 'text-green-600';
+    return charDef.color;
+  };
+
   return (
     <div className="min-h-screen pb-8">
       {/* Header */}
@@ -173,7 +170,7 @@ export default function HomePage() {
               <img src={profile.avatar_url} alt="アバター" className="w-14 h-14 object-cover rounded-xl" />
             ) : (
               <Image
-                src={AVATAR_IMAGES[profile.avatar || 'green']}
+                src={getAvatarImagePath(profile.avatar || 'jai01_front')}
                 alt="アバター"
                 width={56}
                 height={56}
@@ -325,20 +322,11 @@ export default function HomePage() {
                 {profile.recent_scans.map((scan: Scan & { location_name: string }) => (
                   <div key={scan.id} className="p-4 flex items-center gap-3">
                     <Image
-                      src={
-                        scan.outcome === 'golden_jaileon' ? '/jaist-walk/images/jaileon-golden.png' :
-                        scan.outcome === 'rainbow_jaileon' ? '/jaist-walk/images/jaileon-green.png' :
-                        scan.outcome === 'blue_jaileon' ? '/jaist-walk/images/jaileon-blue.png' :
-                        scan.outcome === 'yellow_jaileon' ? '/jaist-walk/images/jaileon-yellow.png' :
-                        scan.outcome === 'jaileon' ? '/jaist-walk/images/jaileon-green.png' : '/jaist-walk/images/bird-yellow.png'
-                      }
+                      src={getOutcomeImagePath(scan.outcome)}
                       alt=""
                       width={32}
                       height={32}
-                      className={`w-8 h-8 object-contain shrink-0 ${
-                        scan.outcome === 'golden_jaileon' ? 'animate-golden-glow' :
-                        scan.outcome === 'rainbow_jaileon' ? 'animate-rainbow-glow' : ''
-                      }`}
+                      className="w-8 h-8 object-contain shrink-0"
                     />
                     <div className="flex-1">
                       <p className="font-medium text-sm">{scan.location_name}</p>
@@ -346,13 +334,7 @@ export default function HomePage() {
                         {new Date(scan.scanned_at).toLocaleDateString('ja-JP')}
                       </p>
                     </div>
-                    <p className={`font-bold text-sm ${
-                      scan.outcome === 'golden_jaileon' ? 'text-amber-600' :
-                      scan.outcome === 'rainbow_jaileon' ? 'text-purple-600' :
-                      scan.outcome === 'blue_jaileon' ? 'text-blue-600' :
-                      scan.outcome === 'yellow_jaileon' ? 'text-yellow-600' :
-                      scan.outcome === 'jaileon' ? 'text-green-600' : 'text-yellow-500'
-                    }`}>
+                    <p className={`font-bold text-sm ${getScanOutcomeColor(scan.outcome)}`}>
                       +{scan.points_earned}pt
                     </p>
                   </div>
@@ -387,7 +369,7 @@ export default function HomePage() {
             {rankingLoading ? (
             <div className="p-8 text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
+              <img src="/jaist-walk/images/jai01-front.png" alt="ジャイレオン" width={48} height={48} className="mx-auto animate-bounce mb-2" />
               <p className="text-gray-400">{t('common.loading')}</p>
             </div>
           ) : ranking.length === 0 ? (
@@ -412,7 +394,7 @@ export default function HomePage() {
                       <img src={entry.avatar_url} alt="" className="w-8 h-8 object-cover rounded-lg" />
                     ) : (
                       <Image
-                        src={AVATAR_IMAGES[entry.avatar || 'green']}
+                        src={getAvatarImagePath(entry.avatar || 'jai01_front')}
                         alt=""
                         width={32}
                         height={32}

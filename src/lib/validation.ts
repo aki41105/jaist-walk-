@@ -2,17 +2,25 @@ import { z } from 'zod';
 
 export const registerSchema = z.object({
   name: z.string()
-    .min(1, '名前を入力してください')
+    .min(3, 'アカウント名は3文字以上にしてください')
     .max(50, '名前は50文字以内にしてください')
     .trim()
     .regex(/^[^\s<>"';&|\\]+$/, '使用できない文字が含まれています'),
   email: z.string().email('有効なメールアドレスを入力してください'),
+  password: z.string().min(8, 'パスワードは8文字以上にしてください'),
   affiliation: z.enum(['student', 'faculty', 'staff', 'other']),
   research_area: z.enum(['cs', 'is', 'ms', 'other']),
 });
 
 export const loginSchema = z.object({
   name: z.string().min(1, 'アカウント名を入力してください'),
+  password: z.string().min(1, 'パスワードを入力してください'),
+});
+
+export const setupPasswordSchema = z.object({
+  name: z.string().min(1, 'アカウント名を入力してください'),
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  password: z.string().min(8, 'パスワードは8文字以上にしてください'),
 });
 
 export const recoverSchema = z.object({

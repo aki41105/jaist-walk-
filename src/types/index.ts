@@ -7,15 +7,28 @@ export type Affiliation = 'student' | 'faculty' | 'staff' | 'other';
 // Research areas (領域)
 export type ResearchArea = 'cs' | 'is' | 'ms' | 'other';
 
-// Capture outcomes
-export type CaptureOutcome = 'jaileon' | 'yellow_jaileon' | 'blue_jaileon' | 'rainbow_jaileon' | 'bird' | 'golden_jaileon';
+// Capture outcomes - 20 jaileon variants + morning + bird
+export type CaptureOutcome =
+  | 'jai01_front' | 'jai02_greeting' | 'jai11_basic' | 'jai13_call' | 'jai14_megaphone'
+  | 'jai04_smile' | 'jai06_mask' | 'jai07_disinfection' | 'jai09_ventilation' | 'jai16_pointer' | 'jai23_walk'
+  | 'jai05_crying' | 'jai15_experiment' | 'jai17_pc' | 'jai22_reading' | 'jai18_think'
+  | 'jai10_back' | 'jai19_wall' | 'jai20_globe' | 'jai21_rest'
+  | 'morning_jai23'
+  | 'bird';
 
 // Capture game states
 export type CaptureState = 'LOADING' | 'APPEARING' | 'IDLE' | 'CATCHING' | 'ESCAPED' | 'RESULT';
 
 // Database row types
-// Avatar options
-export type AvatarType = 'green' | 'yellow' | 'blue' | 'rainbow' | 'bird';
+// Avatar options - all 20 jaileon + bird + legacy values for migration
+export type AvatarType =
+  | 'jai01_front' | 'jai02_greeting' | 'jai04_smile' | 'jai05_crying'
+  | 'jai06_mask' | 'jai07_disinfection' | 'jai09_ventilation' | 'jai10_back'
+  | 'jai11_basic' | 'jai13_call' | 'jai14_megaphone' | 'jai15_experiment'
+  | 'jai16_pointer' | 'jai17_pc' | 'jai18_think' | 'jai19_wall'
+  | 'jai20_globe' | 'jai21_rest' | 'jai22_reading' | 'jai23_walk'
+  | 'bird'
+  | 'green' | 'yellow' | 'blue' | 'rainbow';
 
 export interface User {
   id: string; // JW-XXXXXX format

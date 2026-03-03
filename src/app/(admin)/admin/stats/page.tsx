@@ -28,12 +28,28 @@ interface ScanStats {
 }
 
 const OUTCOME_LABELS: Record<string, { label: string; color: string }> = {
-  jaileon: { label: 'ジャイレオン', color: 'bg-green-500' },
-  yellow_jaileon: { label: 'イエロー', color: 'bg-yellow-400' },
-  blue_jaileon: { label: 'ブルー', color: 'bg-blue-500' },
-  rainbow_jaileon: { label: 'レインボー', color: 'bg-purple-500' },
-  golden_jaileon: { label: 'ゴールデン', color: 'bg-amber-500' },
-  bird: { label: 'バード', color: 'bg-gray-400' },
+  jai01_front: { label: 'ジャイレオン', color: 'bg-green-500' },
+  jai02_greeting: { label: 'おじぎ', color: 'bg-green-400' },
+  jai11_basic: { label: 'きほん', color: 'bg-green-400' },
+  jai13_call: { label: 'よびかけ', color: 'bg-green-400' },
+  jai14_megaphone: { label: 'メガホン', color: 'bg-green-400' },
+  jai04_smile: { label: 'えがお', color: 'bg-yellow-400' },
+  jai06_mask: { label: 'マスク', color: 'bg-yellow-400' },
+  jai07_disinfection: { label: '消毒', color: 'bg-yellow-400' },
+  jai09_ventilation: { label: '換気', color: 'bg-yellow-400' },
+  jai16_pointer: { label: 'さしぼう', color: 'bg-yellow-400' },
+  jai23_walk: { label: 'おさんぽ', color: 'bg-yellow-400' },
+  jai05_crying: { label: 'なきむし', color: 'bg-blue-500' },
+  jai15_experiment: { label: 'はかせ', color: 'bg-blue-500' },
+  jai17_pc: { label: 'PC', color: 'bg-blue-500' },
+  jai22_reading: { label: 'どくしょ', color: 'bg-blue-500' },
+  jai18_think: { label: 'かんがえる', color: 'bg-blue-500' },
+  jai10_back: { label: 'うしろすがた', color: 'bg-purple-500' },
+  jai19_wall: { label: 'かべ', color: 'bg-purple-500' },
+  jai20_globe: { label: 'ちきゅうぎ', color: 'bg-purple-500' },
+  jai21_rest: { label: 'おひるね', color: 'bg-purple-500' },
+  morning_jai23: { label: '早起き', color: 'bg-amber-500' },
+  bird: { label: '小鳥', color: 'bg-gray-400' },
 };
 
 const PERIOD_OPTIONS = [
@@ -115,7 +131,7 @@ export default function AdminStatsPage() {
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/jaist-walk/images/jaileon-green.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
+              <img src="/jaist-walk/images/jai01-front.png" alt="ジャイレオン" width={64} height={64} className="mx-auto animate-bounce mb-4" />
               <p className="text-gray-500">読み込み中...</p>
             </div>
           </div>

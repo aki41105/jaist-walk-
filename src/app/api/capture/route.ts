@@ -3,36 +3,10 @@ import sql from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { captureSchema } from '@/lib/validation';
 import { getDailyOutcome } from '@/lib/qr-outcome';
+import { CHARACTERS, ALL_OUTCOMES } from '@/lib/characters';
 import type { CaptureOutcome } from '@/types';
 
-const CATCH_RATES: Record<CaptureOutcome, number> = {
-  jaileon: 0.50,
-  yellow_jaileon: 0.45,
-  blue_jaileon: 0.40,
-  rainbow_jaileon: 0.35,
-  bird: 1.0,
-  golden_jaileon: 1.0,
-};
-
-const SUCCESS_POINTS: Record<CaptureOutcome, number> = {
-  jaileon: 100,
-  yellow_jaileon: 150,
-  blue_jaileon: 200,
-  rainbow_jaileon: 500,
-  bird: 10,
-  golden_jaileon: 300,
-};
-
 const ESCAPE_POINTS = 5;
-
-const OUTCOME_NAMES: Record<CaptureOutcome, string> = {
-  jaileon: 'ジャイレオン',
-  yellow_jaileon: '黄ジャイレオン',
-  blue_jaileon: '青ジャイレオン',
-  rainbow_jaileon: '虹色ジャイレオン',
-  bird: '小鳥',
-  golden_jaileon: '早起きジャイレオン',
-};
 
 const STREAK_BONUSES: Record<number, number> = {
   3: 50,
@@ -115,16 +89,15 @@ export async function POST(request: NextRequest) {
     }
 
     const isTest = qrLocation.is_test as boolean;
-
-    if (isTest && user.role !== 'admin') {
-      return NextResponse.json(
-        { error: '無効なQRコードです', code: 'INVALID_QR' },
-        { status: 404 }
-      );
-    }
+    let testLastOutcome: CaptureOutcome | undefined;
 
     if (isTest) {
-      // Test QR: delete existing scan for today so it can be re-scanned
+      const [lastTestScan] = await sql`
+        SELECT outcome FROM scans
+        WHERE user_id = ${user.id} AND qr_location_id = ${qrLocation.id} AND date = ${today}
+        ORDER BY scanned_at DESC LIMIT 1
+      `;
+      testLastOutcome = lastTestScan?.outcome as CaptureOutcome | undefined;
       await sql`
         DELETE FROM scans
         WHERE user_id = ${user.id} AND qr_location_id = ${qrLocation.id} AND date = ${today}
@@ -153,17 +126,20 @@ export async function POST(request: NextRequest) {
 
     let outcome: CaptureOutcome;
     if (isTest) {
-      // TODO: temporary - force golden_jaileon for testing
-      outcome = 'golden_jaileon';
+      // Cycle through all characters in order for testing
+      const lastIndex = testLastOutcome ? ALL_OUTCOMES.indexOf(testLastOutcome) : -1;
+      outcome = ALL_OUTCOMES[(lastIndex + 1) % ALL_OUTCOMES.length];
     } else if (isFirstScanToday && isMorning) {
-      outcome = 'golden_jaileon';
+      outcome = 'morning_jai23';
     } else {
       outcome = await getDailyOutcome(qrLocation.id as string, today);
     }
 
-    const catchRate = CATCH_RATES[outcome];
+    const charDef = CHARACTERS[outcome];
+    const catchRate = charDef?.catchRate ?? 0.5;
+    const successPoints = charDef?.points ?? 100;
     const captured = Math.random() < catchRate;
-    const pointsEarned = captured ? SUCCESS_POINTS[outcome] : ESCAPE_POINTS;
+    const pointsEarned = captured ? successPoints : ESCAPE_POINTS;
 
     let streakBonus = 0;
     let streakCount = 0;
@@ -187,13 +163,14 @@ export async function POST(request: NextRequest) {
       throw e;
     }
 
-    const charName = OUTCOME_NAMES[outcome];
+    const charName = charDef?.nameJa ?? outcome;
+    const isSpecial = charDef?.rarity === 'super_rare' || charDef?.rarity === 'morning';
     let reason: string;
     if (outcome === 'bird') {
       reason = `${charName}発見 (${qrLocation.name_ja})`;
     } else {
       reason = captured
-        ? `${charName}捕獲${outcome === 'rainbow_jaileon' || outcome === 'golden_jaileon' ? '！' : ''} (${qrLocation.name_ja})`
+        ? `${charName}捕獲${isSpecial ? '！' : ''} (${qrLocation.name_ja})`
         : `${charName}に逃げられた (${qrLocation.name_ja})`;
     }
 

@@ -20,19 +20,28 @@
     "subtitle": "ジャイレオンを捕まえよう！",
     "nameLabel": "アカウント名",
     "namePlaceholder": "アカウント名を入力",
+    "passwordLabel": "パスワード",
+    "passwordPlaceholder": "パスワードを入力",
     "loginButton": "ログイン",
     "loggingIn": "ログイン中...",
     "registerLink": "新規登録はこちら",
-    "recoverLink": "アカウント名を忘れた方"
+    "recoverLink": "アカウント名を忘れた方",
+    "browserNote": "推奨: Chrome / Edge（Safariでは一部機能が動作しない場合があります）",
+    "needsPasswordSetup": "セキュリティ強化のため、パスワードの設定が必要です"
   },
   "register": {
     "title": "新規登録",
     "subtitle": "JAIST Walkに参加しよう",
     "nameLabel": "アカウント名",
-    "namePlaceholder": "好きな名前を入力",
+    "namePlaceholder": "好きな名前を入力（3文字以上）",
     "emailLabel": "メールアドレス",
     "emailPlaceholder": "example@gmail.com",
     "emailNote": "※ JAISTメール以外でお願いします（Gmail等）",
+    "passwordLabel": "パスワード",
+    "passwordPlaceholder": "8文字以上",
+    "passwordConfirmLabel": "パスワード（確認）",
+    "passwordConfirmPlaceholder": "もう一度入力",
+    "passwordMismatch": "パスワードが一致しません",
     "affiliationLabel": "身分",
     "affiliationPlaceholder": "選択してください",
     "researchAreaLabel": "領域",
@@ -59,6 +68,23 @@
       "ms": "マテリアルサイエンス (MS)",
       "other": "その他"
     }
+  },
+  "setupPassword": {
+    "title": "パスワード設定",
+    "subtitle": "セキュリティ強化のため、パスワードを設定してください",
+    "nameLabel": "アカウント名",
+    "namePlaceholder": "登録したアカウント名",
+    "emailLabel": "登録メールアドレス",
+    "emailPlaceholder": "登録時のメールアドレス",
+    "passwordLabel": "新しいパスワード",
+    "passwordPlaceholder": "8文字以上",
+    "passwordConfirmLabel": "パスワード（確認）",
+    "passwordConfirmPlaceholder": "もう一度入力",
+    "passwordMismatch": "パスワードが一致しません",
+    "submitButton": "パスワードを設定",
+    "submitting": "設定中...",
+    "success": "パスワードを設定しました。ログインしてください。",
+    "backToLogin": "ログインに戻る"
   },
   "recover": {
     "title": "アカウント名復旧",
@@ -117,10 +143,9 @@
     "catching": "捕獲中...!",
     "escaped": "あっ...!",
     "discovery": {
-      "rainbow": "！？ 虹色に輝いている！？",
-      "blue": "青く光るジャイレオン！",
-      "yellow": "黄色いジャイレオンだ！",
-      "golden": "早起きジャイレオン発見！✨"
+      "super_rare": "！？ 超レアジャイレオン！？",
+      "rare": "レアなジャイレオンだ！",
+      "morning": "早起きジャイレオン発見！"
     },
     "success": {
       "title": "捕獲成功！🎉"
@@ -137,11 +162,27 @@
     "totalPoints": "合計ポイント",
     "totalCaptures": "捕獲数",
     "characters": {
-      "jaileon": "ジャイレオン",
-      "yellow_jaileon": "黄ジャイレオン",
-      "blue_jaileon": "青ジャイレオン",
-      "rainbow_jaileon": "虹色ジャイレオン",
-      "golden_jaileon": "早起きジャイレオン",
+      "jai01_front": "ジャイレオン",
+      "jai02_greeting": "おじぎジャイレオン",
+      "jai04_smile": "えがおジャイレオン",
+      "jai05_crying": "なきむしジャイレオン",
+      "jai06_mask": "マスクジャイレオン",
+      "jai07_disinfection": "消毒ジャイレオン",
+      "jai09_ventilation": "換気ジャイレオン",
+      "jai10_back": "うしろすがたジャイレオン",
+      "jai11_basic": "きほんジャイレオン",
+      "jai13_call": "よびかけジャイレオン",
+      "jai14_megaphone": "メガホンジャイレオン",
+      "jai15_experiment": "はかせジャイレオン",
+      "jai16_pointer": "さしぼうジャイレオン",
+      "jai17_pc": "PCジャイレオン",
+      "jai18_think": "かんがえるジャイレオン",
+      "jai19_wall": "かべジャイレオン",
+      "jai20_globe": "ちきゅうぎジャイレオン",
+      "jai21_rest": "おひるねジャイレオン",
+      "jai22_reading": "どくしょジャイレオン",
+      "jai23_walk": "おさんぽジャイレオン",
+      "morning_jai23": "おさんぽジャイレオン",
       "bird": "小鳥"
     },
     "caughtMessage": "を捕まえた！",
@@ -157,14 +198,7 @@
     "emailLabel": "メールアドレス",
     "affiliationLabel": "身分",
     "researchAreaLabel": "領域",
-    "updated": "プロフィールを更新しました",
-    "avatarLabels": {
-      "green": "緑",
-      "yellow": "黄",
-      "blue": "青",
-      "rainbow": "虹",
-      "bird": "鳥"
-    }
+    "updated": "プロフィールを更新しました"
   },
   "info": {
     "title": "遊び方・お知らせ",
@@ -179,6 +213,9 @@
     "superRare": "超レア！",
     "consolation": "参加賞",
     "escapedLabel": "逃げられた場合",
+    "streakTitle": "連続スキャンボーナス",
+    "streakDesc": "毎日スキャンを続けるとボーナスポイントがもらえます！",
+    "morningNote": "朝7〜10時にその日の最初のスキャンをすると、おさんぽジャイレオン（300pt）が確定で出現します",
     "rules": "ルール",
     "rule1": "同じQRコードは1日1回のみスキャンできます",
     "rule2": "出現するキャラクターは日によって変わります",
@@ -236,8 +273,8 @@
       "first_capture": "初捕獲",
       "captures_10": "10匹捕獲",
       "captures_50": "50匹捕獲",
-      "rainbow_catch": "虹色ゲット",
-      "golden_catch": "金色ゲット",
+      "super_rare_catch": "超レアゲット",
+      "morning_catch": "早起きゲット",
       "all_locations": "全ロケーション制覇",
       "streak_3": "3日連続",
       "streak_7": "7日連続",
@@ -279,6 +316,8 @@
     "insufficientPoints": "ポイントが不足しています",
     "networkError": "通信エラーが発生しました",
     "serverError": "サーバーエラーが発生しました",
-    "deleteFailed": "削除に失敗しました"
+    "deleteFailed": "削除に失敗しました",
+    "wrongPassword": "パスワードが正しくありません",
+    "identityMismatch": "アカウント名またはメールアドレスが正しくありません"
   }
 }

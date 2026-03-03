@@ -20,19 +20,28 @@
     "subtitle": "Catch the Jaileon!",
     "nameLabel": "Account Name",
     "namePlaceholder": "Enter your account name",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
     "loginButton": "Log In",
     "loggingIn": "Logging in...",
     "registerLink": "Create an account",
-    "recoverLink": "Forgot your name?"
+    "recoverLink": "Forgot your name?",
+    "browserNote": "Recommended: Chrome / Edge (Some features may not work on Safari)",
+    "needsPasswordSetup": "For security, you need to set a password"
   },
   "register": {
     "title": "Register",
     "subtitle": "Join JAIST Walk",
     "nameLabel": "Account Name",
-    "namePlaceholder": "Choose a name",
+    "namePlaceholder": "Choose a name (3+ characters)",
     "emailLabel": "Email",
     "emailPlaceholder": "example@gmail.com",
     "emailNote": "* Please use a non-JAIST email (e.g. Gmail)",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "8 characters or more",
+    "passwordConfirmLabel": "Confirm Password",
+    "passwordConfirmPlaceholder": "Enter again",
+    "passwordMismatch": "Passwords do not match",
     "affiliationLabel": "Affiliation",
     "affiliationPlaceholder": "Select one",
     "researchAreaLabel": "Research Area",
@@ -59,6 +68,23 @@
       "ms": "Materials Science (MS)",
       "other": "Other"
     }
+  },
+  "setupPassword": {
+    "title": "Set Password",
+    "subtitle": "For security, please set a password for your account",
+    "nameLabel": "Account Name",
+    "namePlaceholder": "Your registered account name",
+    "emailLabel": "Registered Email",
+    "emailPlaceholder": "Email used during registration",
+    "passwordLabel": "New Password",
+    "passwordPlaceholder": "8 characters or more",
+    "passwordConfirmLabel": "Confirm Password",
+    "passwordConfirmPlaceholder": "Enter again",
+    "passwordMismatch": "Passwords do not match",
+    "submitButton": "Set Password",
+    "submitting": "Setting...",
+    "success": "Password has been set. Please log in.",
+    "backToLogin": "Back to login"
   },
   "recover": {
     "title": "Recover Account",
@@ -117,10 +143,9 @@
     "catching": "Catching...!",
     "escaped": "Oh no...!",
     "discovery": {
-      "rainbow": "!? It's shining in rainbow colors!?",
-      "blue": "A blue glowing Jaileon!",
-      "yellow": "A yellow Jaileon!",
-      "golden": "An Early Bird Jaileon! ✨"
+      "super_rare": "!? A Super Rare Jaileon!?",
+      "rare": "A rare Jaileon!",
+      "morning": "An Early Bird Jaileon!"
     },
     "success": {
       "title": "Capture Success! 🎉"
@@ -137,11 +162,27 @@
     "totalPoints": "Total points",
     "totalCaptures": "Captures",
     "characters": {
-      "jaileon": "Jaileon",
-      "yellow_jaileon": "Yellow Jaileon",
-      "blue_jaileon": "Blue Jaileon",
-      "rainbow_jaileon": "Rainbow Jaileon",
-      "golden_jaileon": "Early Bird Jaileon",
+      "jai01_front": "Jaileon",
+      "jai02_greeting": "Bowing Jaileon",
+      "jai04_smile": "Smiling Jaileon",
+      "jai05_crying": "Crying Jaileon",
+      "jai06_mask": "Mask Jaileon",
+      "jai07_disinfection": "Sanitizer Jaileon",
+      "jai09_ventilation": "Ventilation Jaileon",
+      "jai10_back": "Backside Jaileon",
+      "jai11_basic": "Basic Jaileon",
+      "jai13_call": "Calling Jaileon",
+      "jai14_megaphone": "Megaphone Jaileon",
+      "jai15_experiment": "Scientist Jaileon",
+      "jai16_pointer": "Pointer Jaileon",
+      "jai17_pc": "PC Jaileon",
+      "jai18_think": "Thinking Jaileon",
+      "jai19_wall": "Wall Jaileon",
+      "jai20_globe": "Globe Jaileon",
+      "jai21_rest": "Napping Jaileon",
+      "jai22_reading": "Reading Jaileon",
+      "jai23_walk": "Walking Jaileon",
+      "morning_jai23": "Walking Jaileon",
       "bird": "Little Bird"
     },
     "caughtMessage": " was caught!",
@@ -157,14 +198,7 @@
     "emailLabel": "Email",
     "affiliationLabel": "Affiliation",
     "researchAreaLabel": "Area",
-    "updated": "Profile updated",
-    "avatarLabels": {
-      "green": "Green",
-      "yellow": "Yellow",
-      "blue": "Blue",
-      "rainbow": "Rainbow",
-      "bird": "Bird"
-    }
+    "updated": "Profile updated"
   },
   "info": {
     "title": "How to Play & News",
@@ -179,6 +213,9 @@
     "superRare": "Super Rare!",
     "consolation": "Consolation",
     "escapedLabel": "If it escapes",
+    "streakTitle": "Streak Bonuses",
+    "streakDesc": "Keep scanning every day to earn bonus points!",
+    "morningNote": "Scanning for the first time between 7-10 AM guarantees a Walking Jaileon (300pt)",
     "rules": "Rules",
     "rule1": "Each QR code can only be scanned once per day",
     "rule2": "Characters change depending on the day",
@@ -236,8 +273,8 @@
       "first_capture": "First Capture",
       "captures_10": "10 Captures",
       "captures_50": "50 Captures",
-      "rainbow_catch": "Rainbow Catch",
-      "golden_catch": "Golden Catch",
+      "super_rare_catch": "Super Rare Catch",
+      "morning_catch": "Morning Catch",
       "all_locations": "All Locations",
       "streak_3": "3-Day Streak",
       "streak_7": "7-Day Streak",
@@ -279,6 +316,8 @@
     "insufficientPoints": "Insufficient points",
     "networkError": "Network error",
     "serverError": "Server error",
-    "deleteFailed": "Failed to delete"
+    "deleteFailed": "Failed to delete",
+    "wrongPassword": "Incorrect password",
+    "identityMismatch": "Account name or email is incorrect"
   }
 }

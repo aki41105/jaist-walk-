@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import sql from '@/lib/db';
 import { createSession } from '@/lib/session';
 import { loginSchema } from '@/lib/validation';
+import { verifyPassword } from '@/lib/password';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,15 +16,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name } = parsed.data;
+    const { name, password } = parsed.data;
 
     const [user] = await sql`
-      SELECT id FROM users WHERE name = ${name}
+      SELECT id, password_hash FROM users WHERE name = ${name}
     `;
 
     if (!user) {
       return NextResponse.json(
         { error: 'アカウント名が正しくありません' },
+        { status: 401 }
+      );
+    }
+
+    // If password_hash is NULL, user needs to set up password first
+    if (!user.password_hash) {
+      return NextResponse.json(
+        { error: 'パスワードの設定が必要です', needs_password_setup: true },
+        { status: 403 }
+      );
+    }
+
+    const isValid = await verifyPassword(password, user.password_hash as string);
+    if (!isValid) {
+      return NextResponse.json(
+        { error: 'パスワードが正しくありません' },
         { status: 401 }
       );
     }

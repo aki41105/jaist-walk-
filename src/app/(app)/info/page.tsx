@@ -3,10 +3,14 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useLocale } from '@/lib/i18n';
+import { getCharactersByRarity, RARITY_CONFIG, type Rarity } from '@/lib/characters';
 
 export default function InfoPage() {
   const router = useRouter();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+
+  const charsByRarity = getCharactersByRarity();
+  const rarityOrder: Rarity[] = ['common', 'uncommon', 'rare', 'super_rare', 'morning', 'bird'];
 
   return (
     <div className="min-h-screen pb-8">
@@ -45,67 +49,82 @@ export default function InfoPage() {
           </ol>
         </div>
 
-        {/* Characters */}
+        {/* Characters by rarity */}
         <div className="bg-white rounded-2xl shadow p-5">
           <h2 className="text-lg font-bold text-green-700 mb-3">{t('info.characters')}</h2>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
-              <Image src="/jaist-walk/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
-              <div className="flex-1">
-                <p className="font-bold text-green-700">{t('capture.characters.jaileon')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 45% ｜ {t('info.catchRate')} 50%</p>
-              </div>
-              <p className="font-bold text-green-600">100pt</p>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl">
-              <Image src="/jaist-walk/images/jaileon-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
-              <div className="flex-1">
-                <p className="font-bold text-yellow-700">{t('capture.characters.yellow_jaileon')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 20% ｜ {t('info.catchRate')} 45%</p>
-              </div>
-              <p className="font-bold text-yellow-600">150pt</p>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
-              <Image src="/jaist-walk/images/jaileon-blue.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
-              <div className="flex-1">
-                <p className="font-bold text-blue-700">{t('capture.characters.blue_jaileon')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 10% ｜ {t('info.catchRate')} 40%</p>
-              </div>
-              <p className="font-bold text-blue-600">200pt</p>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl">
-              <Image src="/jaist-walk/images/jaileon-green.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-rainbow-glow" />
-              <div className="flex-1">
-                <p className="font-bold text-purple-700">{t('capture.characters.rainbow_jaileon')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 5% ｜ {t('info.catchRate')} 35%（{t('info.superRare')}）</p>
-              </div>
-              <p className="font-bold text-purple-600">500pt</p>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
-              <Image src="/jaist-walk/images/jaileon-golden.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0 animate-golden-glow" />
-              <div className="flex-1">
-                <p className="font-bold text-amber-700">{t('capture.characters.golden_jaileon')}</p>
-                <p className="text-xs text-gray-500">{t('info.goldenNote')} ｜ {t('info.catchRate')} 100%</p>
-              </div>
-              <p className="font-bold text-amber-600">300pt</p>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl">
-              <Image src="/jaist-walk/images/bird-yellow.png" alt="" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
-              <div className="flex-1">
-                <p className="font-bold text-orange-700">{t('capture.characters.bird')}</p>
-                <p className="text-xs text-gray-500">{t('info.spawnRate')} 20% ｜ {t('info.catchRate')} 100%</p>
-              </div>
-              <p className="font-bold text-orange-600">10pt</p>
-            </div>
+          <div className="space-y-4">
+            {rarityOrder.map(rarity => {
+              const chars = charsByRarity[rarity];
+              if (chars.length === 0) return null;
+              const rarityConf = RARITY_CONFIG[rarity];
+              return (
+                <div key={rarity}>
+                  <div className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold mb-2 ${rarityConf.bgColor} ${rarityConf.color}`}>
+                    {locale === 'ja' ? rarityConf.labelJa : rarityConf.labelEn}
+                  </div>
+                  <div className="space-y-2">
+                    {chars.map(char => (
+                      <div key={char.id} className={`flex items-center gap-3 p-3 ${char.bgCard} rounded-xl`}>
+                        <Image
+                          src={`/jaist-walk/images/${char.image}`}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-contain shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className={`font-bold text-sm ${char.color}`}>
+                            {locale === 'ja' ? char.nameJa : char.nameEn}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {rarity === 'morning'
+                              ? (locale === 'ja' ? '朝7〜10時限定・初回スキャン' : 'Morning 7-10AM · First scan')
+                              : rarity === 'bird'
+                              ? `${t('info.spawnRate')} ${char.spawnRate}%`
+                              : `${t('info.spawnRate')} ${char.spawnRate}% ｜ ${t('info.catchRate')} ${Math.round(char.catchRate * 100)}%`
+                            }
+                          </p>
+                        </div>
+                        <p className={`font-bold text-sm shrink-0 ${char.color}`}>{char.points}pt</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Escaped consolation */}
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
               <span className="w-10 h-10 flex items-center justify-center text-2xl shrink-0">💨</span>
               <div className="flex-1">
-                <p className="font-bold text-gray-700">{t('info.escapedLabel')}</p>
+                <p className="font-bold text-sm text-gray-700">{t('info.escapedLabel')}</p>
                 <p className="text-xs text-gray-500">{t('info.consolation')}</p>
               </div>
-              <p className="font-bold text-gray-500">5pt</p>
+              <p className="font-bold text-sm text-gray-500">5pt</p>
             </div>
           </div>
+        </div>
+
+        {/* Streak bonuses */}
+        <div className="bg-white rounded-2xl shadow p-5">
+          <h2 className="text-lg font-bold text-green-700 mb-3">{t('info.streakTitle')}</h2>
+          <p className="text-sm text-gray-600 mb-3">{t('info.streakDesc')}</p>
+          <div className="space-y-2">
+            {[
+              { days: 3, bonus: 50 },
+              { days: 7, bonus: 150 },
+              { days: 14, bonus: 300 },
+              { days: 30, bonus: 500 },
+            ].map(({ days, bonus }) => (
+              <div key={days} className="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                <span className="text-sm font-medium text-orange-700">
+                  {days}{locale === 'ja' ? '日連続' : '-day streak'}
+                </span>
+                <span className="font-bold text-orange-600">+{bonus}pt</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-3">{t('info.morningNote')}</p>
         </div>
 
         {/* Rules */}
@@ -150,10 +169,10 @@ export default function InfoPage() {
             {t('info.contactDesc')}
           </p>
           <a
-            href="mailto:jaist-walk@jaist.ac.jp"
+            href="mailto:laboratry@ml.jaist.ac.jp"
             className="text-green-600 hover:underline text-sm font-medium"
           >
-            jaist-walk@jaist.ac.jp
+            laboratry@ml.jaist.ac.jp
           </a>
         </div>
       </div>
